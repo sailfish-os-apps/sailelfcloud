@@ -173,42 +173,42 @@
 <context>
     <name>LoginPage</name>
     <message>
-        <location filename="../qml/pages/LoginPage.qml" line="49"/>
+        <location filename="../qml/pages/LoginPage.qml" line="19"/>
         <source>Configuration</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/LoginPage.qml" line="64"/>
+        <location filename="../qml/pages/LoginPage.qml" line="34"/>
         <source>Login</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/LoginPage.qml" line="70"/>
+        <location filename="../qml/pages/LoginPage.qml" line="40"/>
         <source>Enter Username</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/LoginPage.qml" line="71"/>
+        <location filename="../qml/pages/LoginPage.qml" line="41"/>
         <source>Username</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/LoginPage.qml" line="91"/>
+        <location filename="../qml/pages/LoginPage.qml" line="61"/>
         <source>Enter Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/LoginPage.qml" line="92"/>
+        <location filename="../qml/pages/LoginPage.qml" line="62"/>
         <source>Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/LoginPage.qml" line="104"/>
+        <location filename="../qml/pages/LoginPage.qml" line="74"/>
         <source>Automatic login</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/LoginPage.qml" line="105"/>
+        <location filename="../qml/pages/LoginPage.qml" line="75"/>
         <source>Allows automatic login when application starts. Can be disabled from Configuration</source>
         <translation type="unfinished"></translation>
     </message>
@@ -216,28 +216,28 @@
 <context>
     <name>SailElfCloud</name>
     <message>
-        <location filename="../qml/SailElfCloud.qml" line="41"/>
+        <location filename="../qml/SailElfCloud.qml" line="11"/>
         <source>elfCloud</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/SailElfCloud.qml" line="49"/>
-        <location filename="../qml/SailElfCloud.qml" line="58"/>
+        <location filename="../qml/SailElfCloud.qml" line="19"/>
+        <location filename="../qml/SailElfCloud.qml" line="28"/>
         <source>File upload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/SailElfCloud.qml" line="50"/>
+        <location filename="../qml/SailElfCloud.qml" line="20"/>
         <source>On progress</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/SailElfCloud.qml" line="59"/>
+        <location filename="../qml/SailElfCloud.qml" line="29"/>
         <source>Compeleted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/SailElfCloud.qml" line="68"/>
+        <location filename="../qml/SailElfCloud.qml" line="38"/>
         <source>File uploaded</source>
         <translation type="unfinished"></translation>
     </message>
@@ -253,13 +253,13 @@
 <context>
     <name>VaultPage</name>
     <message>
-        <location filename="../qml/pages/VaultPage.qml" line="77"/>
-        <location filename="../qml/pages/VaultPage.qml" line="138"/>
+        <location filename="../qml/pages/VaultPage.qml" line="47"/>
+        <location filename="../qml/pages/VaultPage.qml" line="108"/>
         <source>Vaults</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/VaultPage.qml" line="84"/>
+        <location filename="../qml/pages/VaultPage.qml" line="54"/>
         <source>Add vault</source>
         <translation type="unfinished"></translation>
     </message>
