@@ -70,3 +70,7 @@ desktop-file-install --delete-original       \
 %{_datadir}/icons/hicolor/*/apps/%{name}.png
 # >> files
 # << files
+
+# >> macros
+%define __provides_exclude_from ^%{_datadir}/.*$
+# << macros
