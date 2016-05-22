@@ -1,0 +1,1165 @@
+diff --git elfcloud/elfcloud-weasel-1.2.2/.gitignore elfcloud/elfcloud-weasel-1.2.2/.gitignore
+new file mode 100644
+index 0000000..1d2eaad
+--- /dev/null
++++ elfcloud/elfcloud-weasel-1.2.2/.gitignore
+@@ -0,0 +1,4 @@
++/build
++/dist
++/**/__pycache__
++../**/.settings*
+diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud/cli/__init__.py elfcloud/elfcloud-weasel-1.2.2/elfcloud/cli/__init__.py
+index 6c6b368..2e74293 100644
+--- elfcloud/elfcloud-weasel-1.2.2/elfcloud/cli/__init__.py
++++ elfcloud/elfcloud-weasel-1.2.2/elfcloud/cli/__init__.py
+@@ -17,11 +17,11 @@ Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure
+ import sys
+ import os
+ import argparse
+-import StringIO
++import io
+ import elfcloud
+ import codecs
+ import csv
+-import urllib2
++import urllib.request, urllib.error, urllib.parse
+ 
+ from elfcloud.exceptions import ClientException
+ from elfcloud.exceptions import ECException
+@@ -183,22 +183,22 @@ def main(argv=sys.argv):
+     try:
+         call_client_func(user, password, args.apikey, args.server, args.func, args)
+     except ECException as e:
+-        print >> sys.stderr, e
++        print(e, file=sys.stderr)
+         sys.exit(-1)
+     except UnicodeError as e:
+-        print >> sys.stderr, e
++        print(e, file=sys.stderr)
+         sys.exit(-1)
+     except ClientException as e:
+-        print >> sys.stderr, e
++        print(e, file=sys.stderr)
+         sys.exit(-1)
+-    except urllib2.URLError as e:
++    except urllib.error.URLError as e:
+         if hasattr(e, 'reason'):
+-            print >> sys.stderr, e.reason
++            print(e.reason, file=sys.stderr)
+         elif hasattr(e, 'code'):
+-            print >> sys.stderr, e.code, e.msg
++            print(e.code, e.msg, file=sys.stderr)
+         sys.exit(-1)
+     except IOError as e:
+-        print >> sys.stderr, e.strerror
++        print(e.strerror, file=sys.stderr)
+         sys.exit(-1)
+ 
+ 
+@@ -210,7 +210,7 @@ class UnicodeWriter:
+ 
+     def __init__(self, f, dialect=csv.excel, encoding="utf-8", **kwds):
+         # Redirect output to a queue
+-        self.queue = StringIO.StringIO()
++        self.queue = io.StringIO()
+         self.writer = csv.writer(self.queue, dialect=dialect, **kwds)
+         self.stream = f
+         self.encoder = codecs.getincrementalencoder(encoding)()
+@@ -219,9 +219,6 @@ class UnicodeWriter:
+         self.writer.writerow([s.encode("utf-8") for s in row])
+         # Fetch UTF-8 output from the queue ...
+         data = self.queue.getvalue()
+-        data = data.decode("utf-8")
+-        # ... and reencode it into the target encoding
+-        data = self.encoder.encode(data)
+         # write to the target stream
+         self.stream.write(data)
+         # empty queue
+@@ -392,7 +389,7 @@ def store_data(args, client):
+     else:
+         data = sys.stdin
+     if args.verbose:
+-        print >> sys.stdout, "Sending data"
++        print("Sending data", file=sys.stdout)
+ 
+     client.store_data(parent_id=args.id,
+                       key=args.name,
+@@ -402,7 +399,7 @@ def store_data(args, client):
+                       description=args.description,
+                       tags=args.tags)
+     if args.verbose:
+-        print >> sys.stdout, 'OK'
++        print('OK', file=sys.stdout)
+     data.close()
+ 
+ 
+@@ -412,7 +409,7 @@ def fetch_data(args, client):
+     data = None
+     response = None
+     if args.verbose:
+-        print >> sys.stderr, "Fetching data"
++        print("Fetching data", file=sys.stderr)
+     if not args.info:
+         response = client.fetch_data(parent_id=args.id, key=args.name)
+     else:
+@@ -434,13 +431,13 @@ def fetch_data(args, client):
+                 sys.stdout.write(data)
+         if args.verbose:
+             if response['checksum'] == response['data']._md5.hexdigest():
+-                print >> sys.stderr, "OK"
++                print("OK", file=sys.stderr)
+             else:
+-                print >> sys.stderr, "Checksums mismatched"
++                print("Checksums mismatched", file=sys.stderr)
+ 
+ 
+ def subscription_formater(writer, d, indent=0):
+-    for key, value in d.iteritems():
++    for key, value in d.items():
+         content = ['' for x in range(indent)]
+         content.append(str(key))
+ 
+diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud/cli/__pycache__/__init__.cpython-34.pyc elfcloud/elfcloud-weasel-1.2.2/elfcloud/cli/__pycache__/__init__.cpython-34.pyc
+new file mode 100644
+index 0000000..469e997
+Binary files /dev/null and elfcloud/elfcloud-weasel-1.2.2/elfcloud/cli/__pycache__/__init__.cpython-34.pyc differ
+diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud/client.py elfcloud/elfcloud-weasel-1.2.2/elfcloud/client.py
+index a27f8fa..2bf9fa6 100644
+--- elfcloud/elfcloud-weasel-1.2.2/elfcloud/client.py
++++ elfcloud/elfcloud-weasel-1.2.2/elfcloud/client.py
+@@ -16,8 +16,8 @@ Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure
+ """
+ from decorator import decorator
+ 
+-import utils
+-import filecrypt
++from . import utils
++from . import filecrypt
+ from .container import Cluster, Vault
+ from .dataitem import DataItem
+ from .connection import Connection
+diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud/connection.py elfcloud/elfcloud-weasel-1.2.2/elfcloud/connection.py
+index 16ea8ef..60c801c 100644
+--- elfcloud/elfcloud-weasel-1.2.2/elfcloud/connection.py
++++ elfcloud/elfcloud-weasel-1.2.2/elfcloud/connection.py
+@@ -14,11 +14,11 @@ Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure
+    See the License for the specific language governing permissions and
+    limitations under the License.
+ """
+-import cookielib
+-import urllib2
++import http.cookiejar
++import urllib.request, urllib.error, urllib.parse
+ import json
+ 
+-from exceptions import ECUnknownException, ECDataItemException
++from .exceptions import ECUnknownException, ECDataItemException
+ import elfcloud.exceptions as exceptions
+ 
+ 
+@@ -35,8 +35,8 @@ class Connection(object):
+ 
+         """
+         self._server_url = server_url
+-        self._cookies = cookielib.CookieJar()
+-        self._opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self._cookies))
++        self._cookies = http.cookiejar.CookieJar()
++        self._opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(self._cookies))
+         self._is_authed = False
+ 
+     def auth(self, username, auth_data, auth_method, apikey):
+@@ -75,15 +75,17 @@ class Connection(object):
+                 }
+ 
+         post_data = json.JSONEncoder().encode(json_request)
++        binary_data = post_data.encode('utf8')
+         headers = {'Content-Type': 'application/json; charset=utf-8'}
+-        request = urllib2.Request(url, post_data, headers)
+-        response = self._opener.open(request).read()
++        request = urllib.request.Request(url, binary_data, headers)
++        response_data = self._opener.open(request).read()
++        response_string = response_data.decode('utf-8')
+ 
+         try:
+-            response = json.JSONDecoder().decode(response)
++            response = json.JSONDecoder().decode(response_string)
+         except Exception as e:
+             raise e
+-
++        
+         if 'result' in response:
+             return response['result']
+         else:
+@@ -99,12 +101,12 @@ class Connection(object):
+         Sends the request with given headers to elfcloud.fi server.
+         """
+         url = self._server_url + self.__API_VERSION__ + url_suffix
+-        request = urllib2.Request(url)
++        request = urllib.request.Request(url)
+         self._cookies.add_cookie_header(request)
+         for key in headers:
+             request.add_header(key, headers[key])
+         request.data = data
+-        response = urllib2.urlopen(request)
++        response = urllib.request.urlopen(request)
+ 
+         result = response.headers.get('X-ELFCLOUD-RESULT')
+         if result == 'OK':
+@@ -122,13 +124,13 @@ class Connection(object):
+         """
+         exception = response.get('error')
+         if not exception:
+-            raise ECUnknownException()
++            raise ECUnknownException(response)
+ 
+         message = exception.get('message')
+         code = exception.get('code')
+         data = exception.get('data')
+ 
+-        if type(data) in [unicode, str] and hasattr(exceptions, data):
++        if type(data) in [str, str] and hasattr(exceptions, data):
+             raise getattr(exceptions, data)(code, message)
+         else:
+-            raise ECUnknownException("Unknown exception")
++            raise ECUnknownException("Unknown exception", message, code, data)
+diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud/dataitem.py elfcloud/elfcloud-weasel-1.2.2/elfcloud/dataitem.py
+index 593d5c1..efd6096 100644
+--- elfcloud/elfcloud-weasel-1.2.2/elfcloud/dataitem.py
++++ elfcloud/elfcloud-weasel-1.2.2/elfcloud/dataitem.py
+@@ -14,8 +14,8 @@ Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure
+    See the License for the specific language governing permissions and
+    limitations under the License.
+ """
+-import utils
+-import filecrypt
++from . import utils
++from . import filecrypt
+ import hashlib
+ import base64
+ from elfcloud.exceptions import ECDataItemException
+@@ -257,7 +257,7 @@ class DataItem(object):
+         url_suffix = "/store"
+ 
+         try:
+-            data_chunk = data.next()
++            data_chunk = next(data)
+             md5 = hashlib.md5()
+             md5.update(data_chunk)
+             headers['X-ELFCLOUD-HASH'] = md5.hexdigest()
+diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud/filecrypt.py elfcloud/elfcloud-weasel-1.2.2/elfcloud/filecrypt.py
+index 597da0b..d4dd3d5 100644
+--- elfcloud/elfcloud-weasel-1.2.2/elfcloud/filecrypt.py
++++ elfcloud/elfcloud-weasel-1.2.2/elfcloud/filecrypt.py
+@@ -1,139 +1,139 @@
+-# -*- coding: utf-8 -*-
+-__license__ = """
+-Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure Services
+-
+-   Licensed under the Apache License, Version 2.0 (the "License");
+-   you may not use this file except in compliance with the License.
+-   You may obtain a copy of the License at
+-
+-       http://www.apache.org/licenses/LICENSE-2.0
+-
+-   Unless required by applicable law or agreed to in writing, software
+-   distributed under the License is distributed on an "AS IS" BASIS,
+-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-   See the License for the specific language governing permissions and
+-   limitations under the License.
+-"""
+-from .utils import KeyFile
+-import hashlib
+-from Crypto.Cipher import AES
+-
+-from elfcloud.exceptions import ECCryptException
+-
+-
+-class FileCrypt(object):
+-    """FileCrypt provides encryption/decryption functionality"""
+-    def __init__(self, crypt_key, crypt_iv):
+-        """Initializer for FileCrypt
+-
+-        :param crypt_key: key used for encryption
+-        :param crypt_iv: initialization vector used for encryption
+-
+-        """
+-        self._crypt_key = crypt_key
+-        self._crypt_iv = crypt_iv
+-
+-    def _validate_key_and_iv(self):
+-        key = self._crypt_key
+-        iv = self._crypt_iv
+-
+-        if not key or len(key) not in [16, 24, 32]:
+-            raise ECCryptException(900, 'Invalid encryption key')
+-        if not iv or len(iv) != 16:
+-            raise ECCryptException(901, 'Invalid initialization vector')
+-
+-        self._key_hash = KeyFile.calc_hash(iv, key)
+-
+-    def get_key_hash(self):
+-        self._validate_key_and_iv()
+-        return self._key_hash
+-
+-    def decrypt(self, data, chunksize=4194304):
+-        """Adds decrypt function to file iterator
+-
+-        :param data: data to be decrypted
+-        :param chunksize: amount of data to be handled at a time
+-
+-        Returns CryptIterator that decrypts data in chunks
+-        """
+-        self._validate_key_and_iv()
+-        decryptor = AES.new(str(self._crypt_key), AES.MODE_CFB, self._crypt_iv).decrypt
+-        return CryptIterator(data, decryptor, chunksize)
+-
+-    def encrypt(self, data, chunksize=4194304):
+-        """Adds encrypt function to file iterator
+-
+-        :param data: data to be encrypted
+-        :param chunksize: amount of data to be handled at a time
+-
+-        Returns a CryptIterator that encrypts data in chunks
+-        """
+-        self._validate_key_and_iv()
+-        encryptor = AES.new(str(self._crypt_key), AES.MODE_CFB, self._crypt_iv).encrypt
+-        return CryptIterator(data, encryptor, chunksize)
+-
+-
+-class CryptIterator(object):
+-    """CryptIterator iterates over a file and uses given function to decrypt/encrypt data
+-    in chunks
+-
+-    """
+-    def __init__(self, file, func, chunksize=4194304):
+-        """CryptIterator initializer
+-
+-        :param file: file-like object to be iterated
+-        :param func: function to be used on datachunk
+-        :param chunksize: amount of data to be handled at a time
+-
+-        """
+-        self.fileobj = file
+-        self.func = func
+-        self.chunksize = chunksize
+-        self._md5 = hashlib.md5()
+-
+-    def get_content_hash(self):
+-        return self._md5.hexdigest()
+-
+-    def __iter__(self):
+-        return self
+-
+-    def next(self):
+-        """Read a chunk of data, updates md5 and returns encrypted/decrypted chunk
+-
+-        """
+-        chunk = self.fileobj.read(self.chunksize)
+-        if not chunk:
+-            raise StopIteration
+-        self._md5.update(chunk)
+-        return self.func(chunk)
+-
+-
+-class FileIterator(object):
+-    """FileIterator
+-
+-    """
+-    def __init__(self, file, chunksize=4194304):
+-        """FileIterator initializer
+-
+-        :param file: file-like object to be iterated
+-        :param chunksize: amount of data to be handled at a time
+-
+-        """
+-        self.fileobj = file
+-        self.chunksize = chunksize
+-        self._md5 = hashlib.md5()
+-
+-    def get_content_hash(self):
+-        return self._md5.hexdigest()
+-
+-    def __iter__(self):
+-        return self
+-
+-    def next(self):
+-        """Reads a chunk of data, updates md5 and returns the chunk
+-        """
+-        chunk = self.fileobj.read(self.chunksize)
+-        if not chunk:
+-            raise StopIteration
+-        self._md5.update(chunk)
+-        return chunk
++# -*- coding: utf-8 -*-
++__license__ = """
++Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure Services
++
++   Licensed under the Apache License, Version 2.0 (the "License");
++   you may not use this file except in compliance with the License.
++   You may obtain a copy of the License at
++
++       http://www.apache.org/licenses/LICENSE-2.0
++
++   Unless required by applicable law or agreed to in writing, software
++   distributed under the License is distributed on an "AS IS" BASIS,
++   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++   See the License for the specific language governing permissions and
++   limitations under the License.
++"""
++from .utils import KeyFile
++import hashlib
++from Crypto.Cipher import AES
++
++from elfcloud.exceptions import ECCryptException
++
++
++class FileCrypt(object):
++    """FileCrypt provides encryption/decryption functionality"""
++    def __init__(self, crypt_key, crypt_iv):
++        """Initializer for FileCrypt
++
++        :param crypt_key: key used for encryption
++        :param crypt_iv: initialization vector used for encryption
++
++        """
++        self._crypt_key = crypt_key
++        self._crypt_iv = crypt_iv
++
++    def _validate_key_and_iv(self):
++        key = self._crypt_key
++        iv = self._crypt_iv
++
++        if not key or len(key) not in [16, 24, 32]:
++            raise ECCryptException(900, 'Invalid encryption key')
++        if not iv or len(iv) != 16:
++            raise ECCryptException(901, 'Invalid initialization vector')
++
++        self._key_hash = KeyFile.calc_hash(iv, key)
++
++    def get_key_hash(self):
++        self._validate_key_and_iv()
++        return self._key_hash
++
++    def decrypt(self, data, chunksize=4194304):
++        """Adds decrypt function to file iterator
++
++        :param data: data to be decrypted
++        :param chunksize: amount of data to be handled at a time
++
++        Returns CryptIterator that decrypts data in chunks
++        """
++        self._validate_key_and_iv()
++        decryptor = AES.new(str(self._crypt_key), AES.MODE_CFB, self._crypt_iv).decrypt
++        return CryptIterator(data, decryptor, chunksize)
++
++    def encrypt(self, data, chunksize=4194304):
++        """Adds encrypt function to file iterator
++
++        :param data: data to be encrypted
++        :param chunksize: amount of data to be handled at a time
++
++        Returns a CryptIterator that encrypts data in chunks
++        """
++        self._validate_key_and_iv()
++        encryptor = AES.new(str(self._crypt_key), AES.MODE_CFB, self._crypt_iv).encrypt
++        return CryptIterator(data, encryptor, chunksize)
++
++
++class CryptIterator(object):
++    """CryptIterator iterates over a file and uses given function to decrypt/encrypt data
++    in chunks
++
++    """
++    def __init__(self, file, func, chunksize=4194304):
++        """CryptIterator initializer
++
++        :param file: file-like object to be iterated
++        :param func: function to be used on datachunk
++        :param chunksize: amount of data to be handled at a time
++
++        """
++        self.fileobj = file
++        self.func = func
++        self.chunksize = chunksize
++        self._md5 = hashlib.md5()
++
++    def get_content_hash(self):
++        return self._md5.hexdigest()
++
++    def __iter__(self):
++        return self
++
++    def __next__(self):
++        """Read a chunk of data, updates md5 and returns encrypted/decrypted chunk
++
++        """
++        chunk = self.fileobj.read(self.chunksize)
++        if not chunk:
++            raise StopIteration
++        self._md5.update(chunk)
++        return self.func(chunk)
++
++
++class FileIterator(object):
++    """FileIterator
++
++    """
++    def __init__(self, file, chunksize=4194304):
++        """FileIterator initializer
++
++        :param file: file-like object to be iterated
++        :param chunksize: amount of data to be handled at a time
++
++        """
++        self.fileobj = file
++        self.chunksize = chunksize
++        self._md5 = hashlib.md5()
++
++    def get_content_hash(self):
++        return self._md5.hexdigest()
++
++    def __iter__(self):
++        return self
++
++    def __next__(self):
++        """Reads a chunk of data, updates md5 and returns the chunk
++        """
++        chunk = self.fileobj.read(self.chunksize)
++        if not chunk:
++            raise StopIteration
++        self._md5.update(chunk)
++        return chunk
+diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/__init__.py elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/__init__.py
+index 4b267e9..64918a1 100644
+--- elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/__init__.py
++++ elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/__init__.py
+@@ -14,10 +14,10 @@ Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure
+    See the License for the specific language governing permissions and
+    limitations under the License.
+ """
+-from client import *
+-from cli import *
+-from connection import *
+-from container import *
+-from dataitem import *
+-from filecrypt import *
+-from utils import *
++from .client import *
++from .cli import *
++from .connection import *
++from .container import *
++from .dataitem import *
++from .filecrypt import *
++from .utils import *
+diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/client.py elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/client.py
+index ea68ecc..b4524b0 100644
+--- elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/client.py
++++ elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/client.py
+@@ -251,23 +251,23 @@ class TestClientFunctions(unittest.TestCase):
+         conn.auth.assert_called_once_with(self.client.username, self.client._auth_method,
+                                           self.client._auth_data, self.client.apikey)
+ 
+-    def _mock_client_make_request(self, checksum=u'0f9aec7fe5ccbc22d4fcfd3bc8427b10',
+-                                        modified_date=u'2012-10-15T07:42:28.824216+00:00',
+-                                        meta=u'v1:CHA:d8c2eafd90c266e19ab9dcacc479f8af:ENC:AES256:TGS:A,B:KHA:257e3a285b3d6a257e6739ba085ddf2d:DSC:JE::',
++    def _mock_client_make_request(self, checksum='0f9aec7fe5ccbc22d4fcfd3bc8427b10',
++                                        modified_date='2012-10-15T07:42:28.824216+00:00',
++                                        meta='v1:CHA:d8c2eafd90c266e19ab9dcacc479f8af:ENC:AES256:TGS:A,B:KHA:257e3a285b3d6a257e6739ba085ddf2d:DSC:JE::',
+                                         length=26246026,
+-                                        name=u'Wildlife.wmv',
++                                        name='Wildlife.wmv',
+                                         parent_id=392,
+-                                        last_accessed_date=u'2012-10-15T09:56:27.505500+00:00'):
++                                        last_accessed_date='2012-10-15T09:56:27.505500+00:00'):
+         conn = mock.Mock()
+         self.client.connection = conn
+         conn.make_request.return_value = [{
+-            u'modified_date': modified_date,
+-            u'name': name,
+-            u'md5sum': str(checksum),
+-            u'parent_id': parent_id,
+-            u'last_accessed_date': last_accessed_date,
+-            u'meta': meta,
+-            u'size': length
++            'modified_date': modified_date,
++            'name': name,
++            'md5sum': str(checksum),
++            'parent_id': parent_id,
++            'last_accessed_date': last_accessed_date,
++            'meta': meta,
++            'size': length
+         }]
+         return conn
+ 
+diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/connection.py elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/connection.py
+index 132b87a..5c09c8d 100644
+--- elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/connection.py
++++ elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/connection.py
+@@ -16,7 +16,7 @@ Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure
+ """
+ import unittest
+ import mock
+-import StringIO
++import io
+ 
+ from elfcloud.exceptions import ECDataItemException
+ from elfcloud.connection import Connection
+@@ -55,7 +55,7 @@ class TestConnection(unittest.TestCase):
+     @mock.patch('json.JSONDecoder')
+     def test_connection_make_request(self, MockJSONDecoder, MockUrllib, MockRequest):
+         mock_instance1 = mock.Mock()
+-        mock_instance1.open.return_value = StringIO.StringIO("Test response")
++        mock_instance1.open.return_value = io.StringIO("Test response")
+         MockUrllib.return_value = mock_instance1
+ 
+         mock_instance2 = mock.Mock()
+diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/dataitem.py elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/dataitem.py
+index 473fa72..f5ec6e3 100644
+--- elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/dataitem.py
++++ elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/dataitem.py
+@@ -16,7 +16,7 @@ Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure
+ """
+ import unittest
+ import mock
+-import StringIO
++import io
+ import hashlib
+ import base64
+ 
+@@ -34,23 +34,23 @@ class TestDataItem(unittest.TestCase):
+         self.keyname = "keyname"
+         self.parent_id = 1
+ 
+-    def _mock_client_make_request(self, checksum=u'0f9aec7fe5ccbc22d4fcfd3bc8427b10',
+-                                        modified_date=u'2012-10-15T07:42:28.824216+00:00',
+-                                        meta=u'v1:CHA:d8c2eafd90c266e19ab9dcacc479f8af:ENC:AES256:TGS:A,B:KHA:257e3a285b3d6a257e6739ba085ddf2d:DSC:JE::',
++    def _mock_client_make_request(self, checksum='0f9aec7fe5ccbc22d4fcfd3bc8427b10',
++                                        modified_date='2012-10-15T07:42:28.824216+00:00',
++                                        meta='v1:CHA:d8c2eafd90c266e19ab9dcacc479f8af:ENC:AES256:TGS:A,B:KHA:257e3a285b3d6a257e6739ba085ddf2d:DSC:JE::',
+                                         length=26246026,
+-                                        name=u'Wildlife.wmv',
++                                        name='Wildlife.wmv',
+                                         parent_id=392,
+-                                        last_accessed_date=u'2012-10-15T09:56:27.505500+00:00'):
++                                        last_accessed_date='2012-10-15T09:56:27.505500+00:00'):
+         conn = mock.Mock()
+         self.client.connection = conn
+         conn.make_request.return_value = [{
+-            u'modified_date': modified_date,
+-            u'name': name,
+-            u'md5sum': str(checksum),
+-            u'parent_id': parent_id,
+-            u'last_accessed_date': last_accessed_date,
+-            u'meta': meta,
+-            u'size': length
++            'modified_date': modified_date,
++            'name': name,
++            'md5sum': str(checksum),
++            'parent_id': parent_id,
++            'last_accessed_date': last_accessed_date,
++            'meta': meta,
++            'size': length
+         }]
+         return conn
+ 
+@@ -82,7 +82,7 @@ class TestDataItem(unittest.TestCase):
+         self.assertEquals(type(response['data']), CryptIterator)
+ 
+     def test_store_data(self):
+-        test_data = StringIO.StringIO("Some test data to be sent to server")
++        test_data = io.StringIO("Some test data to be sent to server")
+         md5 = hashlib.md5()
+         md5.update(test_data.read())
+         test_data.seek(0)
+@@ -136,7 +136,7 @@ class TestDataItem(unittest.TestCase):
+         self.assertEquals(conn.make_transaction.mock_calls[8], mock.call(headers, '/store', 'ver'))
+ 
+     def test_store_data_del_kha_del_cha(self):
+-        test_data = StringIO.StringIO("Some test data to be sent to server")
++        test_data = io.StringIO("Some test data to be sent to server")
+         md5 = hashlib.md5()
+         data = test_data.read()
+         md5.update(data)
+@@ -155,13 +155,13 @@ class TestDataItem(unittest.TestCase):
+ 
+         conn = mock.Mock()
+         conn.make_request.return_value = [{
+-            u'modified_date': None,
+-            u'name': self.keyname,
+-            u'md5sum': "aabbccddeeff1122",
+-            u'parent_id': self.parent_id,
+-            u'last_accessed_date': None,
++            'modified_date': None,
++            'name': self.keyname,
++            'md5sum': "aabbccddeeff1122",
++            'parent_id': self.parent_id,
++            'last_accessed_date': None,
+             'meta': 'v1:TGS:tag1,tag2:ENC:AES128:DSC:NewDescription:KHA:ajsidoasj:CHA:ajsdoijas::',
+-            u'size': 999
++            'size': 999
+         }]
+ 
+         self.client.connection = conn
+@@ -182,12 +182,12 @@ class TestDataItem(unittest.TestCase):
+         self.client.connection = conn
+         self.client.encryption_mode = ENC_AES256
+ 
+-        test_data = StringIO.StringIO("Some test data to be sent to server")
++        test_data = io.StringIO("Some test data to be sent to server")
+         dataitem = DataItem(self.client, parent_id=self.parent_id, name=self.keyname)
+         self.assertRaises(ClientException, dataitem.store_data, test_data, "append", 0)
+ 
+     def test_store_with_patch(self):
+-        test_data = StringIO.StringIO("Some test data to be sent to server")
++        test_data = io.StringIO("Some test data to be sent to server")
+         md5 = hashlib.md5()
+         md5.update(test_data.read())
+         test_data.seek(0)
+diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/filecrypt.py elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/filecrypt.py
+index 894f480..3ef5e54 100644
+--- elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/filecrypt.py
++++ elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/filecrypt.py
+@@ -15,7 +15,7 @@ Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure
+    limitations under the License.
+ """
+ import unittest
+-import StringIO
++import io
+ import hashlib
+ 
+ from elfcloud.exceptions import (
+@@ -27,7 +27,7 @@ from elfcloud.filecrypt import FileIterator, FileCrypt
+ class TestFileHandling(unittest.TestCase):
+ 
+     def test_crypt_iterator(self):
+-        original_data = StringIO.StringIO("test data to be iterated")
++        original_data = io.StringIO("test data to be iterated")
+ 
+         enc_iterator = FileCrypt('Invalidkey', '1234567890123456')
+         self.assertRaises(ECCryptException, enc_iterator.encrypt, original_data, 1)
+@@ -40,7 +40,7 @@ class TestFileHandling(unittest.TestCase):
+ 
+         enc_iterator = FileCrypt('12345678901234561234567890123456', '1234567890123456')
+ 
+-        data_enc_out = StringIO.StringIO()
++        data_enc_out = io.StringIO()
+         encrypt = enc_iterator.encrypt(original_data, 1)
+         for data in encrypt:
+             data_enc_out.write(data)
+@@ -49,7 +49,7 @@ class TestFileHandling(unittest.TestCase):
+         self.assertNotEqual(original_data.read(), data_enc_out.read())
+         data_enc_out.seek(0)
+ 
+-        data_dec_out = StringIO.StringIO()
++        data_dec_out = io.StringIO()
+ 
+         dec_iterator = FileCrypt('Invalidkey', '1234567890123456')
+         self.assertRaises(ECCryptException, dec_iterator.decrypt, data_enc_out, 1)
+@@ -70,7 +70,7 @@ class TestFileHandling(unittest.TestCase):
+         self.assertEquals(original_data.read(), data_dec_out.read())
+ 
+     def test_crypt_iterator_content_hash(self):
+-        original_data = StringIO.StringIO("test data to be iterated")
++        original_data = io.StringIO("test data to be iterated")
+         iterator = FileCrypt('12345678901234561234567890123456', '1234567890123456')
+         enc_iter = iterator.encrypt(original_data)
+         for enc_data in enc_iter:
+@@ -84,11 +84,11 @@ class TestFileHandling(unittest.TestCase):
+         self.assertEquals(content_hash, enc_iter.get_content_hash())
+ 
+     def test_file_iterator(self):
+-        original_data = StringIO.StringIO("test data to be iterated")
++        original_data = io.StringIO("test data to be iterated")
+ 
+         file_iterator = FileIterator(original_data, 1)
+ 
+-        iter_out = StringIO.StringIO()
++        iter_out = io.StringIO()
+         for data in file_iterator:
+             iter_out.write(data)
+ 
+diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/utils.py elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/utils.py
+index 844c111..49865cc 100644
+--- elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/utils.py
++++ elfcloud/elfcloud-weasel-1.2.2/elfcloud/tests/utils.py
+@@ -15,7 +15,7 @@ Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure
+    limitations under the License.
+ """
+ import os
+-import StringIO
++import io
+ from elfcloud.exceptions import (
+         ClientMetaException,
+         ClientKeyFileException,
+@@ -36,7 +36,7 @@ class ValidateEncryptionTestCase(unittest.TestCase):
+ 
+ class MetaParserDeserializeTestCase(unittest.TestCase):
+     def _makeOne(self, string):
+-        print string
++        print(string)
+         return MetaParser.deserialize(string)
+ 
+     def _parse_test(self, test_string):
+@@ -97,13 +97,13 @@ class MetaParserDeserializeTestCase(unittest.TestCase):
+         self.assertRaises(ECCryptException, self._makeOne, test_string)
+ 
+     def test_parse_invalid_utf8_value(self):
+-        test_string = 'v1:AVAIN1:DATA\xff\u2200::'
++        test_string = 'v1:AVAIN1:DATA\xff\\u2200::'
+         self.assertRaises(ClientMetaException, self._makeOne, test_string)
+ 
+ 
+ class MetaParserSerializeTestCase(unittest.TestCase):
+     def _makeOne(self, meta_dict):
+-        print meta_dict
++        print(meta_dict)
+         return MetaParser.serialize(meta_dict)
+ 
+     def test_no_version(self):
+@@ -123,7 +123,7 @@ class KeyFileParserTestCase(unittest.TestCase):
+ 
+     def generate_key(self, iv_len, key_len):
+         iv, key = os.urandom(iv_len), os.urandom(key_len)
+-        return StringIO.StringIO(iv + key), iv, key
++        return io.StringIO(iv + key), iv, key
+ 
+     def test_parse_file_aes256(self):
+         fh, iv, key = self.generate_key(16, 32)
+diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud/utils.py elfcloud/elfcloud-weasel-1.2.2/elfcloud/utils.py
+index 7a0f9f0..e19c31f 100644
+--- elfcloud/elfcloud-weasel-1.2.2/elfcloud/utils.py
++++ elfcloud/elfcloud-weasel-1.2.2/elfcloud/utils.py
+@@ -1,138 +1,138 @@
+-# -*- coding: utf-8 -*-
+-__license__ = """
+-Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure Services
+-
+-   Licensed under the Apache License, Version 2.0 (the "License");
+-   you may not use this file except in compliance with the License.
+-   You may obtain a copy of the License at
+-
+-       http://www.apache.org/licenses/LICENSE-2.0
+-
+-   Unless required by applicable law or agreed to in writing, software
+-   distributed under the License is distributed on an "AS IS" BASIS,
+-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-   See the License for the specific language governing permissions and
+-   limitations under the License.
+-"""
+-import re
+-import hashlib
+-
+-from .exceptions import ECCryptException
+-from .exceptions import ClientMetaException
+-from .exceptions import ClientKeyFileException
+-
+-ENC_NONE = "NONE"
+-ENC_AES128 = "AES128"
+-ENC_AES192 = "AES192"
+-ENC_AES256 = "AES256"
+-IV_DEFAULT = "1234567890123456"
+-SERVER_DEFAULT = "https://api.elfcloud.fi/"
+-APIKEY_DEFAULT = "atk8vzrhnc2by4f"
+-VAULT_TYPE_DEFAULT = "fi.elfcloud.datastore"
+-
+-
+-def validate_encryption_mode(level, throw_exception=True):
+-    if level in [ENC_NONE, ENC_AES128, ENC_AES192, ENC_AES256]:
+-        return True
+-    if throw_exception:
+-        raise ECCryptException(901, 'Invalid encryption mode')
+-    return False
+-
+-
+-class MetaParser(object):
+-    @staticmethod
+-    def deserialize_tags(tags_string):
+-        return [x.decode('ascii') for x in tags_string.split(",")]
+-
+-    @staticmethod
+-    def deserialize(meta_string):
+-        result_dict = {}
+-
+-        match_parts = re.compile('((?:\\\\.|[^\\\\:])*)(?::|$)')
+-
+-        if not meta_string.startswith("v") or len(meta_string) < 4:
+-            raise ClientMetaException("Invalid meta header")
+-
+-        result_dict['__version__'] = int(meta_string[1])
+-
+-        if len(meta_string) <= 4:
+-            return result_dict
+-
+-        keyvalue_string = meta_string[3:-2]
+-        parts = match_parts.findall(keyvalue_string)
+-
+-        for i in range(0, len(parts), 2):
+-            key = parts[i]
+-            value = None
+-
+-            if key == '':
+-                continue
+-
+-            try:
+-                value = parts[i + 1]
+-                value = re.sub(r'\\(.)', r'\1', value.decode("ascii"))
+-            except:
+-                raise ClientMetaException(u"Error while parsing value for key '{0}'".format(key))
+-
+-            if key == "TGS":
+-                value = MetaParser.deserialize_tags(value)
+-            if key == 'ENC':
+-                validate_encryption_mode(value)
+-
+-            if key in result_dict:
+-                raise ClientMetaException("Multiple values for same key")
+-
+-            result_dict[key] = value
+-
+-        return result_dict
+-
+-    @staticmethod
+-    def serialize(meta_dict):
+-        meta_dict = meta_dict.copy()
+-
+-        version = meta_dict.pop('__version__', None)
+-        if version is None:
+-            raise ClientMetaException("No version specified")
+-
+-        meta_list = []
+-        for key in meta_dict:
+-            value = meta_dict[key]
+-
+-            if key == 'TGS':
+-                for tag in value:
+-                    if ',' in tag:
+-                        raise ClientMetaException("Comma is not allowed in tag")
+-                value = ",".join(value)
+-
+-            ascii_key = key.encode("ascii")
+-            ascii_value = value.encode("ascii")
+-            meta_list.extend([ascii_key, ascii_value])
+-
+-        meta_string = "v{0}:".format(version)
+-        meta_string += ':'.join(meta_list)
+-        meta_string += "::"
+-        return meta_string
+-
+-
+-class KeyFile(object):
+-    @staticmethod
+-    def parse_from_file(fh):
+-        iv = fh.read(16)
+-        key = fh.read()
+-
+-        if len(iv) != 16:
+-            raise ClientKeyFileException("Invalid key file (file too short)")
+-
+-        if len(key) not in [32, 24, 16]:  # Only 128, 192 and 256 bytes supported
+-            raise ClientKeyFileException("Invalid key file (invalid key size)")
+-
+-        return iv, key
+-
+-    @staticmethod
+-    def calc_hash(iv, key):
+-        final_hash = iv + key
+-        for i in range(0, 10000):
+-            m = hashlib.md5()
+-            m.update(final_hash)
+-            final_hash = m.digest()
+-        return final_hash.encode("hex")
++# -*- coding: utf-8 -*-
++__license__ = """
++Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure Services
++
++   Licensed under the Apache License, Version 2.0 (the "License");
++   you may not use this file except in compliance with the License.
++   You may obtain a copy of the License at
++
++       http://www.apache.org/licenses/LICENSE-2.0
++
++   Unless required by applicable law or agreed to in writing, software
++   distributed under the License is distributed on an "AS IS" BASIS,
++   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++   See the License for the specific language governing permissions and
++   limitations under the License.
++"""
++import re
++import hashlib
++
++from .exceptions import ECCryptException
++from .exceptions import ClientMetaException
++from .exceptions import ClientKeyFileException
++
++ENC_NONE = "NONE"
++ENC_AES128 = "AES128"
++ENC_AES192 = "AES192"
++ENC_AES256 = "AES256"
++IV_DEFAULT = "1234567890123456"
++SERVER_DEFAULT = "https://api.elfcloud.fi/"
++APIKEY_DEFAULT = "atk8vzrhnc2by4f"
++VAULT_TYPE_DEFAULT = "fi.elfcloud.datastore"
++
++
++def validate_encryption_mode(level, throw_exception=True):
++    if level in [ENC_NONE, ENC_AES128, ENC_AES192, ENC_AES256]:
++        return True
++    if throw_exception:
++        raise ECCryptException(901, 'Invalid encryption mode')
++    return False
++
++
++class MetaParser(object):
++    @staticmethod
++    def deserialize_tags(tags_string):
++        return [x.decode('ascii') for x in tags_string.split(",")]
++
++    @staticmethod
++    def deserialize(meta_string):
++        result_dict = {}
++
++        match_parts = re.compile('((?:\\\\.|[^\\\\:])*)(?::|$)')
++
++        if not meta_string.startswith("v") or len(meta_string) < 4:
++            raise ClientMetaException("Invalid meta header")
++
++        result_dict['__version__'] = int(meta_string[1])
++
++        if len(meta_string) <= 4:
++            return result_dict
++
++        keyvalue_string = meta_string[3:-2]
++        parts = match_parts.findall(keyvalue_string)
++
++        for i in range(0, len(parts), 2):
++            key = parts[i]
++            value = None
++
++            if key == '':
++                continue
++
++            try:
++                value = parts[i + 1]
++                value = re.sub(r'\\(.)', r'\1', value)
++            except:
++                raise ClientMetaException("Error while parsing value for key '{0}'".format(key))
++
++            if key == "TGS":
++                value = MetaParser.deserialize_tags(value)
++            if key == 'ENC':
++                validate_encryption_mode(value)
++
++            if key in result_dict:
++                raise ClientMetaException("Multiple values for same key")
++
++            result_dict[key] = value
++
++        return result_dict
++
++    @staticmethod
++    def serialize(meta_dict):
++        meta_dict = meta_dict.copy()
++
++        version = meta_dict.pop('__version__', None)
++        if version is None:
++            raise ClientMetaException("No version specified")
++
++        meta_list = []
++        for key in meta_dict:
++            value = meta_dict[key]
++
++            if key == 'TGS':
++                for tag in value:
++                    if ',' in tag:
++                        raise ClientMetaException("Comma is not allowed in tag")
++                value = ",".join(value)
++
++            #ascii_key = key.encode("ascii")
++            #ascii_value = value.encode("ascii")
++            meta_list.extend([key, value])
++
++        meta_string = "v{0}:".format(version)
++        meta_string += ':'.join(meta_list)
++        meta_string += "::"
++        return meta_string
++
++
++class KeyFile(object):
++    @staticmethod
++    def parse_from_file(fh):
++        iv = fh.read(16)
++        key = fh.read()
++
++        if len(iv) != 16:
++            raise ClientKeyFileException("Invalid key file (file too short)")
++
++        if len(key) not in [32, 24, 16]:  # Only 128, 192 and 256 bytes supported
++            raise ClientKeyFileException("Invalid key file (invalid key size)")
++
++        return iv, key
++
++    @staticmethod
++    def calc_hash(iv, key):
++        final_hash = iv + key
++        for i in range(0, 10000):
++            m = hashlib.md5()
++            m.update(final_hash)
++            final_hash = m.digest()
++        return final_hash.encode("hex")
+diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud_weasel.egg-info/.gitignore elfcloud/elfcloud-weasel-1.2.2/elfcloud_weasel.egg-info/.gitignore
+new file mode 100644
+index 0000000..adb0c97
+--- /dev/null
++++ elfcloud/elfcloud-weasel-1.2.2/elfcloud_weasel.egg-info/.gitignore
+@@ -0,0 +1 @@
++/PKG-INFO
+diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud_weasel.egg-info/PKG-INFO elfcloud/elfcloud-weasel-1.2.2/elfcloud_weasel.egg-info/PKG-INFO
+index b999488..d1b8e6b 100644
+--- elfcloud/elfcloud-weasel-1.2.2/elfcloud_weasel.egg-info/PKG-INFO
++++ elfcloud/elfcloud-weasel-1.2.2/elfcloud_weasel.egg-info/PKG-INFO
+@@ -1,4 +1,4 @@
+-Metadata-Version: 1.0
++Metadata-Version: 1.1
+ Name: elfcloud-weasel
+ Version: 1.2.2
+ Summary: elfcloud.fi Weasel
+@@ -20,10 +20,10 @@ Copyright 2010-2013 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure
+    See the License for the specific language governing permissions and
+    limitations under the License.
+ 
+-Description: elfcloud-weasel
+-        ======================
+-        
+-        elfCLOUD.fi Weasel Library and Command Line Interface Tool
++Description: elfcloud-weasel
++        ======================
++        
++        elfCLOUD.fi Weasel Library and Command Line Interface Tool
+         
+         
+         1.2.2 (2013-Feb-12) -- Bug fix release
+diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud_weasel.egg-info/SOURCES.txt elfcloud/elfcloud-weasel-1.2.2/elfcloud_weasel.egg-info/SOURCES.txt
+index 0703b80..70e5d3d 100644
+--- elfcloud/elfcloud-weasel-1.2.2/elfcloud_weasel.egg-info/SOURCES.txt
++++ elfcloud/elfcloud-weasel-1.2.2/elfcloud_weasel.egg-info/SOURCES.txt
+@@ -29,6 +29,7 @@ elfcloud/tests/container.py
+ elfcloud/tests/dataitem.py
+ elfcloud/tests/filecrypt.py
+ elfcloud/tests/utils.py
++elfcloud_weasel.egg-info/.gitignore
+ elfcloud_weasel.egg-info/PKG-INFO
+ elfcloud_weasel.egg-info/SOURCES.txt
+ elfcloud_weasel.egg-info/dependency_links.txt
+diff --git elfcloud/elfcloud-weasel-1.2.2/setup.py elfcloud/elfcloud-weasel-1.2.2/setup.py
+index 9c0bccf..f02ed4b 100644
+--- elfcloud/elfcloud-weasel-1.2.2/setup.py
++++ elfcloud/elfcloud-weasel-1.2.2/setup.py
+@@ -49,7 +49,7 @@ setup(name='elfcloud-weasel',
+       author='elfcloud',
+       author_email='support.dev@elfcloud.fi',
+       url='http://elfcloud.fi/',
+-      license=open('LICENSE.txt').read(),
++      license=open('LICENSE.txt', 'r', encoding='utf-8').read(),
+       keywords='',
+       packages=find_packages(),
+       include_package_data=True,
