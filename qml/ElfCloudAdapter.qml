@@ -116,7 +116,7 @@ Python {
             console.log("Python version: " + pythonVersion());
             __setHandlers();
             addImportPath(Qt.resolvedUrl("python/"));
-            addImportPath(Qt.resolvedUrl("../lib/usr/lib/python3.4/site-packages/"));
+            addImportPath(Qt.resolvedUrl("../lib/pyaes-0.1.0-py3.4.egg"));
             addImportPath(Qt.resolvedUrl("../lib/decorator-4.0.9-py3.4.egg"));
             addImportPath(Qt.resolvedUrl("../lib/elfcloud_weasel-1.2.2-py3.4.egg"));
             importModule('elfCloudAdapter', function() {
