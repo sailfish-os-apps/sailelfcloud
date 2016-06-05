@@ -103,6 +103,16 @@ Page {
         Image {
             id: image
             anchors.fill: parent
+            asynchronous: true
+            fillMode: Image.PreserveAspectFit
+            sourceSize.height: page.height * 2
+
+            PinchArea {
+                anchors.fill: parent
+                pinch.target: parent
+                pinch.minimumScale: 1
+                pinch.maximumScale: 4
+            }
         }
 
         HorizontalScrollDecorator { flickable: flickableForImage }

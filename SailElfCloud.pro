@@ -57,13 +57,13 @@ DISTFILES += \
     qml/dialogs/FileChooserDialog.qml \
     qml/items/ImageBackgroundItem.qml \
     qml/items/DocumentBackgroundItem.qml \
-    qml/views/ImageView.qml \
-    qml/views/FileView.qml \
     qml/dialogs/AddVaultDialog.qml \
     qml/dialogs/AddClusterDialog.qml \
     rpm/harbour-sailelfcloud.changes \
     harbour-sailelfcloud.desktop \
-    qml/dialogs/RenameDialog.qml
+    qml/dialogs/RenameDialog.qml \
+    qml/views/FileSelectorView.qml \
+    qml/views/ImageSelectorView.qml
 
 unix: PKGCONFIG +=
 

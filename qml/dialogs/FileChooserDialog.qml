@@ -83,7 +83,7 @@ Dialog {
             text: qsTr("Pull down to choose source")
         }
 
-        ImageView {
+        ImageSelectorView {
             id: imageView
             anchors.fill: parent
             visible: false
@@ -91,7 +91,7 @@ Dialog {
             onDeselected: { page.canAccept = false; }
         }
 
-        FileView {
+        FileSelectorView {
             id: documentView
             rootPath: StandardPaths.documents
             anchors.fill: parent
@@ -100,7 +100,7 @@ Dialog {
             onDeselected: { page.canAccept = false; }
         }
 
-        FileView {
+        FileSelectorView {
             id: musicView
             rootPath: StandardPaths.music
             anchors.fill: parent
@@ -109,7 +109,7 @@ Dialog {
             onDeselected: { page.canAccept = false; }
         }
 
-        FileView {
+        FileSelectorView {
             id: videosView
             rootPath: StandardPaths.videos
             anchors.fill: parent
