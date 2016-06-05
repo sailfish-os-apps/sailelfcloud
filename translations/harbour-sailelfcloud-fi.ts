@@ -102,57 +102,57 @@
 <context>
     <name>DataItemDetailsPage</name>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="89"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="102"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="90"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="30"/>
         <source>Deleting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="94"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="106"/>
         <source>Rename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="99"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="111"/>
         <source>View Contents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="155"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="167"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="160"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="172"/>
         <source>Tags</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="165"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="177"/>
         <source>Id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="169"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="181"/>
         <source>ParentId</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="175"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="187"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="180"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="192"/>
         <source>Last access time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="185"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="197"/>
         <source>MD5</source>
         <translation type="unfinished"></translation>
     </message>
@@ -260,6 +260,19 @@
     <message>
         <location filename="../qml/pages/LoginPage.qml" line="85"/>
         <source>Allows automatic login when application starts. Can be disabled from Configuration</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RenameDialog</name>
+    <message>
+        <location filename="../qml/dialogs/RenameDialog.qml" line="14"/>
+        <source>Rename</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/RenameDialog.qml" line="19"/>
+        <source>New name</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

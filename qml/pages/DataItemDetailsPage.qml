@@ -17,7 +17,7 @@ Page {
                            });
     }
 
-    function _removeDataItem() {
+    function _requestRemoveDataItem() {
         elfCloud.removeFile(parentContainerId, dataItemName,
                             function() {
                                 var prevPage = pageStack.previousPage();
@@ -26,8 +26,21 @@ Page {
                             });
     }
 
-    function _renameDataItem() {
+    function _removeDataItem() {
+        remorse.execute(qsTr("Deleting"), _requestRemoveDataItem);
+    }
 
+    function _refreshAfterRename(newName) {
+        dataItemName = newName;
+        _refresh();
+    }
+
+    function _renameDataItem() {
+        var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/RenameDialog.qml"), {"oldName":dataItemName});
+        dialog.onRename.connect( function(newName) {
+            elfCloud.renameDataItem(parentContainerId, dataItemName, newName, function() {
+                _refreshAfterRename(newName); });
+        });
     }
 
     function _makeVisible() {
@@ -54,14 +67,14 @@ Page {
         flickable.visible = false;
     }
 
-    function _updatePageContent() {
+    function _refresh() {
         _makeBusy();
         elfCloud.getDataItemInfo(parentContainerId, dataItemName, _updatePageContentWithItemInfo);
     }
 
     Component.onCompleted: {
         coverText = dataItemName;
-        _updatePageContent();
+        _refresh();
     }
 
     onStatusChanged: {
@@ -87,12 +100,11 @@ Page {
         PullDownMenu {
             MenuItem {
                 text: qsTr("Delete")
-                onClicked: { remorse.execute(qsTr("Deleting"),
-                                             _removeDataItem); }
+                onClicked: { _deleteDataItem() }
             }
             MenuItem {
                 text: qsTr("Rename")
-                onClicked: {}
+                onClicked: { _renameDataItem() }
             }
 
             MenuItem {

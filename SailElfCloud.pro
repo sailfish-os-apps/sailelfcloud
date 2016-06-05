@@ -62,7 +62,8 @@ DISTFILES += \
     qml/dialogs/AddVaultDialog.qml \
     qml/dialogs/AddClusterDialog.qml \
     rpm/harbour-sailelfcloud.changes \
-    harbour-sailelfcloud.desktop
+    harbour-sailelfcloud.desktop \
+    qml/dialogs/RenameDialog.qml
 
 unix: PKGCONFIG +=
 

@@ -99,6 +99,10 @@ Python {
         py.call("elfCloudAdapter.removeDataItem", [parentId, filename], onSuccess);
     }
 
+    function renameDataItem(parentId, oldName, newName, onSuccess) {
+        py.call("elfCloudAdapter.renameDataItem", [parentId, oldName, newName], onSuccess);
+    }
+
     function addVault(name, onSuccess) {
         py.call("elfCloudAdapter.addVault", [name], onSuccess);
     }

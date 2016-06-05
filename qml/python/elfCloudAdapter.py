@@ -162,13 +162,12 @@ def getSubscriptionInfo():
     return out
     
 def storeDataItem(parentId, remotename, filename):
-    parentId = int(parentId)
     _info("Storing: " + filename + " as " + remotename)
     fileobj = open(filename, "rb")
     _configEncryption()
 
     
-    result = client.store_data(parentId,
+    result = client.store_data(int(parentId),
                                remotename,
                                fileobj)
     
@@ -195,18 +194,22 @@ def storeDataItems(parentId, localRemotePaths):
 def removeDataItem(parentId, name):
     _info("Removing " + name)
     return client.remove_dataitem(int(parentId), name)
+
+def renameDataItem(parentId, oldName, newName):
+    _info("Renaming ", oldName, "to", newName)
+    return client.rename_dataitem(int(parentId), oldName, newName)
      
 def addVault(name):
     return client.add_vault(name, VALULT_TYPES[0])
 
 def removeVault(id):
-    return client.remove_vault(id)
+    return client.remove_vault(int(id))
 
 def addCluster(parentId, name):
-    return client.add_cluster(name, parentId)
+    return client.add_cluster(name, int(parentId))
 
 def removeCluster(id):
-    client.remove_cluster(id)
+    client.remove_cluster(int(id))
 
 if __name__ == '__main__':
     pass
