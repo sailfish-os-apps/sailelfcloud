@@ -26,20 +26,36 @@ Page {
                             });
     }
 
+    function _renameDataItem() {
+
+    }
+
     function _makeVisible() {
-        busyIndication.running = false
-        flickable.visible = true
+        busyIndication.running = false;
+        flickable.visible = true;
+    }
+
+    function _tagListToString(tagList) {
+        return tagList.join(",");
     }
 
     function _updatePageContentWithItemInfo(itemInfo) {
-        itemIdField.value = itemInfo["id"]
-        sizeField.value = itemInfo["size"]
-        accessesField.value = itemInfo["accessed"]
-        md5Field.value = itemInfo["md5sum"]
-        _makeVisible()
+        descriptionField.value = itemInfo["description"];
+        tagsField.value = _tagListToString(itemInfo["tags"]);
+        itemIdField.value = itemInfo["id"];
+        sizeField.value = itemInfo["size"];
+        accessedField.value = itemInfo["accessed"];
+        md5Field.value = itemInfo["md5sum"];
+        _makeVisible();
+    }
+
+    function _makeBusy() {
+        busyIndication.running = true;
+        flickable.visible = false;
     }
 
     function _updatePageContent() {
+        _makeBusy();
         elfCloud.getDataItemInfo(parentContainerId, dataItemName, _updatePageContentWithItemInfo);
     }
 
@@ -135,6 +151,16 @@ Page {
                 }
 
                 DetailItem {
+                    id: descriptionField
+                    label: qsTr("Description")
+                }
+
+                DetailItem {
+                    id: tagsField
+                    label: qsTr("Tags")
+                }
+
+                DetailItem {
                     id: itemIdField
                     label: qsTr("Id")
                 }
@@ -150,7 +176,7 @@ Page {
                 }
 
                 DetailItem {
-                    id: accessesField
+                    id: accessedField
                     label: qsTr("Last access time")
                 }
 

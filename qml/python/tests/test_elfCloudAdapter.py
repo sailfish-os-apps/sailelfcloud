@@ -62,20 +62,21 @@ class Test(unittest.TestCase):
         elfCloudAdapter.removeDataItem(self.clusterId, "test_bin_file_from_ut.bin")
 
     def test_storeDataItems(self):
-        localTempFile1 = tempfile.NamedTemporaryFile("r+")        
+        localTempFile1 = tempfile.NamedTemporaryFile("r+", delete=False)        
         localTempFile1.write("test data written by unit test")
         localTempFile1.flush()
-        localTempFile2 = tempfile.NamedTemporaryFile("rb+")        
+        localTempFile2 = tempfile.NamedTemporaryFile("rb+", delete=False)        
         localTempFile2.write(b"tes\0\0t data\0written by unit test\0") # binary file requires byte objects hence b"
-        localTempFile2.flush()        
-        elfCloudAdapter.storeDataItems(self.clusterId, [(localTempFile1.name,"test_file_from_ut_1.txt"),
-                                                        (localTempFile2.name,"test_file_from_ut_2.txt")])
+        localTempFile2.flush()
         localTempFile1.close()
         localTempFile2.close()
-        
+
+        elfCloudAdapter.storeDataItems(self.clusterId, [(localTempFile1.name,"test_file_from_ut_1.txt"),
+                                                        (localTempFile2.name,"test_file_from_ut_2.txt")])        
         content = elfCloudAdapter.listContent(self.clusterId)
         print ("content:", content)
-        
+               
+        elfCloudAdapter.updateDataItem(self.clusterId, "test_file_from_ut_1.txt", "New description", ["tag1", "tag 2"])
         dataiteminfo = elfCloudAdapter.getDataItemInfo(self.clusterId, "test_file_from_ut_1.txt")
         print ("dataitem info:", dataiteminfo)
                 

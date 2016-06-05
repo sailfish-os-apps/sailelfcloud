@@ -826,7 +826,7 @@ index 844c111..49865cc 100644
      def test_parse_file_aes256(self):
          fh, iv, key = self.generate_key(16, 32)
 diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud/utils.py elfcloud/elfcloud-weasel-1.2.2/elfcloud/utils.py
-index 7a0f9f0..e19c31f 100644
+index 7a0f9f0..b1d2d58 100644
 --- elfcloud/elfcloud-weasel-1.2.2/elfcloud/utils.py
 +++ elfcloud/elfcloud-weasel-1.2.2/elfcloud/utils.py
 @@ -1,138 +1,138 @@
@@ -1012,7 +1012,7 @@ index 7a0f9f0..e19c31f 100644
 +class MetaParser(object):
 +    @staticmethod
 +    def deserialize_tags(tags_string):
-+        return [x.decode('ascii') for x in tags_string.split(",")]
++        return tags_string.split(",")
 +
 +    @staticmethod
 +    def deserialize(meta_string):

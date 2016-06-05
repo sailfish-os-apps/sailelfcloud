@@ -110,10 +110,17 @@ def getDataItemInfo(parentId, name):
     dataitem = client.get_dataitem(parentId, name)
     return {'id': dataitem.dataitem_id,
             'size': dataitem.size,
-            'meta': dataitem.meta,
+            'description': dataitem.description,
+            'tags': dataitem.tags,
             'name': dataitem.name,
-            'accessed': dataitem.last_accessed_date,
-            'md5sum': dataitem.md5sum}
+            'accessed': (dataitem.last_accessed_date if dataitem.last_accessed_date else ''),
+            'md5sum': (dataitem.md5sum if dataitem.md5sum else ''),
+            'contentHash': (dataitem.content_hash if dataitem.content_hash else ''),
+            'keyHash': (dataitem.key_hash if dataitem.key_hash else '')}
+
+def updateDataItem(parentId, name, description=None, tags=None):
+    client.update_dataitem(parentId, name, description, tags)
+    
 
 def fetchDataItem(parentId, name, key=None):
     parentId = int(parentId)
