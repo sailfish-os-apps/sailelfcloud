@@ -9,20 +9,24 @@ Page {
 
     id: page
 
-    function _connectionCb(status) {
+    function _connectionCb(status, reason) {
+        elfCloud.onConnected.disconnect(_connectionCb);
         busyIndication.running = false;
         if (status) {
             pageStack.replaceAbove(null, Qt.resolvedUrl("VaultPage.qml"));
         } else {
             connectionProblemLabel.text = qsTr("Failed to connect");
             connectionProblemLabel.visible = true;
+            connectionProblemReasonArea.text = reason;
+            connectionProblemReasonArea.visible = true;
             helpers.clearAutoLogin();
         }
     }
 
     onStatusChanged: {
         if (status === PageStatus.Active) {
-            elfCloud.connect(username, password, _connectionCb);
+            elfCloud.onConnected.connect(_connectionCb);
+            elfCloud.connect(username, password);
         }
     }
 
@@ -40,6 +44,20 @@ Page {
     Label {
         id: connectionProblemLabel
         anchors.centerIn: parent
+        font.family: Theme.fontFamilyHeading
+        visible: false
+    }
+    TextArea {
+        id: connectionProblemReasonArea
+        anchors.top: connectionProblemLabel.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        font.pixelSize: Theme.fontSizeSmall
+        horizontalAlignment: TextEdit.AlignHCenter
+        textMargin: parent.width / 5
+        labelVisible: false
+        readOnly: true
+        wrapMode: TextEdit.Wrap
         visible: false
     }
 }

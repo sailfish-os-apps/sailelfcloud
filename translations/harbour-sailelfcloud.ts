@@ -66,12 +66,12 @@
 <context>
     <name>ConnectionPage</name>
     <message>
-        <location filename="../qml/pages/ConnectionPage.qml" line="17"/>
+        <location filename="../qml/pages/ConnectionPage.qml" line="18"/>
         <source>Failed to connect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConnectionPage.qml" line="30"/>
+        <location filename="../qml/pages/ConnectionPage.qml" line="34"/>
         <source>Connecting</source>
         <translation type="unfinished"></translation>
     </message>

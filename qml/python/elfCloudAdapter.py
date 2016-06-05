@@ -32,21 +32,25 @@ def _info(*text):
 def _error(*text):
     pyotherside.send('log-e', ''.join(text))
 
+
+def _sendConnectedSignal(status, reason=None):
+    pyotherside.send('connected', status, reason)
+
 def connect(username, password):
     global client
     try:
         client = elfcloud.Client(username=username, auth_data=password,
                                  apikey=APIKEY,
                                  server_url=elfcloud.utils.SERVER_DEFAULT)    
-        # Do quick check that connection works
-        getSubscriptionInfo() # this will do
+        client.auth()
     except Exception as e:
         _error(str(e))
         client = None
+        _sendConnectedSignal(False, str(e))
         return False
 
     _info("elfCloud client connected")
-        
+    _sendConnectedSignal(True)
     return True
 
 def disconnect():
@@ -109,10 +113,10 @@ def _configEncryption():
 def getDataItemInfo(parentId, name):
     dataitem = client.get_dataitem(parentId, name)
     return {'id': dataitem.dataitem_id,
-            'size': dataitem.size,
-            'description': dataitem.description,
-            'tags': dataitem.tags,
             'name': dataitem.name,
+            'size': dataitem.size,
+            'description': (dataitem.description if dataitem.description else ''),
+            'tags': (dataitem.tags if dataitem.tags else []),
             'accessed': (dataitem.last_accessed_date if dataitem.last_accessed_date else ''),
             'md5sum': (dataitem.md5sum if dataitem.md5sum else ''),
             'contentHash': (dataitem.content_hash if dataitem.content_hash else ''),

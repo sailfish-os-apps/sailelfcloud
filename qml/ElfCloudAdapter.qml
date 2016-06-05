@@ -4,6 +4,7 @@ import harbour.sailelfcloud.helpers 1.0
 
 Python {
 
+    signal connected(bool status, string reason)
     signal uploadStarted(int parentId)
     signal uploadFileCompleted(int parentId, string remotePath, string localPath)
     signal downloadFileCompleted(int parentId, string remotePath, string localPath)
@@ -29,6 +30,7 @@ Python {
                     console.error(text);
                 });
 
+        setHandler('connected', connected);
         setHandler('store-started', uploadStarted);
         setHandler('store-completed', uploadCompleted);
         setHandler('store-dataitem-completed', uploadFileCompleted);
@@ -126,5 +128,5 @@ Python {
         }
     }
 
-    onError: console.log("Error: %1".arg(traceback));
+    onError: console.error("Exception: %1".arg(traceback));
 }
