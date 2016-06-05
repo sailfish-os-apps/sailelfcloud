@@ -65,7 +65,7 @@ Page {
         model: ListModel { id: listModel
             function addVaults(vaultList) {
                 for (var i = 0; i < vaultList.length; i++) {
-                    console.log("Vault: " + vaultList[i].contentName + " id: " + vaultList[i].contentId);
+                    console.log("Vault: " + vaultList[i].contentName + ", id: " + vaultList[i].contentId);
                     append({"vault":vaultList[i]});
                 }
             }
@@ -96,7 +96,7 @@ Page {
                 anchors.top: labelVaultName.bottom
                 anchors.left: listIcon.right
                 anchors.leftMargin: Theme.paddingMedium
-                text: "id: " + model.vault.contentId
+                text: qsTr("owner: ") + model.vault.contentOwnerFirstName + " " + model.vault.contentOwnerLastName
                 font.pixelSize: Theme.fontSizeSmall
                 color: itemVaults.highlighted ? Theme.highlightColor : Theme.secondaryColor
             }

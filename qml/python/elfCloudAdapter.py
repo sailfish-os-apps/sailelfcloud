@@ -19,7 +19,8 @@ except ImportError:
         def send(self, *args): pass
     sys.modules["pyotherside"] = pyotherside()
 
-
+APIKEY = 'swrqwb95d98ou8d'
+VALULT_TYPES = [elfcloud.utils.VAULT_TYPE_DEFAULT, 'com.ahola.sailelfcloud']
 client = None
 
 def _debug(*text):
@@ -35,7 +36,7 @@ def connect(username, password):
     global client
     try:
         client = elfcloud.Client(username=username, auth_data=password,
-                                 apikey=elfcloud.utils.APIKEY_DEFAULT,
+                                 apikey=APIKEY,
                                  server_url=elfcloud.utils.SERVER_DEFAULT)    
         # Do quick check that connection works
         getSubscriptionInfo() # this will do
@@ -56,13 +57,19 @@ def disconnect():
 
 def listVaults():
     vaults = client.list_vaults()
-    vaultList = []
+    vaultList = []   
            
     for vault in vaults:
         vaultList.append({'name': vault.name,
-                          'id'  : vault.id,
+                          'id': vault.id,
                           'size': 0,
-                          'type': 'vault'})
+                          'type': 'vault',
+                          'vaultType': vault.vault_type,
+                          'permissions': vault.permissions,
+                          'modified': vault.modified_date,
+                          'accessed': vault.last_accessed_date,
+                          'ownerFirstName': vault.owner['firstname'],
+                          'ownerLastName': vault.owner['lastname']})
 
     return vaultList
 
@@ -74,7 +81,7 @@ def listContent(parentId):
     contentList = []
            
     for cluster in clusters:
-        _info("cluster " + cluster.name + ":" + str(cluster.id))
+        print("cluster ", cluster.__dict__)
         contentList.append({'name':     cluster.name,
                             'id'  :     cluster.id,
                             'size':     0,
@@ -82,12 +89,13 @@ def listContent(parentId):
                             'type':     'cluster'})
 
     for dataitem in dataitems:
-        _info("dataitem " + dataitem.name + ":" + str(dataitem.size))
+        print("dataitem ", dataitem.__dict__)
         contentList.append({'name':     dataitem.name,
                             'id'  :     0,
                             'size':     dataitem.size,
                             'parentId': dataitem.parent_id,
-                            'type':     'dataitem'})
+                            'type':     'dataitem',
+                            'metadata': dataitem.meta})
 
     return contentList
 
@@ -96,6 +104,15 @@ def _configEncryption():
     client.set_encryption_key(None)
     client.set_iv(elfcloud.utils.IV_DEFAULT)
     client.encryption_mode = elfcloud.utils.ENC_NONE
+
+def getDataItemInfo(parentId, name):
+    dataitem = client.get_dataitem(parentId, name)
+    return {'id': dataitem.dataitem_id,
+            'size': dataitem.size,
+            'meta': dataitem.meta,
+            'name': dataitem.name,
+            'accessed': dataitem.last_accessed_date,
+            'md5sum': dataitem.md5sum}
 
 def fetchDataItem(parentId, name, key=None):
     parentId = int(parentId)
@@ -126,7 +143,8 @@ def readFile(filename):
     return type,text
 
 SUBSCRIPTION_FIELD_MAP = {'id':'Id', 'status':'Status', 'start_date':'Start date',
-                          'end_date':'End date', 'storage_quota': 'Quota'}
+                          'end_date':'End date', 'storage_quota': 'Quota',
+                          'subscription_type':'Subscription type'}
 
 def getSubscriptionInfo():
     info = client.get_subscription_info()
@@ -171,7 +189,7 @@ def removeDataItem(parentId, name):
     return client.remove_dataitem(int(parentId), name)
      
 def addVault(name):
-    return client.add_vault(name, elfcloud.utils.VAULT_TYPE_DEFAULT)
+    return client.add_vault(name, VALULT_TYPES[0])
 
 def removeVault(id):
     return client.remove_vault(id)

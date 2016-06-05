@@ -28,10 +28,6 @@ https://sailfishos.org/develop/tutorials/building-sailfish-os-packages-manually/
 
 or use Sailfish QT Creator to build&deploy the application.
 
-NOTE! Initial build of pycrypto takes ages to complete sometimes. It
-looks almost like the build process whould be stuck but after a minute
-or two it continues.
-
 
 TODO
 ====

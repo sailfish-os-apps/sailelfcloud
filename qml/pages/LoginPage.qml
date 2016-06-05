@@ -70,6 +70,16 @@ Page {
             }
 
             TextSwitch {
+                id: rememberLogin
+                text: qsTr("Remember login")
+                description: qsTr("Remembers login information such as username and password.")
+                checked: helpers.isRememberLogin()
+                onCheckedChanged: {
+                    checked ? helpers.setRememberLogin() : helpers.clearRememberLogin();
+                }
+            }
+
+            TextSwitch {
                 id: autologin
                 text: qsTr("Automatic login")
                 description: qsTr("Allows automatic login when application starts. Can be disabled from Configuration")
@@ -80,8 +90,8 @@ Page {
                 text: "Login"
                 anchors.horizontalCenter: parent.horizontalCenter
                 onClicked: {
-                    helpers.setSettingsUserName(usernameField.text);
-                    helpers.setSettingsPassword(passwordField.text);
+                    helpers.isRememberLogin() ? helpers.setSettingsUserNamePassword(usernameField.text, passwordField.text) :
+                                                helpers.clearSettingsUserNamePassword();
                     autologin.checked ? helpers.setAutoLogin() : helpers.clearAutoLogin();
                     pageStack.push(Qt.resolvedUrl("ConnectionPage.qml"),
                                    {'username':usernameField.text,'password':passwordField.text});

@@ -42,6 +42,16 @@ Page {
                 }
             }
 
+            TextSwitch {
+                id: rememberLogin
+                text: qsTr("Remember login")
+                description: qsTr("Remembers login information such as username and password.")
+                checked: helpers.isRememberLogin()
+                onCheckedChanged: {
+                    checked ? helpers.setRememberLogin() : helpers.clearRememberLogin();
+                }
+            }
+
             Button {
                 text: "Forget login information"
                 anchors.horizontalCenter: parent.horizontalCenter

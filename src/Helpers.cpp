@@ -36,6 +36,24 @@ QString Helpers::getSettingsDir(void) const
     return s.fileName();
 }
 
+bool Helpers::isRememberLogin(void) const
+{
+    QSettings s;
+    return s.value("user/remember", false).toBool();
+}
+
+void Helpers::setRememberLogin(void) const
+{
+    QSettings s;
+    s.setValue("user/remember", true);
+}
+
+void Helpers::clearRememberLogin(void) const
+{
+    QSettings s;
+    s.setValue("user/remember", false);
+}
+
 QString Helpers::getSettingsUserName(void) const
 {
     QSettings s;
@@ -59,6 +77,20 @@ void Helpers::setSettingsPassword(const QString pw) const
     QSettings s;
     s.setValue("user/passw", pw);
 }
+
+void Helpers::setSettingsUserNamePassword(const QString name, const QString pw) const
+{
+    setSettingsUserName(name);
+    setSettingsPassword(pw);
+}
+
+void Helpers::clearSettingsUserNamePassword(void) const
+{
+    QSettings s;
+    s.remove("user/name");
+    s.remove("user/passw");
+}
+
 
 bool Helpers::isAutoLogin(void) const
 {
@@ -94,10 +126,9 @@ bool Helpers::isAutoLoginAllowed(void) const
 void Helpers::clearLoginInformation(void) const
 {
     QSettings s;
-
-    s.remove("user/name");
-    s.remove("user/passw");
+    s.remove("user/remember");
     s.remove("config/autologin");
+    clearSettingsUserNamePassword();
 }
 
 QString Helpers::getStandardLocationPictures(void) const

@@ -7,4 +7,6 @@ QtObject {
     property int    contentSize
     property string contentType // vault, cluster, dataitem
     property int    contentParentId
+    property string contentOwnerFirstName
+    property string contentOwnerLastName
 }

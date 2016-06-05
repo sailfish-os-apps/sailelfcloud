@@ -52,6 +52,16 @@
         <source>Allows automatic login when application starts.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../qml/pages/ConfigPage.qml" line="47"/>
+        <source>Remember login</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/ConfigPage.qml" line="48"/>
+        <source>Remembers login information such as username and password.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConnectionPage</name>
@@ -81,6 +91,11 @@
     <message>
         <location filename="../qml/pages/ContentPage.qml" line="99"/>
         <source>Refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/ContentPage.qml" line="129"/>
+        <source>size: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -204,11 +219,21 @@
     </message>
     <message>
         <location filename="../qml/pages/LoginPage.qml" line="74"/>
-        <source>Automatic login</source>
+        <source>Remember login</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/pages/LoginPage.qml" line="75"/>
+        <source>Remembers login information such as username and password.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/LoginPage.qml" line="84"/>
+        <source>Automatic login</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/LoginPage.qml" line="85"/>
         <source>Allows automatic login when application starts. Can be disabled from Configuration</source>
         <translation type="unfinished"></translation>
     </message>
@@ -261,6 +286,11 @@
     <message>
         <location filename="../qml/pages/VaultPage.qml" line="54"/>
         <source>Add vault</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/VaultPage.qml" line="99"/>
+        <source>owner: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>

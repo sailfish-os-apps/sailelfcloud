@@ -15,11 +15,18 @@ public:
     Q_INVOKABLE QString getOfflineStorageDir(void) const;
     Q_INVOKABLE QString getSettingsDir(void) const;
 
+    Q_INVOKABLE bool isRememberLogin(void) const;
+    Q_INVOKABLE void setRememberLogin(void) const;
+    Q_INVOKABLE void clearRememberLogin(void) const;
+
     Q_INVOKABLE QString getSettingsUserName(void) const;
     Q_INVOKABLE void setSettingsUserName(const QString name) const;
 
     Q_INVOKABLE QString getSettingsPassword(void) const;
     Q_INVOKABLE void setSettingsPassword(const QString pw) const;
+
+    Q_INVOKABLE void setSettingsUserNamePassword(const QString name, const QString pw) const;
+    Q_INVOKABLE void clearSettingsUserNamePassword(void) const;
 
     Q_INVOKABLE bool isAutoLogin(void) const;
     Q_INVOKABLE void setAutoLogin(void) const;

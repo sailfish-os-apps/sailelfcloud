@@ -11,4 +11,7 @@
 * Sat May 21 2016 Teemu Ahola <teemuahola7@gmail.com> 0.0.1-1
 - First draft
 
+* Sat May 21 2016 Teemu Ahola <teemuahola7@gmail.com> 0.0.1-2
+- Replaced pycrypto with pyaes in ElfCloud Weasel.
+
 

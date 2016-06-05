@@ -126,7 +126,7 @@ Page {
                 anchors.top: labelContentName.bottom
                 anchors.left: listIcon.right
                 anchors.leftMargin: Theme.paddingMedium
-                text: "id: " + model.dataItem.contentId + " size: " + model.dataItem.contentSize
+                text: qsTr("size: ") + model.dataItem.contentSize
                 font.pixelSize: Theme.fontSizeSmall
                 color: itemContent.highlighted ? Theme.highlightColor : Theme.secondaryColor
             }

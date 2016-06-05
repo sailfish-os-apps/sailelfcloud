@@ -47,13 +47,15 @@ Python {
     function _createContentDetailsList(content) {
         var list = []
         for (var i = 0; i < content.length; i++) {
-            console.log("adding: " + content[i].name + " " + content[i].id);
+            console.log("adding:", content[i].name, content[i].id, content[i].ownerFirstName, content[i].ownerLastName);
             list.push(_componentDetailsComp.createObject(py, // we will be the parent
                                                         {"contentName"    :content[i].name,
                                                          "contentId"      :content[i].id,
                                                          "contentParentId":content[i].parentId,
                                                          "contentSize"    :content[i].size,
-                                                         "contentType"    :content[i].type}));
+                                                         "contentType"    :content[i].type,
+                                                         "contentOwnerFirstName" :content[i].ownerFirstName,
+                                                         "contentOwnerLastName" :content[i].ownerLastName}));
         }
 
         return list
