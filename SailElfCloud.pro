@@ -45,7 +45,6 @@ DISTFILES += \
     qml/pages/LoginPage.qml \
     qml/pages/VaultPage.qml \
     qml/pages/DataItemDetailsPage.qml \
-    qml/ContentDetailsType.qml \
     qml/pages/Spacer.qml \
     qml/pages/ViewPage.qml \
     qml/python/hexdump.py \

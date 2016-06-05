@@ -5,19 +5,21 @@ import ".."
 Page {
     id: page
 
-    property ContentDetailsType details
+    property var parentContainerId
+    property var dataItemId
+    property var dataItemName
 
     function _viewDataItemContent() {
-        elfCloud.fetchData(details.contentParentId, details.contentName,
+        elfCloud.fetchData(parentContainerId, dataItemName,
                            function(filename) {
                                pageStack.push(Qt.resolvedUrl("ViewPage.qml"),
                                               {"filename":filename,
-                                               "cloudFilename":details.contentName});
+                                               "cloudFilename":dataItemName});
                            });
     }
 
     function _removeDataItem() {
-        elfCloud.removeFile(details.contentParentId, details.contentName,
+        elfCloud.removeFile(parentContainerId, dataItemName,
                             function() {
                                 var prevPage = pageStack.previousPage();
                                 pageStack.pop();
@@ -26,7 +28,7 @@ Page {
     }
 
     Component.onCompleted: {
-        coverText = details.contentName // can be found from SailElfCloud.qml as property
+        coverText = dataItemName
     }
 
     onStatusChanged: {
@@ -67,7 +69,7 @@ Page {
             anchors.right: parent.right
 
             PageHeader {
-                title: details.contentName
+                title: dataItemName
             }
 
             // file info texts, visible if error is not set
@@ -82,7 +84,7 @@ Page {
                     height: openArea.height
                     onClicked: {
                         openButton.enabled = false; // prevent multiple clicks
-                        _viewDataItemContent(details.contentParentId, details.contentName);
+                        _viewDataItemContent(parentContainerId, dataItemName);
                     }
 
                     Column {
@@ -97,7 +99,7 @@ Page {
                         Label {
                             id: filename
                             width: parent.width
-                            text: details.contentName
+                            text: dataItemName
                             textFormat: Text.PlainText
                             wrapMode: Text.Wrap
                             horizontalAlignment: Text.AlignHCenter
@@ -109,12 +111,12 @@ Page {
 
                 DetailItem {
                     label: qsTr("Id")
-                    value: details.contentId
+                    value: dataItemId
                 }
 
                 DetailItem {
                     label: qsTr("ParentId")
-                    value: details.contentParentId
+                    value: parentContainerId
                 }
             }            
         }

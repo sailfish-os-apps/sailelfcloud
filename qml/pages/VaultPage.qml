@@ -65,7 +65,7 @@ Page {
         model: ListModel { id: listModel
             function addVaults(vaultList) {
                 for (var i = 0; i < vaultList.length; i++) {
-                    console.log("Vault: " + vaultList[i].contentName + ", id: " + vaultList[i].contentId);
+                    console.log("Vault: " + vaultList[i]["name"] + ", id: " + vaultList[i]["id"]);
                     append({"vault":vaultList[i]});
                 }
             }
@@ -88,7 +88,7 @@ Page {
                 id: labelVaultName
                 anchors.left: listIcon.right
                 anchors.leftMargin: Theme.paddingMedium
-                text: model.vault.contentName
+                text: model.vault["name"]
                 color: itemVaults.highlighted ? Theme.highlightColor : Theme.primaryColor
             }
             Label {
@@ -96,16 +96,16 @@ Page {
                 anchors.top: labelVaultName.bottom
                 anchors.left: listIcon.right
                 anchors.leftMargin: Theme.paddingMedium
-                text: qsTr("owner: ") + model.vault.contentOwnerFirstName + " " + model.vault.contentOwnerLastName
+                text: qsTr("owner: ") + model.vault["ownerFirstName"] + " " + model.vault["ownerLastName"]
                 font.pixelSize: Theme.fontSizeSmall
                 color: itemVaults.highlighted ? Theme.highlightColor : Theme.secondaryColor
             }
 
             onClicked: {
-                console.log("Opening vault " + model.vault.contentId);
+                console.log("Opening vault " + model.vault["name"]);
                 pageStack.push(Qt.resolvedUrl("ContentPage.qml"),
-                               {"details"   : model.vault,
-                                "parentName": qsTr("Vaults")});
+                               {"containerId" : model.vault["id"],
+                                "containerName": model.vault["name"]});
             }
         }
 

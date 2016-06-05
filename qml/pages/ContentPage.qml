@@ -6,12 +6,13 @@ import ".."
 Page {
     id: page
 
-    property string parentName
-    property ContentDetailsType details
+    property var containerId
+    property var containerName
 
     signal refresh()
 
     Component.onCompleted: {
+        coverText = containerName
         refresh();
         elfCloud.uploadCompleted.connect(page.uploadCompleted);
     }
@@ -27,11 +28,10 @@ Page {
     }
 
     function updateContent() {
-        coverText = details.contentName // coverText can be found from SailElfCloud.qml as property
-        elfCloud.listContent(details.contentId, function(contentList) {
+        elfCloud.listContent(containerId, function(contentList) {
             for (var i = 0; i < contentList.length; i++) {
-                console.log("Cluster: " + contentList[i].contentName + " id: " + contentList[i].contentId);
-                listModel.append({"dataItem": contentList[i]});
+                console.log("Item:", contentList[i]["name"], "id:", contentList[i]["id"]);
+                listModel.append({"item": contentList[i]});
             }
             page.makeVisible();
          });
@@ -49,7 +49,7 @@ Page {
     }
 
     function uploadCompleted(parentId) {
-        if (details.contentId === parentId)
+        if (containerId === parentId) // if upload completed for our container
             refresh();
     }
 
@@ -67,7 +67,7 @@ Page {
         anchors.fill: parent        
 
         header: PageHeader {
-            title: details.contentName
+            title: containerName
         }
 
         CommonPullDownMenu {
@@ -79,7 +79,7 @@ Page {
                     var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/AddClusterDialog.qml"));
                     dialog.onCreateCluster.connect( function(name) {
                         console.info("Creating cluster", name);
-                        elfCloud.addCluster(details.contentId, name, function() { page.refresh(); });
+                        elfCloud.addCluster(containerId, name, function() { page.refresh(); });
                     });
                 }
             }
@@ -90,7 +90,7 @@ Page {
                     var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/FileChooserDialog.qml"))
                     dialog.accepted.connect( function() {
                         console.info("Uploading files: " + dialog.selectedPaths);
-                        elfCloud.uploadFiles(details.contentId, dialog.selectedPaths);
+                        elfCloud.uploadFiles(containerId, dialog.selectedPaths);
                         });
                 }
             }
@@ -112,13 +112,13 @@ Page {
                 id: listIcon
                 x: Theme.paddingLarge
                 y: Theme.paddingMedium
-                source: model.dataItem.contentType === "cluster" ? "image://theme/icon-m-folder" : "image://theme/icon-m-document"
+                source: model.item["type"] === "cluster" ? "image://theme/icon-m-folder" : "image://theme/icon-m-document"
             }
             Label {
                 id: labelContentName
                 anchors.left: listIcon.right
                 anchors.leftMargin: Theme.paddingMedium
-                text: model.dataItem.contentName
+                text: model.item["name"]
                 color: itemContent.highlighted ? Theme.highlightColor : Theme.primaryColor
             }
             Label {
@@ -126,18 +126,21 @@ Page {
                 anchors.top: labelContentName.bottom
                 anchors.left: listIcon.right
                 anchors.leftMargin: Theme.paddingMedium
-                text: qsTr("size: ") + model.dataItem.contentSize
+                text: qsTr("size: ") + model.item["size"]
                 font.pixelSize: Theme.fontSizeSmall
                 color: itemContent.highlighted ? Theme.highlightColor : Theme.secondaryColor
             }
 
             onClicked: {
-                if (model.dataItem.contentType === "cluster") {
+                if (model.item["type"] === "cluster") {
                     pageStack.push(Qt.resolvedUrl("ContentPage.qml"),
-                                   {"details":model.dataItem});
-                } else if (model.dataItem.contentType === "dataitem") {
+                                   {"containerId":model.item["id"],
+                                    "containerName":model.item["name"]});
+                } else if (model.item["type"] === "dataitem") {
                     pageStack.push(Qt.resolvedUrl("DataItemDetailsPage.qml"),
-                                   {"details":model.dataItem});
+                                   {"parentContainerId":containerId,
+                                    "dataItemId":model.item["id"],
+                                    "dataItemName":model.item["name"]});
                 }
             }
         }

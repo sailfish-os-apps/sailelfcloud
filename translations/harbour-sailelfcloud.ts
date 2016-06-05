@@ -102,32 +102,32 @@
 <context>
     <name>DataItemDetailsPage</name>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="46"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="48"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="47"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="49"/>
         <source>Deleting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="51"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="53"/>
         <source>Rename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="56"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="58"/>
         <source>View Contents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="111"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="113"/>
         <source>Id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="116"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="118"/>
         <source>ParentId</source>
         <translation type="unfinished"></translation>
     </message>
@@ -279,7 +279,6 @@
     <name>VaultPage</name>
     <message>
         <location filename="../qml/pages/VaultPage.qml" line="47"/>
-        <location filename="../qml/pages/VaultPage.qml" line="108"/>
         <source>Vaults</source>
         <translation type="unfinished"></translation>
     </message>
