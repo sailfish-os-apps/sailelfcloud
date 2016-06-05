@@ -102,33 +102,48 @@
 <context>
     <name>DataItemDetailsPage</name>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="48"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="73"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="49"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="74"/>
         <source>Deleting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="53"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="78"/>
         <source>Rename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="58"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="83"/>
         <source>View Contents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="113"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="139"/>
         <source>Id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="118"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="143"/>
         <source>ParentId</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="149"/>
+        <source>Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="154"/>
+        <source>Last access time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="159"/>
+        <source>MD5</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

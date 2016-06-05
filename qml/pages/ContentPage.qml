@@ -139,7 +139,6 @@ Page {
                 } else if (model.item["type"] === "dataitem") {
                     pageStack.push(Qt.resolvedUrl("DataItemDetailsPage.qml"),
                                    {"parentContainerId":containerId,
-                                    "dataItemId":model.item["id"],
                                     "dataItemName":model.item["name"]});
                 }
             }

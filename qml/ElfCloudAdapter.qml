@@ -63,6 +63,10 @@ Python {
                 function(content) {onSuccess(_createContentDetailsList(content))});
     }
 
+    function getDataItemInfo(parentId, name, onSuccess) {
+        py.call("elfCloudAdapter.getDataItemInfo", [parentId, name], onSuccess);
+    }
+
     function fetchData(parentId, name, onSuccess) {
         py.call("elfCloudAdapter.fetchDataItem", [parentId, name], onSuccess);
     }

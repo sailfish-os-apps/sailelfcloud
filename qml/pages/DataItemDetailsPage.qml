@@ -5,9 +5,8 @@ import ".."
 Page {
     id: page
 
-    property var parentContainerId
-    property var dataItemId
-    property var dataItemName
+    property int parentContainerId
+    property string dataItemName
 
     function _viewDataItemContent() {
         elfCloud.fetchData(parentContainerId, dataItemName,
@@ -27,8 +26,26 @@ Page {
                             });
     }
 
+    function _makeVisible() {
+        busyIndication.running = false
+        flickable.visible = true
+    }
+
+    function _updatePageContentWithItemInfo(itemInfo) {
+        itemIdField.value = itemInfo["id"]
+        sizeField.value = itemInfo["size"]
+        accessesField.value = itemInfo["accessed"]
+        md5Field.value = itemInfo["md5sum"]
+        _makeVisible()
+    }
+
+    function _updatePageContent() {
+        elfCloud.getDataItemInfo(parentContainerId, dataItemName, _updatePageContentWithItemInfo);
+    }
+
     Component.onCompleted: {
-        coverText = dataItemName
+        coverText = dataItemName;
+        _updatePageContent();
     }
 
     onStatusChanged: {
@@ -37,8 +54,16 @@ Page {
         }
     }
 
+    BusyIndicator {
+        id: busyIndication
+        size: BusyIndicatorSize.Large
+        anchors.centerIn: parent
+        running: true
+    }
+
     SilicaFlickable {
         id: flickable
+        visible: false
         anchors.fill: parent
         contentHeight: column.height
         VerticalScrollDecorator { flickable: flickable }
@@ -110,13 +135,28 @@ Page {
                 }
 
                 DetailItem {
+                    id: itemIdField
                     label: qsTr("Id")
-                    value: dataItemId
                 }
 
                 DetailItem {
                     label: qsTr("ParentId")
                     value: parentContainerId
+                }
+
+                DetailItem {
+                    id: sizeField
+                    label: qsTr("Size")
+                }
+
+                DetailItem {
+                    id: accessesField
+                    label: qsTr("Last access time")
+                }
+
+                DetailItem {
+                    id: md5Field
+                    label: qsTr("MD5")
                 }
             }            
         }
