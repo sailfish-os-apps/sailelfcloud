@@ -8,11 +8,36 @@ Page {
     property string filename: ""
     property string cloudFilename: ""
 
+
+    function _updateTextView(type, text) {
+        messageLabel.text = text;
+        portraitText.text = type;
+        landscapeText.text = type;
+
+        if (type === "bin") {
+            messageLabel.wrapMode = Text.NoWrap;
+            messageLabel.font.family = "Monospace"
+        }
+        flickableForText.visible = true;
+    }
+
+    function _readPlainFile(filename) {
+        elfCloud.readFile(filename, _updateTextView);
+    }
+
+    function _readImageFile(filename) {
+        console.log("showing image", filename);
+        image.source = filename;
+        flickableForImage.visible = true;
+    }
+
     SilicaFlickable {
-        id: flickable
+        id: flickableForText
+        visible: false
         anchors.fill: parent
         contentHeight: column.height
-        VerticalScrollDecorator { flickable: flickable }
+
+        VerticalScrollDecorator { flickable: flickableForText }
 
         Column {
             id: column
@@ -45,10 +70,10 @@ Page {
             }
             Spacer {
                 height: 2*Theme.paddingLarge
-                visible: message.text !== ""
+                visible: messageLabel.text !== ""
             }
             Label {
-                id: message
+                id: messageLabel
                 width: parent.width
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 // show medium size if there is no portrait (or landscape text)
@@ -56,31 +81,40 @@ Page {
                 font.pixelSize: portraitText.text === "" ? Theme.fontSizeMedium : Theme.fontSizeTiny
                 color: portraitText.text === "" ? Theme.highlightColor : Theme.secondaryColor
                 horizontalAlignment: Text.AlignHCenter
-                visible: message.text !== ""
             }
             Spacer {
                 height: 2*Theme.paddingLarge
-                visible: message.text !== ""
+                visible: messageLabel.text !== ""
             }
-
-            HorizontalScrollDecorator { flickable: flickable }
         }
+        HorizontalScrollDecorator { flickable: flickableForText }
     }
 
-    function updateTextView(type, text) {
-        message.text = text;
-        portraitText.text = type;
-        landscapeText.text = type;
 
-        if (type === "bin") {
-            message.wrapMode = Text.NoWrap;
-            message.font.family = "Monospace"
+    SilicaFlickable {
+        id: flickableForImage
+        visible: false
+        anchors.fill: parent
+
+        VerticalScrollDecorator { flickable: flickableForImage }
+
+        PageHeader { title: page.cloudFilename }
+
+        Image {
+            id: image
+            anchors.fill: parent
         }
+
+        HorizontalScrollDecorator { flickable: flickableForImage }
     }
 
     onStatusChanged: {
         if (status === PageStatus.Activating) {
-            elfCloud.readFile(filename, updateTextView);
+            var mime = helpers.getFileMimeType(filename);
+            if (mime === "text/plain")
+                _readPlainFile(filename);
+            else if (mime.indexOf("image/") >= 0)
+                _readImageFile(filename);
         }
     }
 }

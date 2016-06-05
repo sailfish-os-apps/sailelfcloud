@@ -100,7 +100,7 @@ Page {
         PullDownMenu {
             MenuItem {
                 text: qsTr("Delete")
-                onClicked: { _deleteDataItem() }
+                onClicked: { _removeDataItem() }
             }
             MenuItem {
                 text: qsTr("Rename")
