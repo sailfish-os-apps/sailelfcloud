@@ -46,7 +46,6 @@ DISTFILES += \
     qml/pages/VaultPage.qml \
     qml/pages/DataItemDetailsPage.qml \
     qml/pages/Spacer.qml \
-    qml/pages/ViewPage.qml \
     qml/python/hexdump.py \
     qml/pages/SubscriptionInfoPage.qml \
     qml/Settings.qml \
@@ -63,7 +62,8 @@ DISTFILES += \
     harbour-sailelfcloud.desktop \
     qml/dialogs/RenameDialog.qml \
     qml/views/FileSelectorView.qml \
-    qml/views/ImageSelectorView.qml
+    qml/views/ImageSelectorView.qml \
+    qml/pages/DataItemContentPage.qml
 
 unix: PKGCONFIG +=
 

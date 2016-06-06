@@ -138,21 +138,23 @@ def fetchDataItem(parentId, name, key=None):
     
     return temp.name
 
-def readFile(filename):    
+def readPlainFile(filename):    
     text = ""
-    type = ""
-    try:
-        type = "text"
-        with open(filename, "r") as f:
-            for l in f:
-                text += l
+
+    with open(filename, "r") as f:
+        for l in f:
+            text += l
                 
-    except UnicodeDecodeError:
-        type = "bin"
-        with open(filename, "rb") as f:
-            text = hexdump.hexdump(f,result="return")
+    return text
+
+def readBinFile(filename):    
+    text = ""
+
+    with open(filename, "rb") as f:
+        text = hexdump.hexdump(f,result="return")
     
-    return type,text
+    return text
+
 
 SUBSCRIPTION_FIELD_MAP = {'id':'Id', 'status':'Status', 'start_date':'Start date',
                           'end_date':'End date', 'storage_quota': 'Quota',

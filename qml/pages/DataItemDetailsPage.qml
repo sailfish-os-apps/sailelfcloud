@@ -9,12 +9,9 @@ Page {
     property string dataItemName
 
     function _viewDataItemContent() {
-        elfCloud.fetchData(parentContainerId, dataItemName,
-                           function(filename) {
-                               pageStack.push(Qt.resolvedUrl("ViewPage.qml"),
-                                              {"filename":filename,
-                                               "cloudFilename":dataItemName});
-                           });
+        pageStack.push(Qt.resolvedUrl("DataItemContentPage.qml"),
+                       {"dataItemName":dataItemName,
+                        "parentContainerId":parentContainerId});
     }
 
     function _requestRemoveDataItem() {

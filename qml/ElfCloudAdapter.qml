@@ -73,9 +73,12 @@ Python {
         py.call("elfCloudAdapter.fetchDataItem", [parentId, name], onSuccess);
     }
 
-    function readFile(filename, onSuccess) {
-        py.call("elfCloudAdapter.readFile", [filename],
-                function(result) {onSuccess(result[0], result[1]);});
+    function readPlainFile(filename, onSuccess) {
+        py.call("elfCloudAdapter.readPlainFile", [filename], onSuccess);
+    }
+
+    function readBinFile(filename, onSuccess) {
+        py.call("elfCloudAdapter.readBinFile", [filename], onSuccess);
     }
 
     function getSubscriptionInfo(onSuccess) {

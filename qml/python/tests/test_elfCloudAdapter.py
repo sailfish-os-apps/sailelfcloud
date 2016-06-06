@@ -11,8 +11,8 @@ import tempfile
 import elfCloudAdapter
 
 # Set your own username and password
-USERNAME="unittestuser"
-PASSWORD="utyghK!8"
+USERNAME=""
+PASSWORD=""
 
 def setUpModule():
     elfCloudAdapter.connect(USERNAME, PASSWORD)
