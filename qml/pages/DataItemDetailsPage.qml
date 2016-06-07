@@ -8,6 +8,14 @@ Page {
     property int parentContainerId
     property string dataItemName
 
+    function _downloadDataItem() {
+        console.debug("Downloading", dataItemName, "from", parentContainerId);
+        elfCloud.downloadFileCompleted.connect(application.downloadFileCompleted);
+        elfCloud.fetchData(parentContainerId, dataItemName);
+        downloadStartedNotif.body = dataItemName;
+        downloadStartedNotif.publish();
+    }
+
     function _viewDataItemContent() {
         pageStack.push(Qt.resolvedUrl("DataItemContentPage.qml"),
                        {"dataItemName":dataItemName,
@@ -102,6 +110,11 @@ Page {
             MenuItem {
                 text: qsTr("Rename")
                 onClicked: { _renameDataItem() }
+            }
+
+            MenuItem {
+                text: qsTr("Download")
+                onClicked: { _downloadDataItem() }
             }
 
             MenuItem {

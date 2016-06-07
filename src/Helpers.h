@@ -35,9 +35,6 @@ public:
 
     Q_INVOKABLE void clearLoginInformation(void) const;
 
-    Q_INVOKABLE QString getStandardLocationPictures(void) const;
-    Q_INVOKABLE QString getStandardLocationCamera(void) const;
-
     Q_INVOKABLE QStringList getListOfFiles(const QString directory) const;
     Q_INVOKABLE QStringList getListOfDirs(const QString directory) const;
     Q_INVOKABLE QStringList getListOfFilesRecursively(const QString directory) const;
@@ -46,6 +43,18 @@ public:
 
     Q_INVOKABLE qint64 getFileSize(const QString path) const;
     Q_INVOKABLE QString getFileMimeType(const QString path) const;
+
+    Q_INVOKABLE QString readPlainFile(const QString path) const;
+    Q_INVOKABLE bool moveAndRenameFileAccordingToMime(const QString path, const QString destFilename) const;
+
+private:
+    QString getStandardLocationPictures(void) const;
+    QString getStandardLocationCamera(void) const;
+    QString getStandardLocationDocuments(void) const;
+    QString getStandardLocationDownloads(void) const;
+    QString getStandardLocationVideo(void) const;
+    QString getStandardLocationAudio(void) const;
+
 };
 
 #endif // HELPERS

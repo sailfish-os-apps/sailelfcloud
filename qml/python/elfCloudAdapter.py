@@ -124,7 +124,9 @@ def getDataItemInfo(parentId, name):
 
 def updateDataItem(parentId, name, description=None, tags=None):
     client.update_dataitem(parentId, name, description, tags)
-    
+
+def _sendFetchCompletedSignal(parentId, name, localname):
+    pyotherside.send('fetch-dataitem-completed', parentId, name, localname)
 
 def fetchDataItem(parentId, name, key=None):
     parentId = int(parentId)
@@ -135,6 +137,8 @@ def fetchDataItem(parentId, name, key=None):
     
     for d in data:
         temp.write(d)
+    
+    _sendFetchCompletedSignal(parentId, name, temp.name)
     
     return temp.name
 

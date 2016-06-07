@@ -1,3 +1,4 @@
+#include <QtDebug>
 #include <QQmlEngine>
 #include <QSettings>
 #include <QCoreApplication>
@@ -5,6 +6,7 @@
 #include <QDir>
 #include <QMimeDatabase>
 #include <QMimeType>
+#include <QTextStream>
 
 #include "Helpers.h"
 
@@ -131,16 +133,6 @@ void Helpers::clearLoginInformation(void) const
     clearSettingsUserNamePassword();
 }
 
-QString Helpers::getStandardLocationPictures(void) const
-{
-    return QStandardPaths::standardLocations(QStandardPaths::PicturesLocation)[0];
-}
-
-QString Helpers::getStandardLocationCamera(void) const
-{
-    return QStandardPaths::standardLocations(QStandardPaths::PicturesLocation)[0] + "/Camera";
-}
-
 QStringList Helpers::getListOfFiles(const QString directory) const
 {
     QDir recoredDir(directory);
@@ -195,3 +187,71 @@ QString Helpers::getFileMimeType(const QString path) const
     return QMimeDatabase().mimeTypeForFile(path).name();
 }
 
+QString Helpers::readPlainFile(const QString path) const
+{
+    QFile f(path);
+    QString returnString;
+
+    if (f.open(QFile::ReadOnly | QIODevice::Text)) {
+        QTextStream in(&f);
+        returnString = in.readAll();
+        f.close();
+    }
+
+    return returnString;
+}
+
+QString Helpers::getStandardLocationPictures(void) const
+{
+    return QStandardPaths::standardLocations(QStandardPaths::PicturesLocation)[0];
+}
+
+QString Helpers::getStandardLocationCamera(void) const
+{
+    return QStandardPaths::standardLocations(QStandardPaths::PicturesLocation)[0] + "/Camera";
+}
+
+QString Helpers::getStandardLocationDocuments(void) const
+{
+    return QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)[0];
+}
+
+QString Helpers::getStandardLocationDownloads(void) const
+{
+    return QStandardPaths::standardLocations(QStandardPaths::DownloadLocation)[0];
+}
+
+QString Helpers::getStandardLocationAudio(void) const
+{
+    return QStandardPaths::standardLocations(QStandardPaths::MusicLocation)[0];
+}
+
+QString Helpers::getStandardLocationVideo(void) const
+{
+    return QStandardPaths::standardLocations(QStandardPaths::MoviesLocation)[0];
+}
+
+bool Helpers::moveAndRenameFileAccordingToMime(const QString path, const QString destFilename) const
+{
+    const QString mime = getFileMimeType(path);
+    QString standardLocation;
+
+    if (mime.contains("text/plain"))
+        standardLocation = getStandardLocationDocuments();
+    else if (mime.contains("image/"))
+        standardLocation = getStandardLocationPictures();
+    else if (mime.contains("audio/"))
+        standardLocation = getStandardLocationAudio();
+    else if (mime.contains("video/"))
+        standardLocation = getStandardLocationVideo();
+    else
+        standardLocation = getStandardLocationDownloads();
+
+    QString destination = standardLocation + "/"+ destFilename;
+
+    if (QFile::exists(destination))
+        return false;
+
+    qDebug() << "Moving file of mime type" << mime << "to" << destination;
+    return QFile::rename(path, destination);
+}

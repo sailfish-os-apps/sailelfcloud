@@ -23,15 +23,12 @@ Page {
             _displayPlainFile(localFilename, mime);
         else if (mime.indexOf("image/") >= 0)
             _displayImageFile(localFilename);
-        else if (mime === "application/octet-stream")
-            _displayBinFile(localFilename, mime);
         else
             _displayUnknownFile(mime);
     }
 
     function _displayPlainFile(filename, mime) {
-        elfCloud.readPlainFile(filename,
-                               function(text) { _updateTextViewForPlainFile(text, mime); });
+        _updateTextViewForPlainFile(helpers.readPlainFile(filename), mime);
     }
 
     function _updateTextViewForPlainFile(text, mime) {

@@ -6,10 +6,9 @@ Python {
 
     signal connected(bool status, string reason)
     signal uploadStarted(int parentId)
-    signal uploadFileCompleted(int parentId, string remotePath, string localPath)
-    signal downloadFileCompleted(int parentId, string remotePath, string localPath)
+    signal uploadFileCompleted(int parentId, string name, string localName)
+    signal downloadFileCompleted(int parentId, string name, string localName)
     signal uploadCompleted(int parentId)
-    signal downloadCompleted(int parentId)
 
 
     property bool _ready: false // True if init done succesfully
@@ -34,6 +33,7 @@ Python {
         setHandler('store-started', uploadStarted);
         setHandler('store-completed', uploadCompleted);
         setHandler('store-dataitem-completed', uploadFileCompleted);
+        setHandler('fetch-dataitem-completed', downloadFileCompleted)
     }
 
     function connect(username, password, onSuccess) {

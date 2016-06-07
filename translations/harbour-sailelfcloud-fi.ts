@@ -102,7 +102,7 @@
 <context>
     <name>DataItemContentPage</name>
     <message>
-        <location filename="../qml/pages/DataItemContentPage.qml" line="70"/>
+        <location filename="../qml/pages/DataItemContentPage.qml" line="67"/>
         <source>File mime type is not supported by this view</source>
         <translation type="unfinished"></translation>
     </message>
@@ -110,57 +110,62 @@
 <context>
     <name>DataItemDetailsPage</name>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="99"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="107"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="27"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="35"/>
         <source>Deleting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="103"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="111"/>
         <source>Rename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="108"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="116"/>
+        <source>Download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="121"/>
         <source>View Contents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="164"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="177"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="169"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="182"/>
         <source>Tags</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="174"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="187"/>
         <source>Id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="178"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="191"/>
         <source>ParentId</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="184"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="197"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="189"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="202"/>
         <source>Last access time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="194"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="207"/>
         <source>MD5</source>
         <translation type="unfinished"></translation>
     </message>
@@ -308,8 +313,23 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/SailElfCloud.qml" line="38"/>
+        <location filename="../qml/SailElfCloud.qml" line="37"/>
         <source>File uploaded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/SailElfCloud.qml" line="43"/>
+        <source>File download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/SailElfCloud.qml" line="51"/>
+        <source>File downloaded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/SailElfCloud.qml" line="76"/>
+        <source>File exists</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
