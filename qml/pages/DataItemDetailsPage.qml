@@ -8,10 +8,15 @@ Page {
     property int parentContainerId
     property string dataItemName
 
+    function _fetchDataItem() {
+        var outputPath = helpers.generateLocalPathForRemoteDataItem(parentContainerId, dataItemName);
+        console.debug("Downloading", dataItemName, "from", parentContainerId, "to", outputPath);
+        elfCloud.fetchData(parentContainerId, dataItemName, outputPath);
+    }
+
     function _downloadDataItem() {
-        console.debug("Downloading", dataItemName, "from", parentContainerId);
         elfCloud.downloadFileCompleted.connect(application.downloadFileCompleted);
-        elfCloud.fetchData(parentContainerId, dataItemName);
+        _fetchDataItem();
         downloadStartedNotif.body = dataItemName;
         downloadStartedNotif.publish();
     }
@@ -22,13 +27,13 @@ Page {
                         "parentContainerId":parentContainerId});
     }
 
+    function _showPreviousPage() {
+        pageStack.pop();
+    }
+
     function _requestRemoveDataItem() {
         elfCloud.removeFile(parentContainerId, dataItemName,
-                            function() {
-                                var prevPage = pageStack.previousPage();
-                                pageStack.pop();
-                                prevPage.refresh();
-                            });
+                            _showPreviousPage);
     }
 
     function _removeDataItem() {

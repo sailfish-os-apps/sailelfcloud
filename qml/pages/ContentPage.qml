@@ -9,26 +9,15 @@ Page {
     property var containerId
     property var containerName
 
-    signal refresh()
-
-    Component.onCompleted: {
-        coverText = containerName
-        refresh();
-        elfCloud.uploadCompleted.connect(page.uploadCompleted);
-    }
-
-    Component.onDestruction: {
-        elfCloud.uploadCompleted.disconnect(page.uploadCompleted);
-    }
-
-    onRefresh: {
-        actBusy();
-        listModel.clear();
-        updateContent();
+    function makeVisible() {
+        busyIndication.running = false;
+        contentListView.visible = true;
+        noContentIndication.enabled = (contentListView.count === 0);
     }
 
     function updateContent() {
         elfCloud.listContent(containerId, function(contentList) {
+            listModel.clear();
             for (var i = 0; i < contentList.length; i++) {
                 console.log("Item:", contentList[i]["name"], "id:", contentList[i]["id"]);
                 listModel.append({"item": contentList[i]});
@@ -42,15 +31,28 @@ Page {
         contentListView.visible = false;
     }
 
-    function makeVisible() {
-        busyIndication.running = false;
-        contentListView.visible = true;
-        noContentIndication.enabled = (contentListView.count === 0);
+    function refresh() {
+        actBusy();
+        updateContent();
+    }
+
+    onStatusChanged: {
+        if (status === PageStatus.Activating)
+            refresh();
     }
 
     function uploadCompleted(parentId) {
         if (containerId === parentId) // if upload completed for our container
             refresh();
+    }
+
+    Component.onCompleted: {
+        coverText = containerName
+        elfCloud.uploadCompleted.connect(page.uploadCompleted);
+    }
+
+    Component.onDestruction: {
+        elfCloud.uploadCompleted.disconnect(page.uploadCompleted);
     }
 
     BusyIndicator {

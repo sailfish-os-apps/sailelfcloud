@@ -4,7 +4,7 @@ Created on Apr 27, 2016
 @author: teemu
 '''
 
-import tempfile
+import time
 import elfcloud
 import hexdump
 
@@ -128,19 +128,17 @@ def updateDataItem(parentId, name, description=None, tags=None):
 def _sendFetchCompletedSignal(parentId, name, localname):
     pyotherside.send('fetch-dataitem-completed', parentId, name, localname)
 
-def fetchDataItem(parentId, name, key=None):
-    parentId = int(parentId)
-    
+def fetchDataItem(parentId, name, outputPath, key=None):
     _configEncryption()
-    data = client.fetch_data(parentId, name)['data'] 
-    temp = tempfile.NamedTemporaryFile(delete=False)
+    data = client.fetch_data(int(parentId), name)['data']
+     
+    with open(outputPath, mode='wb') as outputFile:
+        for d in data:
+            outputFile.write(d)
+    time.sleep(2)
+    _sendFetchCompletedSignal(parentId, name, outputPath)
     
-    for d in data:
-        temp.write(d)
-    
-    _sendFetchCompletedSignal(parentId, name, temp.name)
-    
-    return temp.name
+    return True
 
 def readPlainFile(filename):    
     text = ""

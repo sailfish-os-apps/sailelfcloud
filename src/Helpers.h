@@ -9,12 +9,6 @@ class Helpers : public QObject {
 public:
     explicit Helpers (QObject* parent = 0) : QObject(parent) {}
 
-    Q_INVOKABLE QString getDataDir(void) const;
-    Q_INVOKABLE QString getCacheDir(void) const;
-    Q_INVOKABLE QString getConfigDir(void) const;
-    Q_INVOKABLE QString getOfflineStorageDir(void) const;
-    Q_INVOKABLE QString getSettingsDir(void) const;
-
     Q_INVOKABLE bool isRememberLogin(void) const;
     Q_INVOKABLE void setRememberLogin(void) const;
     Q_INVOKABLE void clearRememberLogin(void) const;
@@ -47,13 +41,23 @@ public:
     Q_INVOKABLE QString readPlainFile(const QString path) const;
     Q_INVOKABLE bool moveAndRenameFileAccordingToMime(const QString path, const QString destFilename) const;
 
+    Q_INVOKABLE QString generateLocalPathForRemoteDataItem(int parentId, const QString name) const;
+
+    static void prepareCache();
+    static void dropCache();
+
 private:
-    QString getStandardLocationPictures(void) const;
-    QString getStandardLocationCamera(void) const;
-    QString getStandardLocationDocuments(void) const;
-    QString getStandardLocationDownloads(void) const;
-    QString getStandardLocationVideo(void) const;
-    QString getStandardLocationAudio(void) const;
+    static QString getStandardLocationPictures(void);
+    static QString getStandardLocationCamera(void);
+    static QString getStandardLocationDocuments(void);
+    static QString getStandardLocationDownloads(void);
+    static QString getStandardLocationVideo(void);
+    static QString getStandardLocationAudio(void);
+    static QString getDataDir(void);
+    static QString getCacheDir(void);
+    static QString getConfigDir(void);
+    static QString getOfflineStorageDir(void);
+    static QString getSettingsDir(void);
 
 };
 

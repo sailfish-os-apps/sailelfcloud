@@ -9,10 +9,29 @@ Page {
     property string dataItemName
     property int parentContainerId
 
+    function _displayUnknownFile(mime) {
+        busyIndication.running = false;
+        unknownFileMimeArea.text = qsTr("File mime type is not supported by this view") + ": " + mime;
+        unknownFileMimeArea.visible = true;
+    }
 
-    Component.onCompleted: {
-        console.debug("Fetching", dataItemName, "from", parentContainerId);
-        elfCloud.fetchData(parentContainerId, dataItemName, _displayFile);
+    function _displayImageFile(filename) {
+        image.source = filename;
+        busyIndication.running = false;
+        flickableForImage.visible = true;
+    }
+
+    function _updateTextViewForPlainFile(text, mime) {
+        fileContentLabel.text = text;
+        fileContentLabel.font.pixelSize = Theme.fontSizeMedium
+        fileContentLabel.color = Theme.highlightColor
+        mimeLabel.text = mime;
+        busyIndication.running = false;
+        flickableForText.visible = true;
+    }
+
+    function _displayPlainFile(filename, mime) {
+        _updateTextViewForPlainFile(helpers.readPlainFile(filename), mime);
     }
 
     function _displayFile(localFilename) {
@@ -27,45 +46,14 @@ Page {
             _displayUnknownFile(mime);
     }
 
-    function _displayPlainFile(filename, mime) {
-        _updateTextViewForPlainFile(helpers.readPlainFile(filename), mime);
+    function _fetchAndDisplayDataItem() {
+        var outputPath = helpers.generateLocalPathForRemoteDataItem(parentContainerId, dataItemName);
+        console.debug("Fetching", dataItemName, "from", parentContainerId, "to", outputPath);
+        elfCloud.fetchData(parentContainerId, dataItemName, outputPath, _displayFile);
     }
 
-    function _updateTextViewForPlainFile(text, mime) {
-        fileContentLabel.text = text;
-        fileContentLabel.font.pixelSize = Theme.fontSizeMedium
-        fileContentLabel.color = Theme.highlightColor
-        mimeLabel.text = mime;
-        busyIndication.running = false;
-        flickableForText.visible = true;
-    }
-
-    function _displayImageFile(filename) {
-        image.source = filename;
-        busyIndication.running = false;
-        flickableForImage.visible = true;
-    }
-
-    function _displayBinFile(filename, mime) {
-        elfCloud.readBinFile(filename,
-                             function(text) { _updateTextViewForBinFile(text, mime); });
-    }
-
-    function _updateTextViewForBinFile(text, mime) {
-        fileContentLabel.text = text;
-        fileContentLabel.wrapMode = Text.NoWrap;
-        fileContentLabel.font.family = "Monospace";
-        fileContentLabel.font.pixelSize = Theme.fontSizeTiny
-        fileContentLabel.color = Theme.secondaryColor
-        mimeLabel.text = mime;
-        busyIndication.running = false;
-        flickableForText.visible = true;
-    }
-
-    function _displayUnknownFile(mime) {
-        busyIndication.running = false;
-        unknownFileMimeArea.text = qsTr("File mime type is not supported by this view") + ": " + mime;
-        unknownFileMimeArea.visible = true;
+    Component.onCompleted: {
+        _fetchAndDisplayDataItem();
     }
 
     BusyIndicator {

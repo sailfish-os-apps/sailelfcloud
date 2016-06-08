@@ -43,14 +43,19 @@ class Test(unittest.TestCase):
             
         self.fail("Failed to find expeted vault")
 
-    @unittest.skip("")
     def test_storeDataItem_TextFile(self):
         localTempFile = tempfile.NamedTemporaryFile("r+")        
         localTempFile.write("test data written by unit test")
         localTempFile.flush()
-        result = elfCloudAdapter.storeDataItem(self.clusterId, "test_file_from_ut.txt", localTempFile.name)
+        elfCloudAdapter.storeDataItem(self.clusterId, "test_file_from_ut.txt", localTempFile.name)
         localTempFile.close()
-        elfCloudAdapter.removeDataItem(self.clusterId, "test_file_from_ut.txt")
+        
+        elfCloudAdapter.fetchDataItem(self.clusterId, "test_file_from_ut.txt", "local_file.txt")
+        fileContent = elfCloudAdapter.readPlainFile("local_file.txt")
+        self.assertEqual("test data written by unit test", fileContent)
+
+        
+        elfCloudAdapter.removeDataItem(self.clusterId, "test_file_from_ut.txt")        
 
     @unittest.skip("")
     def test_storeDataItem_BinFile(self):
@@ -83,13 +88,6 @@ class Test(unittest.TestCase):
         elfCloudAdapter.removeDataItem(self.clusterId, "test_file_from_ut_1.txt")
         elfCloudAdapter.removeDataItem(self.clusterId, "test_file_from_ut_2.txt")
 
-
-    @unittest.skip("")
-    def test_fetchDataItem_readFile_TextFileGiven_ShouldReturnValidTypeAndString(self):
-        filename = elfCloudAdapter.fetchDataItem(self.clusterId, "file_with_data_1.txt", None)
-        fileContent = elfCloudAdapter.readFile(filename)
-        self.assertEqual("text", fileContent[0])
-        self.assertEqual("The data of this file\n", fileContent[1])
 
     @unittest.skip("")
     def test_fetchDataItem_readFile_BinaryFileGiven_ShouldReturnValidTypeAndHexdump(self):

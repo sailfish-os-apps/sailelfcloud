@@ -1,4 +1,6 @@
 #include <QtQuick>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
 #include <sailfishapp.h>
 #include "Helpers.h"
 
@@ -14,7 +16,10 @@ int main(int argc, char *argv[])
     //
     // For details see:
     // https://harbour.jolla.com/faq#1.5.0
+
     qmlRegisterType<Helpers>("harbour.sailelfcloud.helpers", 1, 0, "Helpers");
+    Helpers helpers;
+    helpers.prepareCache();
 
     // Start the application.
     v->setSource(SailfishApp::pathTo("qml/SailElfCloud.qml"));

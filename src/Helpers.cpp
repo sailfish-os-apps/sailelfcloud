@@ -10,34 +10,6 @@
 
 #include "Helpers.h"
 
-QString Helpers::getDataDir(void) const
-{
-    return QStandardPaths::writableLocation(QStandardPaths::DataLocation);
-}
-
-QString Helpers::getCacheDir(void) const
-{
-    return QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
-}
-
-QString Helpers::getConfigDir(void) const
-{
-    return QDir(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)).
-            filePath(QCoreApplication::applicationName());
-}
-
-QString Helpers::getOfflineStorageDir(void) const
-{
-    QQmlEngine engine;
-    return engine.offlineStoragePath();
-}
-
-QString Helpers::getSettingsDir(void) const
-{
-    QSettings s;
-    return s.fileName();
-}
-
 bool Helpers::isRememberLogin(void) const
 {
     QSettings s;
@@ -201,32 +173,37 @@ QString Helpers::readPlainFile(const QString path) const
     return returnString;
 }
 
-QString Helpers::getStandardLocationPictures(void) const
+QString Helpers::generateLocalPathForRemoteDataItem(int parentId, const QString name) const
+{
+    return getCacheDir() + QString("/") + QString::number(parentId) + QString("___") + name;
+}
+
+QString Helpers::getStandardLocationPictures(void)
 {
     return QStandardPaths::standardLocations(QStandardPaths::PicturesLocation)[0];
 }
 
-QString Helpers::getStandardLocationCamera(void) const
+QString Helpers::getStandardLocationCamera(void)
 {
     return QStandardPaths::standardLocations(QStandardPaths::PicturesLocation)[0] + "/Camera";
 }
 
-QString Helpers::getStandardLocationDocuments(void) const
+QString Helpers::getStandardLocationDocuments(void)
 {
     return QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)[0];
 }
 
-QString Helpers::getStandardLocationDownloads(void) const
+QString Helpers::getStandardLocationDownloads(void)
 {
     return QStandardPaths::standardLocations(QStandardPaths::DownloadLocation)[0];
 }
 
-QString Helpers::getStandardLocationAudio(void) const
+QString Helpers::getStandardLocationAudio(void)
 {
     return QStandardPaths::standardLocations(QStandardPaths::MusicLocation)[0];
 }
 
-QString Helpers::getStandardLocationVideo(void) const
+QString Helpers::getStandardLocationVideo(void)
 {
     return QStandardPaths::standardLocations(QStandardPaths::MoviesLocation)[0];
 }
@@ -254,4 +231,43 @@ bool Helpers::moveAndRenameFileAccordingToMime(const QString path, const QString
 
     qDebug() << "Moving file of mime type" << mime << "to" << destination;
     return QFile::rename(path, destination);
+}
+
+QString Helpers::getDataDir(void)
+{
+    return QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+}
+
+QString Helpers::getCacheDir(void)
+{
+    return QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+}
+
+QString Helpers::getConfigDir(void)
+{
+    return QDir(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)).
+            filePath(QCoreApplication::applicationName());
+}
+
+QString Helpers::getOfflineStorageDir(void)
+{
+    QQmlEngine engine;
+    return engine.offlineStoragePath();
+}
+
+QString Helpers::getSettingsDir(void)
+{
+    QSettings s;
+    return s.fileName();
+}
+
+void Helpers::prepareCache()
+{
+    QDir dir;
+    dir.mkpath(getCacheDir());
+}
+
+void Helpers::dropCache()
+{
+
 }

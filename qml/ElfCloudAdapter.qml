@@ -1,6 +1,5 @@
 import QtQuick 2.0
 import io.thp.pyotherside 1.2
-import harbour.sailelfcloud.helpers 1.0
 
 Python {
 
@@ -13,7 +12,6 @@ Python {
 
     property bool _ready: false // True if init done succesfully
     property var  _componentDetailsComp: Qt.createComponent("ContentDetailsType.qml")
-    property var  _helpers: Helpers { }
 
     id: py
 
@@ -69,8 +67,8 @@ Python {
         py.call("elfCloudAdapter.getDataItemInfo", [parentId, name], onSuccess);
     }
 
-    function fetchData(parentId, name, onSuccess) {
-        py.call("elfCloudAdapter.fetchDataItem", [parentId, name], onSuccess);
+    function fetchData(parentId, name, outputPath, onSuccess) {
+        py.call("elfCloudAdapter.fetchDataItem", [parentId, name, outputPath], onSuccess);
     }
 
     function readPlainFile(filename, onSuccess) {
@@ -86,7 +84,7 @@ Python {
     }
 
     function uploadFile(parentId, path, onSuccess) {
-        var remoteName = _helpers.getFilenameFromPath(path);
+        var remoteName = helpers.getFilenameFromPath(path);
         py.call("elfCloudAdapter.storeDataItem", [parentId, remoteName, path], onSuccess);
     }
 
@@ -94,7 +92,7 @@ Python {
         var localRemotePaths = []
         for (var i = 0; i < localPaths.length; i++) {
             var localPath = localPaths[i];
-            var remoteName = _helpers.getFilenameFromPath(localPaths[i]);
+            var remoteName = helpers.getFilenameFromPath(localPaths[i]);
             localRemotePaths.push([localPath,remoteName]);
         }
         py.call("elfCloudAdapter.storeDataItems", [parentId, localRemotePaths], onSuccess);
