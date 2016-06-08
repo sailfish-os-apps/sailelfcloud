@@ -223,7 +223,7 @@ index 16ea8ef..60c801c 100644
 -            raise ECUnknownException("Unknown exception")
 +            raise ECUnknownException("Unknown exception", message, code, data)
 diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud/dataitem.py elfcloud/elfcloud-weasel-1.2.2/elfcloud/dataitem.py
-index 593d5c1..efd6096 100644
+index 593d5c1..06a52cb 100644
 --- elfcloud/elfcloud-weasel-1.2.2/elfcloud/dataitem.py
 +++ elfcloud/elfcloud-weasel-1.2.2/elfcloud/dataitem.py
 @@ -14,8 +14,8 @@ Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure
@@ -237,7 +237,19 @@ index 593d5c1..efd6096 100644
  import hashlib
  import base64
  from elfcloud.exceptions import ECDataItemException
-@@ -257,7 +257,7 @@ class DataItem(object):
+@@ -121,10 +121,8 @@ class DataItem(object):
+         }
+         self.__dict__.update(update_dict)
+ 
+-    def _update(self):
+-        if not self._info_retrieved:
+-            self._get_item_info()
+ 
++    def _update(self):
+         method = 'update_dataitem'
+         params = {
+             'parent_id': self.parent_id,
+@@ -257,7 +255,7 @@ class DataItem(object):
          url_suffix = "/store"
  
          try:

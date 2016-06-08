@@ -110,7 +110,7 @@
 <context>
     <name>DataItemDetailsPage</name>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="112"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="113"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -120,17 +120,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="116"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="117"/>
         <source>Rename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="121"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="122"/>
         <source>Download</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="126"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="127"/>
         <source>View Contents</source>
         <translation type="unfinished"></translation>
     </message>
@@ -140,33 +140,38 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="187"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="186"/>
         <source>Tags</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="192"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="190"/>
         <source>Id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="196"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="193"/>
         <source>ParentId</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="202"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="198"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="207"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="202"/>
         <source>Last access time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="212"/>
-        <source>MD5</source>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="206"/>
+        <source>Hash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="210"/>
+        <source>Key hash</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

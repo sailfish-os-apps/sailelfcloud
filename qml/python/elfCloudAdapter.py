@@ -118,7 +118,6 @@ def getDataItemInfo(parentId, name):
             'description': (dataitem.description if dataitem.description else ''),
             'tags': (dataitem.tags if dataitem.tags else []),
             'accessed': (dataitem.last_accessed_date if dataitem.last_accessed_date else ''),
-            'md5sum': (dataitem.md5sum if dataitem.md5sum else ''),
             'contentHash': (dataitem.content_hash if dataitem.content_hash else ''),
             'keyHash': (dataitem.key_hash if dataitem.key_hash else '')}
 

@@ -68,7 +68,8 @@ Page {
         itemIdField.value = itemInfo["id"];
         sizeField.value = itemInfo["size"];
         accessedField.value = itemInfo["accessed"];
-        md5Field.value = itemInfo["md5sum"];
+        hashField.value = itemInfo["contentHash"];
+        keyHashField.value = itemInfo["keyHash"];
         _makeVisible();
     }
 
@@ -176,42 +177,39 @@ Page {
                         Spacer { height: Theme.paddingLarge }
                     }
                 }
-
                 DetailItem {
                     id: descriptionField
                     label: qsTr("Description")
-                }
-
+                }              
                 DetailItem {
                     id: tagsField
                     label: qsTr("Tags")
                 }
-
                 DetailItem {
                     id: itemIdField
                     label: qsTr("Id")
                 }
-
                 DetailItem {
                     label: qsTr("ParentId")
                     value: parentContainerId
                 }
-
                 DetailItem {
                     id: sizeField
                     label: qsTr("Size")
                 }
-
                 DetailItem {
                     id: accessedField
                     label: qsTr("Last access time")
                 }
-
                 DetailItem {
-                    id: md5Field
-                    label: qsTr("MD5")
+                    id: hashField
+                    label: qsTr("Hash")
                 }
-            }            
+                DetailItem {
+                    id: keyHashField
+                    label: qsTr("Key hash")
+                }
+            }
         }
     }
 }
