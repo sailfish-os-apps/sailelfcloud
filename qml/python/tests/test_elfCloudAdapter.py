@@ -62,7 +62,7 @@ class Test(unittest.TestCase):
         localTempFile = tempfile.NamedTemporaryFile("rb+")        
         localTempFile.write(b"tes\0\0t data\0written by unit test\0") # binary file requires byte objects hence b"
         localTempFile.flush()
-        result = elfCloudAdapter.storeDataItem(self.clusterId, "test_bin_file_from_ut.bin", localTempFile.name)
+        elfCloudAdapter.storeDataItem(self.clusterId, "test_bin_file_from_ut.bin", localTempFile.name)
         localTempFile.close()
         elfCloudAdapter.removeDataItem(self.clusterId, "test_bin_file_from_ut.bin")
 

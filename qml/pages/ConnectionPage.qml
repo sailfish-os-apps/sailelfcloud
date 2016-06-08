@@ -13,7 +13,7 @@ Page {
         elfCloud.onConnected.disconnect(_connectionCb);
         busyIndication.running = false;
         if (status) {
-            pageStack.replaceAbove(null, Qt.resolvedUrl("VaultPage.qml"));
+            pageStack.replaceAbove(null, Qt.resolvedUrl("ContainerPage.qml"));
         } else {
             connectionProblemLabel.text = qsTr("Failed to connect");
             connectionProblemLabel.visible = true;

@@ -77,24 +77,40 @@
     </message>
 </context>
 <context>
-    <name>ContentPage</name>
+    <name>ContainerPage</name>
     <message>
-        <location filename="../qml/pages/ContentPage.qml" line="79"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="63"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="107"/>
+        <source>Vaults</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/ContainerPage.qml" line="84"/>
+        <source>owner: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/ContainerPage.qml" line="114"/>
+        <source>Add vault</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/ContainerPage.qml" line="126"/>
         <source>Add cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContentPage.qml" line="90"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="138"/>
         <source>Upload file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContentPage.qml" line="101"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="150"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContentPage.qml" line="131"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="80"/>
         <source>size: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -343,24 +359,6 @@
     <message>
         <location filename="../qml/pages/SubscriptionInfoPage.qml" line="21"/>
         <source>Subscription Info</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>VaultPage</name>
-    <message>
-        <location filename="../qml/pages/VaultPage.qml" line="47"/>
-        <source>Vaults</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/pages/VaultPage.qml" line="54"/>
-        <source>Add vault</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/pages/VaultPage.qml" line="99"/>
-        <source>owner: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>

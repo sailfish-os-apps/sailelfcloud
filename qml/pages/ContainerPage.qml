@@ -6,8 +6,8 @@ import ".."
 Page {
     id: page
 
-    property var containerId
-    property var containerName
+    property var containerId: null // This is null if vaults should be shown
+    property var containerName: null
 
     function makeVisible() {
         busyIndication.running = false;
@@ -15,15 +15,28 @@ Page {
         noContentIndication.enabled = (contentListView.count === 0);
     }
 
+    function updateContentListAndShowPage(contentList) {
+        listModel.clear();
+        for (var i = 0; i < contentList.length; i++) {
+            console.debug("Adding:", contentList[i]["name"], "id:", contentList[i]["id"]);
+            listModel.append({"item": contentList[i]});
+        }
+        makeVisible();
+    }
+
+    function updateForVaults() {
+        elfCloud.listVaults(updateContentListAndShowPage);
+    }
+
+    function updateForContainers() {
+        elfCloud.listContent(containerId, updateContentListAndShowPage);
+    }
+
     function updateContent() {
-        elfCloud.listContent(containerId, function(contentList) {
-            listModel.clear();
-            for (var i = 0; i < contentList.length; i++) {
-                console.log("Item:", contentList[i]["name"], "id:", contentList[i]["id"]);
-                listModel.append({"item": contentList[i]});
-            }
-            page.makeVisible();
-         });
+        if (containerId === null)
+            updateForVaults();
+        else
+            updateForContainers();
     }
 
     function actBusy() {
@@ -47,7 +60,7 @@ Page {
     }
 
     Component.onCompleted: {
-        coverText = containerName
+        coverText = containerName !== null ? containerName : qsTr("Vaults")
         elfCloud.uploadCompleted.connect(page.uploadCompleted);
     }
 
@@ -62,6 +75,28 @@ Page {
         running: true
     }
 
+    function createContentInfoString(modelItem) {
+        if (modelItem["type"] === "dataitem")
+            return qsTr("size: ") + modelItem["size"];
+        else if (modelItem["type"] === "cluster")
+            return "";
+        else if (modelItem["type"] === "vault")
+            return qsTr("owner: ") + modelItem["ownerFirstName"] + " " + modelItem["ownerLastName"];
+    }
+
+    function openItem(modelItem) {
+        if (modelItem["type"] === "cluster" ||
+                modelItem["type"] === "vault") {
+            pageStack.push(Qt.resolvedUrl("ContainerPage.qml"),
+                           {"containerId":modelItem["id"],
+                            "containerName":modelItem["name"]});
+        } else if (modelItem["type"] === "dataitem") {
+            pageStack.push(Qt.resolvedUrl("DataItemDetailsPage.qml"),
+                           {"parentContainerId":containerId,
+                            "dataItemName":modelItem["name"]});
+        }
+    }
+
     SilicaListView {
         id: contentListView
         visible: false
@@ -69,25 +104,39 @@ Page {
         anchors.fill: parent        
 
         header: PageHeader {
-            title: containerName
+            title: containerName !== null ? containerName : qsTr("Vaults")
         }
 
         CommonPullDownMenu {
             id: pulldown
 
             MenuItem {
+                text: qsTr("Add vault")
+                visible: containerId === null
+                onClicked: {
+                    var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/AddVaultDialog.qml"));
+                    dialog.onCreateVault.connect( function(name) {
+                        console.info("Creating vault", name);
+                        elfCloud.addVault(name, page.refresh);
+                    });
+                }
+            }
+
+            MenuItem {
                 text: qsTr("Add cluster")
+                visible: containerId !== null
                 onClicked: {
                     var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/AddClusterDialog.qml"));
                     dialog.onCreateCluster.connect( function(name) {
                         console.info("Creating cluster", name);
-                        elfCloud.addCluster(containerId, name, function() { page.refresh(); });
+                        elfCloud.addCluster(containerId, name, page.refresh);
                     });
                 }
             }
 
             MenuItem {
                 text: qsTr("Upload file")
+                visible: containerId !== null
                 onClicked: {
                     var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/FileChooserDialog.qml"))
                     dialog.accepted.connect( function() {
@@ -114,7 +163,7 @@ Page {
                 id: listIcon
                 x: Theme.paddingLarge
                 y: Theme.paddingMedium
-                source: model.item["type"] === "cluster" ? "image://theme/icon-m-folder" : "image://theme/icon-m-document"
+                source: model.item["type"] === "dataitem" ? "image://theme/icon-m-document" : "image://theme/icon-m-folder"
             }
             Label {
                 id: labelContentName
@@ -128,22 +177,12 @@ Page {
                 anchors.top: labelContentName.bottom
                 anchors.left: listIcon.right
                 anchors.leftMargin: Theme.paddingMedium
-                text: qsTr("size: ") + model.item["size"]
+                text: createContentInfoString(model.item)
                 font.pixelSize: Theme.fontSizeSmall
                 color: itemContent.highlighted ? Theme.highlightColor : Theme.secondaryColor
             }
 
-            onClicked: {
-                if (model.item["type"] === "cluster") {
-                    pageStack.push(Qt.resolvedUrl("ContentPage.qml"),
-                                   {"containerId":model.item["id"],
-                                    "containerName":model.item["name"]});
-                } else if (model.item["type"] === "dataitem") {
-                    pageStack.push(Qt.resolvedUrl("DataItemDetailsPage.qml"),
-                                   {"parentContainerId":containerId,
-                                    "dataItemName":model.item["name"]});
-                }
-            }
+            onClicked: openItem(model.item)
         }
 
         ViewPlaceholder {

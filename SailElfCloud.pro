@@ -40,10 +40,8 @@ DISTFILES += \
     qml/icons/* \
     qml/SailElfCloud.qml \
     qml/cover/CoverPage.qml \
-    qml/pages/ContentPage.qml \
     qml/ElfCloudAdapter.qml \
     qml/pages/LoginPage.qml \
-    qml/pages/VaultPage.qml \
     qml/pages/DataItemDetailsPage.qml \
     qml/pages/Spacer.qml \
     qml/python/hexdump.py \
@@ -63,7 +61,8 @@ DISTFILES += \
     qml/dialogs/RenameDialog.qml \
     qml/views/FileSelectorView.qml \
     qml/views/ImageSelectorView.qml \
-    qml/pages/DataItemContentPage.qml
+    qml/pages/DataItemContentPage.qml \
+    qml/pages/ContainerPage.qml
 
 unix: PKGCONFIG +=
 

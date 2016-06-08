@@ -85,14 +85,15 @@ def listContent(parentId):
     contentList = []
            
     for cluster in clusters:
-        contentList.append({'name':     cluster.name,
-                            'id'  :     cluster.id,
-                            'size':     0,
-                            'parentId': cluster.parent_id,
-                            'modified': cluster.modified_date,
-                            'accessed': cluster.last_accessed_date, 
+        contentList.append({'name':        cluster.name,
+                            'id'  :        cluster.id,
+                            'dataItems':   cluster.dataitems,
+                            'descendants': cluster.descendants,
+                            'parentId':    cluster.parent_id,
+                            'modified':    cluster.modified_date,
+                            'accessed':    cluster.last_accessed_date, 
                             'permissions': cluster.permissions,                            
-                            'type':     'cluster'})
+                            'type':        'cluster'})
 
     for dataitem in dataitems:
         contentList.append({'name':     dataitem.name,
