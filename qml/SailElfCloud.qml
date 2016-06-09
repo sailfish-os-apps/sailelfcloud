@@ -59,11 +59,11 @@ ApplicationWindow
         previewBody: body
     }
 
-    function uploadStarted() {
+    function _uploadStarted(parentId, remoteLocalNames) {
         uploadStartedNotif.publish();
     }
 
-    function uploadCompleted() {
+    function _uploadCompleted(parentId, remoteLocalNames) {
         uploadCompletedNotif.publish();
     }
 
@@ -89,13 +89,14 @@ ApplicationWindow
         downloadFileFailedNotif.publish();
     }
 
+
+
     Component.onCompleted: {
         elfCloud.fetchAndMoveDataItemStarted.connect(_downloadStarted);
         elfCloud.fetchAndMoveDataItemCompleted.connect(_downloadCompleted);
         elfCloud.fetchAndMoveDataItemFailed.connect(_downloadFailed);
-        elfCloud.uploadStarted.connect(uploadStarted);
-        elfCloud.uploadCompleted.connect(uploadCompleted);
-        elfCloud.uploadFileCompleted.connect(uploadFileCompleted);
+        elfCloud.storeDataItemsStarted.connect(_uploadCompleted);
+        elfCloud.storeDataItemsCompleted.connect(_uploadCompleted);
     }
 
     initialPage: Qt.resolvedUrl("pages/MainPage.qml")

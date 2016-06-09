@@ -173,6 +173,20 @@ def storeDataItem(parentId, remotename, filename):
                                fileobj)
     
     return result
+
+def _sendDataItemStoredSignal(status, parentId, remoteName, localName, dataItemsLeft):
+    pyotherside.send('store-dataitem-completed', status, parentId, remoteName, localName, dataItemsLeft)
+
+
+def storeDataItems(parentId, remoteLocalNames):
+    dataItemsLeft = len(remoteLocalNames)
+    
+    for remote,local in remoteLocalNames:
+        dataItemsLeft -= 1
+        status = storeDataItem(parentId, remote, local)
+        _sendDataItemStoredSignal(status, parentId, remote, local, dataItemsLeft)
+        
+    
       
 def removeDataItem(parentId, name):
     _info("Removing " + name)

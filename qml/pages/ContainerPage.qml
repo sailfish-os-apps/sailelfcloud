@@ -61,11 +61,9 @@ Page {
 
     Component.onCompleted: {
         coverText = containerName !== null ? containerName : qsTr("Vaults")
-        elfCloud.uploadCompleted.connect(page.uploadCompleted);
     }
 
     Component.onDestruction: {
-        elfCloud.uploadCompleted.disconnect(page.uploadCompleted);
     }
 
     BusyIndicator {
@@ -141,7 +139,7 @@ Page {
                     var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/FileChooserDialog.qml"))
                     dialog.accepted.connect( function() {
                         console.info("Uploading files: " + dialog.selectedPaths);
-                        elfCloud.uploadFiles(containerId, dialog.selectedPaths);
+                        elfCloud.storeDataItems(containerId, dialog.selectedPaths);
                         });
                 }
             }

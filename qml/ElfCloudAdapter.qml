@@ -5,9 +5,6 @@ import harbour.sailelfcloud.helpers 1.0
 Python {
 
     signal connected(bool status, string reason)
-    signal uploadStarted(int parentId)
-    signal uploadFileCompleted(int parentId, string name, string localName)
-    signal uploadCompleted(int parentId)
 
     signal fetchDataItemStarted(int parentId, string name, string localName)
     signal fetchDataItemCompleted(int parentId, string name, string localName)
@@ -16,6 +13,12 @@ Python {
     signal fetchAndMoveDataItemStarted(int parentId, string name, string localName)
     signal fetchAndMoveDataItemCompleted(int parentId, string name, string localName)
     signal fetchAndMoveDataItemFailed(int parentId, string name, string localName, string reason)
+
+    signal storeDataItemsStarted(int parentId, var remoteLocalNames)
+    signal storeDataItemStarted(int parentId, string remoteName, string localName, int dataItemsLeft)
+    signal storeDataItemCompleted(int parentId, string remoteName, string localName, int dataItemsLeft)
+    signal storeDataItemFailed(int parentId, string remoteName, string localName, int dataItemsLeft, string reason)
+    signal storeDataItemsCompleted(int parentId, var remoteLocalNames)
 
     property bool _ready: false // True if init done succesfully
     property var  _helpers: Helpers { }
@@ -35,9 +38,7 @@ Python {
                 });
 
         setHandler('connected', connected);
-        setHandler('store-started', uploadStarted);
-        setHandler('store-completed', uploadCompleted);
-        setHandler('store-dataitem-completed', uploadFileCompleted);
+        setHandler('store-dataitem-completed', _storeDataItemCb);
     }
 
     function connect(username, password, onSuccess) {
@@ -116,33 +117,30 @@ Python {
         py.call("elfCloudAdapter.getSubscriptionInfo", [], onSuccess);
     }
 
-    function _storeDataItemCb(status, parentId, localPath, remoteName) {
-        console.log("Uploaded", status, parentId, localPath, remoteName);
+    function _storeDataItemCb(status, parentId, remoteName, localName, dataItemsLeft) {
+        if (status)
+            storeDataItemCompleted(parentId, remoteName, localName, dataItemsLeft);
+        else
+            storeDataItemFailed(parentId, remoteName, localName, dataItemsLeft, "failed");
     }
 
-    WorkerScript {
-       id: dataItemStoreWorker
-       source: "script/DataItemUploader.js"
-
-       onMessage: {
-           py.call("elfCloudAdapter.storeDataItem", [messageObject.parentId,
-                                                     messageObject.remoteName,
-                                                     messageObject.localPath],
-                   function(status) { _storeDataItemCb(status, messageObject.parentId,
-                                                       messageObject.localPath,
-                                                       messageObject.remoteName); });
-       }
+    function _storeDataItemsCb(status, parentId, remoteLocalNames) {
+        storeDataItemsCompleted(parentId, remoteLocalNames);
     }
 
     function storeDataItems(parentId, localPaths) {
-        var remoteNames = []
+        var remoteLocalNames = []
 
         for (var i = 0; i < localPaths.length; i++) {
-            remoteNames.push(helpers.getFilenameFromPath(localPaths[i]));
+            var localName = localPaths[i]
+            var remoteName = helpers.getFilenameFromPath(localPaths[i]);
+            remoteLocalNames.push([remoteName,localName]);
         }
 
-        dataItemStoreWorker.sendMessage({"parentId":parentId,"localPaths":ĺocalPaths,"remoteNames":remoteNames});
-    }
+        storeDataItemsStarted(parentId, remoteLocalNames);
+        py.call("elfCloudAdapter.storeDataItems", [parentId, remoteLocalNames],
+                function(status) { _storeDataItemsCb(status, parentId, remoteLocalNames); });
+   }
 
     function removeFile(parentId, filename, onSuccess) {
         py.call("elfCloudAdapter.removeDataItem", [parentId, filename], onSuccess);

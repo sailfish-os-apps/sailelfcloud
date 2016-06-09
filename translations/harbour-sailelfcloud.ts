@@ -80,37 +80,37 @@
     <name>ContainerPage</name>
     <message>
         <location filename="../qml/pages/ContainerPage.qml" line="63"/>
-        <location filename="../qml/pages/ContainerPage.qml" line="107"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="105"/>
         <source>Vaults</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="84"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="82"/>
         <source>owner: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="114"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="112"/>
         <source>Add vault</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="126"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="124"/>
         <source>Add cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="138"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="136"/>
         <source>Upload file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="150"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="148"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="80"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="78"/>
         <source>size: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -194,7 +194,7 @@
 <context>
     <name>ElfCloudAdapter</name>
     <message>
-        <location filename="../qml/ElfCloudAdapter.qml" line="95"/>
+        <location filename="../qml/ElfCloudAdapter.qml" line="96"/>
         <source>Destination file exists</source>
         <translation type="unfinished"></translation>
     </message>
