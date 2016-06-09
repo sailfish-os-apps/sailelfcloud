@@ -51,6 +51,14 @@ ApplicationWindow
         previewBody: body
     }
 
+    Notification {
+        id: downloadFileFailedNotif
+        category: "x-nemo.transfer.complete"
+        summary: qsTr("File download failed")
+        previewSummary: summary
+        previewBody: body
+    }
+
     function uploadStarted() {
         uploadStartedNotif.publish();
     }
@@ -66,21 +74,25 @@ ApplicationWindow
         uploadFileCompletedNotif.publish();
     }
 
-    function downloadFileCompleted(parentId, dataItemName, localPath) {
-        console.debug("Downloaded", localPath, "to", parentId, ":", dataItemName);
-        elfCloud.downloadFileCompleted.disconnect(downloadFileCompleted);
+    function _downloadStarted(parentId, dataItemName, localPath) {
+        downloadStartedNotif.body = dataItemName;
+        downloadStartedNotif.publish();
+    }
 
-        if (helpers.moveAndRenameFileAccordingToMime(localPath, dataItemName)) {
-            downloadFileCompletedNotif.summary = qsTr("File exists")
-            downloadFileCompletedNotif.body = dataItemName;
-            downloadFileCompletedNotif.publish();
-        } else {
-            downloadFileCompletedNotif.body = dataItemName;
-            downloadFileCompletedNotif.publish();
-        }
+    function _downloadCompleted(parentId, dataItemName, localPath) {
+        downloadFileCompletedNotif.body = dataItemName;
+        downloadFileCompletedNotif.publish();
+    }
+
+    function _downloadFailed(parentId, dataItemName, localPath, reason) {
+        downloadFileFailedNotif.body = reason + " - " + dataItemName;
+        downloadFileFailedNotif.publish();
     }
 
     Component.onCompleted: {
+        elfCloud.fetchAndMoveDataItemStarted.connect(_downloadStarted);
+        elfCloud.fetchAndMoveDataItemCompleted.connect(_downloadCompleted);
+        elfCloud.fetchAndMoveDataItemFailed.connect(_downloadFailed);
         elfCloud.uploadStarted.connect(uploadStarted);
         elfCloud.uploadCompleted.connect(uploadCompleted);
         elfCloud.uploadFileCompleted.connect(uploadFileCompleted);

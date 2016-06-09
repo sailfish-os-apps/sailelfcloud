@@ -124,9 +124,6 @@ def getDataItemInfo(parentId, name):
 def updateDataItem(parentId, name, description=None, tags=None):
     client.update_dataitem(parentId, name, description, tags)
 
-def _sendFetchCompletedSignal(parentId, name, localname):
-    pyotherside.send('fetch-dataitem-completed', parentId, name, localname)
-
 def fetchDataItem(parentId, name, outputPath, key=None):
     _configEncryption()
     data = client.fetch_data(int(parentId), name)['data']
@@ -135,8 +132,6 @@ def fetchDataItem(parentId, name, outputPath, key=None):
         for d in data:
             outputFile.write(d)
 
-    _sendFetchCompletedSignal(parentId, name, outputPath)
-    
     return True
 
 def readPlainFile(filename):    
@@ -173,30 +168,11 @@ def storeDataItem(parentId, remotename, filename):
     fileobj = open(filename, "rb")
     _configEncryption()
 
-    
     result = client.store_data(int(parentId),
                                remotename,
                                fileobj)
     
     return result
-
-def _sendStoreStartedSignal(parentId):
-    pyotherside.send('store-started', parentId)
-
-def _sendStoreCompletedSignal(parentId):
-    pyotherside.send('store-completed', parentId)
-
-def _sendDataItemStoreCompletedSignal(parentId, remotePath, localPath):
-    pyotherside.send('store-dataitem-completed', parentId, remotePath, localPath)
-
-def storeDataItems(parentId, localRemotePaths):
-    _sendStoreStartedSignal(parentId)
-    
-    for local,remote in localRemotePaths:
-        storeDataItem(parentId, remote, local)
-        _sendDataItemStoreCompletedSignal(parentId, remote, local)
-        
-    _sendStoreCompletedSignal(parentId)
       
 def removeDataItem(parentId, name):
     _info("Removing " + name)

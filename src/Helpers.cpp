@@ -7,6 +7,7 @@
 #include <QMimeDatabase>
 #include <QMimeType>
 #include <QTextStream>
+#include <QDebug>
 
 #include "Helpers.h"
 
@@ -208,7 +209,7 @@ QString Helpers::getStandardLocationVideo(void)
     return QStandardPaths::standardLocations(QStandardPaths::MoviesLocation)[0];
 }
 
-bool Helpers::moveAndRenameFileAccordingToMime(const QString path, const QString destFilename) const
+bool Helpers::moveAndRenameFileAccordingToMime(const QString path, const QString destFilename, bool overwrite) const
 {
     const QString mime = getFileMimeType(path);
     QString standardLocation;
@@ -226,8 +227,12 @@ bool Helpers::moveAndRenameFileAccordingToMime(const QString path, const QString
 
     QString destination = standardLocation + "/"+ destFilename;
 
-    if (QFile::exists(destination))
+    if (QFile::exists(destination) && !overwrite) {
+        qDebug() << "Destination file" << destination << "exists";
         return false;
+    }
+    else if (overwrite)
+        QFile::remove(destination);
 
     qDebug() << "Moving file of mime type" << mime << "to" << destination;
     return QFile::rename(path, destination);

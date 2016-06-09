@@ -126,68 +126,76 @@
 <context>
     <name>DataItemDetailsPage</name>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="113"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="106"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="40"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="33"/>
         <source>Deleting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="117"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="110"/>
         <source>Rename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="122"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="115"/>
         <source>Download</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="127"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="120"/>
         <source>View Contents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="182"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="175"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="186"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="179"/>
         <source>Tags</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="190"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="183"/>
         <source>Id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="193"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="186"/>
         <source>ParentId</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="198"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="191"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="202"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="195"/>
         <source>Last access time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="206"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="199"/>
         <source>Hash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="210"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="203"/>
         <source>Key hash</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ElfCloudAdapter</name>
+    <message>
+        <location filename="../qml/ElfCloudAdapter.qml" line="95"/>
+        <source>Destination file exists</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -349,8 +357,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/SailElfCloud.qml" line="74"/>
-        <source>File exists</source>
+        <location filename="../qml/SailElfCloud.qml" line="57"/>
+        <source>File download failed</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

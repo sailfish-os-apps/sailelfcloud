@@ -8,17 +8,10 @@ Page {
     property int parentContainerId
     property string dataItemName
 
-    function _fetchDataItem() {
+    function _downloadDataItem() {
         var outputPath = helpers.generateLocalPathForRemoteDataItem(parentContainerId, dataItemName);
         console.debug("Downloading", dataItemName, "from", parentContainerId, "to", outputPath);
-        elfCloud.fetchData(parentContainerId, dataItemName, outputPath);
-    }
-
-    function _downloadDataItem() {
-        elfCloud.downloadFileCompleted.connect(application.downloadFileCompleted);
-        _fetchDataItem();
-        downloadStartedNotif.body = dataItemName;
-        downloadStartedNotif.publish();
+        elfCloud.fetchAndMoveDataItem(parentContainerId, dataItemName, outputPath, false);
     }
 
     function _viewDataItemContent() {

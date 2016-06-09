@@ -34,27 +34,34 @@ Page {
         _updateTextViewForPlainFile(helpers.readPlainFile(filename), mime);
     }
 
-    function _displayFile(localFilename) {
-        var mime = helpers.getFileMimeType(localFilename);
-        console.debug("File:", localFilename, "mime type is", mime);
+    function _displayFile(parentId, name, localFilename) {
+        if (parentId === parentContainerId && name === dataItemName)
+        {
+            var mime = helpers.getFileMimeType(localFilename);
+            console.debug("File:", localFilename, "mime type is", mime);
 
-        if (mime === "text/plain")
-            _displayPlainFile(localFilename, mime);
-        else if (mime.indexOf("image/") >= 0)
-            _displayImageFile(localFilename);
-        else
-            _displayUnknownFile(mime);
+            if (mime === "text/plain")
+                _displayPlainFile(localFilename, mime);
+            else if (mime.indexOf("image/") >= 0)
+                _displayImageFile(localFilename);
+            else
+                _displayUnknownFile(mime);
+        }
     }
 
-    function _fetchAndDisplayDataItem() {
+    function _fetchDataItem() {
         var outputPath = helpers.generateLocalPathForRemoteDataItem(parentContainerId, dataItemName);
         console.debug("Fetching", dataItemName, "from", parentContainerId, "to", outputPath);
-        elfCloud.fetchData(parentContainerId, dataItemName, outputPath,
-                           function(status) { _displayFile(outputPath); });
+        elfCloud.fetchDataItem(parentContainerId, dataItemName, outputPath);
     }
 
     Component.onCompleted: {
-        _fetchAndDisplayDataItem();
+        elfCloud.fetchDataItemCompleted.connect(_displayFile);
+        _fetchDataItem();
+    }
+
+    Component.onDestruction: {
+        elfCloud.fetchDataItemCompleted.disconnect(_displayFile);
     }
 
     BusyIndicator {

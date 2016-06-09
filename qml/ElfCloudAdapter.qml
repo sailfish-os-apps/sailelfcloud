@@ -1,17 +1,24 @@
 import QtQuick 2.0
 import io.thp.pyotherside 1.2
+import harbour.sailelfcloud.helpers 1.0
 
 Python {
 
     signal connected(bool status, string reason)
     signal uploadStarted(int parentId)
     signal uploadFileCompleted(int parentId, string name, string localName)
-    signal downloadFileCompleted(int parentId, string name, string localName)
     signal uploadCompleted(int parentId)
 
+    signal fetchDataItemStarted(int parentId, string name, string localName)
+    signal fetchDataItemCompleted(int parentId, string name, string localName)
+    signal fetchDataItemFailed(int parentId, string name, string localName, string reason)
+
+    signal fetchAndMoveDataItemStarted(int parentId, string name, string localName)
+    signal fetchAndMoveDataItemCompleted(int parentId, string name, string localName)
+    signal fetchAndMoveDataItemFailed(int parentId, string name, string localName, string reason)
 
     property bool _ready: false // True if init done succesfully
-    property var  _componentDetailsComp: Qt.createComponent("ContentDetailsType.qml")
+    property var  _helpers: Helpers { }
 
     id: py
 
@@ -31,7 +38,6 @@ Python {
         setHandler('store-started', uploadStarted);
         setHandler('store-completed', uploadCompleted);
         setHandler('store-dataitem-completed', uploadFileCompleted);
-        setHandler('fetch-dataitem-completed', downloadFileCompleted)
     }
 
     function connect(username, password, onSuccess) {
@@ -67,8 +73,35 @@ Python {
         py.call("elfCloudAdapter.getDataItemInfo", [parentId, name], onSuccess);
     }
 
-    function fetchData(parentId, name, outputPath, onSuccess) {
-        py.call("elfCloudAdapter.fetchDataItem", [parentId, name, outputPath], onSuccess);
+    function _fetchDataItemCb(status, parentId, name, outputPath) {
+        if (status)
+            fetchDataItemCompleted(parentId, name, outputPath);
+        else
+            fetchDataItemFailed(parentId, name, outputPath, "failed");
+    }
+
+    function fetchDataItem(parentId, name, outputPath) {
+        fetchDataItemStarted(parentId, name, outputPath);
+        py.call("elfCloudAdapter.fetchDataItem", [parentId, name, outputPath],
+                function(status) {_fetchDataItemCb(status, parentId, name, outputPath); });
+    }
+
+
+    function _fetchAndMoveDataItemCb(status, parentId, name, outputPath, overwrite) {
+        if (status) {
+            if (helpers.moveAndRenameFileAccordingToMime(outputPath, name, overwrite))
+                fetchAndMoveDataItemCompleted(parentId, name, outputPath);
+            else
+                fetchAndMoveDataItemFailed(parentId, name, outputPath, qsTr("Destination file exists"));
+        }
+        else
+            fetchAndMoveDataItemFailed(parentId, name, outputPath, "failed");
+    }
+
+    function fetchAndMoveDataItem(parentId, name, outputPath, overwrite) {
+        fetchDataItemStarted(parentId, name, outputPath);
+        py.call("elfCloudAdapter.fetchDataItem", [parentId, name, outputPath],
+                function(status) { _fetchAndMoveDataItemCb(status, parentId, name, outputPath, overwrite); });
     }
 
     function readPlainFile(filename, onSuccess) {
@@ -83,19 +116,32 @@ Python {
         py.call("elfCloudAdapter.getSubscriptionInfo", [], onSuccess);
     }
 
-    function uploadFile(parentId, path, onSuccess) {
-        var remoteName = helpers.getFilenameFromPath(path);
-        py.call("elfCloudAdapter.storeDataItem", [parentId, remoteName, path], onSuccess);
+    function _storeDataItemCb(status, parentId, localPath, remoteName) {
+        console.log("Uploaded", status, parentId, localPath, remoteName);
     }
 
-    function uploadFiles(parentId, localPaths, onSuccess) {
-        var localRemotePaths = []
+    WorkerScript {
+       id: dataItemStoreWorker
+       source: "script/DataItemUploader.js"
+
+       onMessage: {
+           py.call("elfCloudAdapter.storeDataItem", [messageObject.parentId,
+                                                     messageObject.remoteName,
+                                                     messageObject.localPath],
+                   function(status) { _storeDataItemCb(status, messageObject.parentId,
+                                                       messageObject.localPath,
+                                                       messageObject.remoteName); });
+       }
+    }
+
+    function storeDataItems(parentId, localPaths) {
+        var remoteNames = []
+
         for (var i = 0; i < localPaths.length; i++) {
-            var localPath = localPaths[i];
-            var remoteName = helpers.getFilenameFromPath(localPaths[i]);
-            localRemotePaths.push([localPath,remoteName]);
+            remoteNames.push(helpers.getFilenameFromPath(localPaths[i]));
         }
-        py.call("elfCloudAdapter.storeDataItems", [parentId, localRemotePaths], onSuccess);
+
+        dataItemStoreWorker.sendMessage({"parentId":parentId,"localPaths":ĺocalPaths,"remoteNames":remoteNames});
     }
 
     function removeFile(parentId, filename, onSuccess) {

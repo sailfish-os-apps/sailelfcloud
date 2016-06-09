@@ -39,7 +39,7 @@ public:
     Q_INVOKABLE QString getFileMimeType(const QString path) const;
 
     Q_INVOKABLE QString readPlainFile(const QString path) const;
-    Q_INVOKABLE bool moveAndRenameFileAccordingToMime(const QString path, const QString destFilename) const;
+    Q_INVOKABLE bool moveAndRenameFileAccordingToMime(const QString path, const QString destFilename, bool overwrite) const;
 
     Q_INVOKABLE QString generateLocalPathForRemoteDataItem(int parentId, const QString name) const;
 
