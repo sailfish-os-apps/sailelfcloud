@@ -49,7 +49,8 @@ Page {
     function _fetchAndDisplayDataItem() {
         var outputPath = helpers.generateLocalPathForRemoteDataItem(parentContainerId, dataItemName);
         console.debug("Fetching", dataItemName, "from", parentContainerId, "to", outputPath);
-        elfCloud.fetchData(parentContainerId, dataItemName, outputPath, _displayFile);
+        elfCloud.fetchData(parentContainerId, dataItemName, outputPath,
+                           function(status) { _displayFile(outputPath); });
     }
 
     Component.onCompleted: {
