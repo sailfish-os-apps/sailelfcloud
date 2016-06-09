@@ -342,23 +342,28 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/SailElfCloud.qml" line="35"/>
+        <location filename="../qml/SailElfCloud.qml" line="34"/>
         <source>File uploaded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/SailElfCloud.qml" line="41"/>
+        <location filename="../qml/SailElfCloud.qml" line="40"/>
         <source>File download</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/SailElfCloud.qml" line="49"/>
+        <location filename="../qml/SailElfCloud.qml" line="48"/>
         <source>File downloaded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/SailElfCloud.qml" line="57"/>
+        <location filename="../qml/SailElfCloud.qml" line="56"/>
         <source>File download failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/SailElfCloud.qml" line="71"/>
+        <source> uploaded, items left </source>
         <translation type="unfinished"></translation>
     </message>
 </context>

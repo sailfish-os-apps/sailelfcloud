@@ -183,8 +183,8 @@ def storeDataItems(parentId, remoteLocalNames):
     
     for remote,local in remoteLocalNames:
         dataItemsLeft -= 1
-        status = storeDataItem(parentId, remote, local)
-        _sendDataItemStoredSignal(status, parentId, remote, local, dataItemsLeft)
+        storeDataItem(parentId, remote, local)
+        _sendDataItemStoredSignal(True, parentId, remote, local, dataItemsLeft)
         
     
       

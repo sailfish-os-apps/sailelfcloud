@@ -26,7 +26,6 @@ ApplicationWindow
         summary: qsTr("File upload")
         body: qsTr("Compeleted")
         previewSummary: summary
-        previewBody: body
     }
 
     Notification {
@@ -65,12 +64,13 @@ ApplicationWindow
 
     function _uploadCompleted(parentId, remoteLocalNames) {
         uploadCompletedNotif.publish();
+        uploadFileCompletedNotif.close();
     }
 
-    function uploadFileCompleted(parentId, remotePath, localPath) {
-        console.debug("Uploaded", localPath, "to", parentId, ":", remotePath);
-        uploadFileCompletedNotif.body = localPath;
-        uploadFileCompletedNotif.replacesId = 0;
+    function _uploadFileCompleted(parentId, remoteName, localName, dataItemsLeft) {
+        console.debug("Uploaded", localName, "to", parentId, ":", remoteName, " items left to upload ", dataItemsLeft);
+        uploadFileCompletedNotif.body = localName + qsTr(" uploaded, items left ") + dataItemsLeft;
+        uploadFileCompletedNotif.previewBody  = localName;
         uploadFileCompletedNotif.publish();
     }
 
@@ -97,6 +97,7 @@ ApplicationWindow
         elfCloud.fetchAndMoveDataItemFailed.connect(_downloadFailed);
         elfCloud.storeDataItemsStarted.connect(_uploadCompleted);
         elfCloud.storeDataItemsCompleted.connect(_uploadCompleted);
+        elfCloud.storeDataItemCompleted.connect(_uploadFileCompleted);
     }
 
     initialPage: Qt.resolvedUrl("pages/MainPage.qml")
