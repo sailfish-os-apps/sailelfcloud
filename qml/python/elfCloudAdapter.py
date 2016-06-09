@@ -4,7 +4,6 @@ Created on Apr 27, 2016
 @author: teemu
 '''
 
-import time
 import elfcloud
 import hexdump
 
@@ -135,7 +134,7 @@ def fetchDataItem(parentId, name, outputPath, key=None):
     with open(outputPath, mode='wb') as outputFile:
         for d in data:
             outputFile.write(d)
-    time.sleep(2)
+
     _sendFetchCompletedSignal(parentId, name, outputPath)
     
     return True
