@@ -25,6 +25,10 @@ Python {
     signal clusterAdded(int parentId, string name)
     signal clusterRemoved(int id)
 
+    signal dataItemRemoved(int parentId, string name)
+
+    signal dataItemRenamed(int parentId, string oldName, string newName)
+
     property bool _ready: false // True if init done succesfully
     property var  _helpers: Helpers { }
 
@@ -110,14 +114,6 @@ Python {
                 function(status) { _fetchAndMoveDataItemCb(status, parentId, name, outputPath, overwrite); });
     }
 
-    function readPlainFile(filename, onSuccess) {
-        py.call("elfCloudAdapter.readPlainFile", [filename], onSuccess);
-    }
-
-    function readBinFile(filename, onSuccess) {
-        py.call("elfCloudAdapter.readBinFile", [filename], onSuccess);
-    }
-
     function getSubscriptionInfo(onSuccess) {
         py.call("elfCloudAdapter.getSubscriptionInfo", [], onSuccess);
     }
@@ -147,12 +143,22 @@ Python {
                 function(status) { _storeDataItemsCb(status, parentId, remoteLocalNames); });
    }
 
-    function removeFile(parentId, filename, onSuccess) {
-        py.call("elfCloudAdapter.removeDataItem", [parentId, filename], onSuccess);
+    function _removeDataItemCb(status, parentId, name) {
+        dataItemRemoved(parentId, name);
     }
 
-    function renameDataItem(parentId, oldName, newName, onSuccess) {
-        py.call("elfCloudAdapter.renameDataItem", [parentId, oldName, newName], onSuccess);
+    function removeDataItem(parentId, name) {
+        py.call("elfCloudAdapter.removeDataItem", [parentId, name],
+                function(status) { _removeDataItemCb(status, parentId, name); });
+    }
+
+    function _renameDataItemCb(status, parentId, oldName, newName) {
+        dataItemRenamed(parentId, oldName, newName);
+    }
+
+    function renameDataItem(parentId, oldName, newName) {
+        py.call("elfCloudAdapter.renameDataItem", [parentId, oldName, newName],
+                function(status) { _renameDataItemCb(status, parentId, oldName, newName); });
     }
 
     function _addVaultCb(status, name) {

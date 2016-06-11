@@ -136,7 +136,7 @@
 <context>
     <name>DataItemDetailsPage</name>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="106"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="111"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -146,57 +146,57 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="110"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="115"/>
         <source>Rename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="115"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="120"/>
         <source>Download</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="120"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="125"/>
         <source>View Contents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="175"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="180"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="179"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="184"/>
         <source>Tags</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="183"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="188"/>
         <source>Id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="186"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="191"/>
         <source>ParentId</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="191"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="196"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="195"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="200"/>
         <source>Last access time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="199"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="204"/>
         <source>Hash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="203"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="208"/>
         <source>Key hash</source>
         <translation type="unfinished"></translation>
     </message>
@@ -204,7 +204,7 @@
 <context>
     <name>ElfCloudAdapter</name>
     <message>
-        <location filename="../qml/ElfCloudAdapter.qml" line="101"/>
+        <location filename="../qml/ElfCloudAdapter.qml" line="105"/>
         <source>Destination file exists</source>
         <translation type="unfinished"></translation>
     </message>

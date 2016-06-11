@@ -20,29 +20,29 @@ Page {
                         "parentContainerId":parentContainerId});
     }
 
-    function _showPreviousPage() {
+    function _goBack() {
         pageStack.pop();
     }
 
     function _requestRemoveDataItem() {
-        elfCloud.removeFile(parentContainerId, dataItemName,
-                            _showPreviousPage);
+        elfCloud.dataItemRemoved.connect(_goBack);
+        elfCloud.removeDataItem(parentContainerId, dataItemName);
     }
 
     function _removeDataItem() {
         remorse.execute(qsTr("Deleting"), _requestRemoveDataItem);
     }
 
-    function _refreshAfterRename(newName) {
+    function _refreshAfterRename(_parentId, _oldName, newName) {
         dataItemName = newName;
         _refresh();
     }
 
     function _renameDataItem() {
+        elfCloud.dataItemRenamed.connect(_refreshAfterRename);
         var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/RenameDialog.qml"), {"oldName":dataItemName});
         dialog.onRename.connect( function(newName) {
-            elfCloud.renameDataItem(parentContainerId, dataItemName, newName, function() {
-                _refreshAfterRename(newName); });
+            elfCloud.renameDataItem(parentContainerId, dataItemName, newName);
         });
     }
 
@@ -79,6 +79,11 @@ Page {
     Component.onCompleted: {
         coverText = dataItemName;
         _refresh();
+    }
+
+    Component.onDestruction: {
+        elfCloud.dataItemRenamed.disconnect(_refreshAfterRename);
+        elfCloud.dataItemRemoved.disconnect(_goBack);
     }
 
     onStatusChanged: {
