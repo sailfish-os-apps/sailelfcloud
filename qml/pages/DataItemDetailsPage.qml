@@ -104,21 +104,21 @@ Page {
         PullDownMenu {
             MenuItem {
                 text: qsTr("Delete")
-                onClicked: { _removeDataItem() }
+                onClicked: _removeDataItem()
             }
             MenuItem {
                 text: qsTr("Rename")
-                onClicked: { _renameDataItem() }
+                onClicked: _renameDataItem()
             }
 
             MenuItem {
                 text: qsTr("Download")
-                onClicked: { _downloadDataItem() }
+                onClicked: _downloadDataItem()
             }
 
             MenuItem {
                 text: qsTr("View Contents")
-                onClicked:  { _viewDataItemContent(); }
+                onClicked: _viewDataItemContent()
             }
         }
 

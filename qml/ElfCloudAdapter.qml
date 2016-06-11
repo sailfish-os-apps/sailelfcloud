@@ -20,6 +20,11 @@ Python {
     signal storeDataItemFailed(int parentId, string remoteName, string localName, int dataItemsLeft, string reason)
     signal storeDataItemsCompleted(int parentId, var remoteLocalNames)
 
+    signal vaultAdded(string name)
+
+    signal clusterAdded(int parentId, string name)
+    signal clusterRemoved(int id)
+
     property bool _ready: false // True if init done succesfully
     property var  _helpers: Helpers { }
 
@@ -150,12 +155,31 @@ Python {
         py.call("elfCloudAdapter.renameDataItem", [parentId, oldName, newName], onSuccess);
     }
 
-    function addVault(name, onSuccess) {
-        py.call("elfCloudAdapter.addVault", [name], onSuccess);
+    function _addVaultCb(status, name) {
+        vaultAdded(name);
     }
 
-    function addCluster(parentId, name, onSuccess) {
-        py.call("elfCloudAdapter.addCluster", [parentId, name], onSuccess);
+    function addVault(name) {
+        py.call("elfCloudAdapter.addVault", [name],
+                function(status) { _addVaultCb(status, name); });
+    }
+
+    function _addClusterCb(status, parentId, name) {
+        clusterAdded(parentId, name);
+    }
+
+    function addCluster(parentId, name) {
+        py.call("elfCloudAdapter.addCluster", [parentId, name],
+                function(status) { _addClusterCb(status, parentId, name); });
+    }
+
+    function _removeClusterCb(status, id) {
+        clusterRemoved(id);
+    }
+
+    function removeCluster(id) {
+        py.call("elfCloudAdapter.removeCluster", [id],
+                function(status) { _removeClusterCb(status, id); });
     }
 
     Component.onCompleted: {

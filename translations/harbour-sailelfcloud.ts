@@ -79,39 +79,49 @@
 <context>
     <name>ContainerPage</name>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="63"/>
-        <location filename="../qml/pages/ContainerPage.qml" line="105"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="137"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="159"/>
         <source>Vaults</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="82"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="86"/>
+        <source>size: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/ContainerPage.qml" line="90"/>
         <source>owner: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="112"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="124"/>
+        <source>Removing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/ContainerPage.qml" line="166"/>
         <source>Add vault</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="124"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="172"/>
+        <source>Remove cluster</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/ContainerPage.qml" line="178"/>
         <source>Add cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="136"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="184"/>
         <source>Upload file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="148"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="190"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="78"/>
-        <source>size: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -119,7 +129,7 @@
     <name>DataItemContentPage</name>
     <message>
         <location filename="../qml/pages/DataItemContentPage.qml" line="14"/>
-        <source>File mime type is not supported by this view</source>
+        <source>File mime type &apos;%1&apos; is not supported by this view. Using external application.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -194,7 +204,7 @@
 <context>
     <name>ElfCloudAdapter</name>
     <message>
-        <location filename="../qml/ElfCloudAdapter.qml" line="96"/>
+        <location filename="../qml/ElfCloudAdapter.qml" line="101"/>
         <source>Destination file exists</source>
         <translation type="unfinished"></translation>
     </message>

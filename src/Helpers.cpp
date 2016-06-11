@@ -176,7 +176,10 @@ QString Helpers::readPlainFile(const QString path) const
 
 QString Helpers::generateLocalPathForRemoteDataItem(int parentId, const QString name) const
 {
-    return getCacheDir() + QString("/") + QString::number(parentId) + QString("___") + name;
+    const QString path = getCacheDir() + QString("/") + QString::number(parentId);
+    QDir d;
+    d.mkpath(path);
+    return path + QString("/") + name;
 }
 
 QString Helpers::getStandardLocationPictures(void)

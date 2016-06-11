@@ -6,64 +6,72 @@ import ".."
 Page {
     id: page
 
-    property var containerId: null // This is null if vaults should be shown
-    property var containerName: null
+    property int containerId
+    property string containerName
+    property string containerType: "top" // top, vault or cluster
 
-    function makeVisible() {
+    function _makeVisible() {
         busyIndication.running = false;
         contentListView.visible = true;
         noContentIndication.enabled = (contentListView.count === 0);
     }
 
-    function updateContentListAndShowPage(contentList) {
+    function _updateContentListAndShowPage(contentList) {
         listModel.clear();
         for (var i = 0; i < contentList.length; i++) {
             console.debug("Adding:", contentList[i]["name"], "id:", contentList[i]["id"]);
             listModel.append({"item": contentList[i]});
         }
-        makeVisible();
+        _makeVisible();
     }
 
-    function updateForVaults() {
-        elfCloud.listVaults(updateContentListAndShowPage);
+    function _updateForVaults() {
+        elfCloud.listVaults(_updateContentListAndShowPage);
     }
 
-    function updateForContainers() {
-        elfCloud.listContent(containerId, updateContentListAndShowPage);
+    function _updateForContainers() {
+        elfCloud.listContent(containerId, _updateContentListAndShowPage);
     }
 
-    function updateContent() {
-        if (containerId === null)
-            updateForVaults();
+    function _updateContent() {
+        if (containerType === "top")
+            _updateForVaults();
         else
-            updateForContainers();
+            _updateForContainers();
     }
 
-    function actBusy() {
+    function _actBusy() {
         busyIndication.running = true;
         contentListView.visible = false;
     }
 
-    function refresh() {
-        actBusy();
-        updateContent();
+    function _refresh() {
+        _actBusy();
+        _updateContent();
     }
 
-    onStatusChanged: {
-        if (status === PageStatus.Activating)
-            refresh();
+    function _addVault() {
+        var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/AddVaultDialog.qml"));
+        dialog.onCreateVault.connect( function(name) {
+            console.info("Creating vault", name);
+            elfCloud.vaultAdded.connect(page._refresh);
+            elfCloud.addVault(name);
+        });
     }
 
-    function uploadCompleted(parentId) {
-        if (containerId === parentId) // if upload completed for our container
-            refresh();
+    function _uploadCompleted(parentId, _remoteName, _localName, _dataItemsLeft) {
+        if (containerId === parentId) { // if upload completed for our container
+            _refresh();
+        }
     }
 
-    Component.onCompleted: {
-        coverText = containerName !== null ? containerName : qsTr("Vaults")
-    }
-
-    Component.onDestruction: {
+    function _upload() {
+        var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/FileChooserDialog.qml"))
+        dialog.accepted.connect( function() {
+            console.info("Uploading files: " + dialog.selectedPaths);
+            elfCloud.storeDataItemCompleted.connect(_uploadCompleted);
+            elfCloud.storeDataItems(containerId, dialog.selectedPaths);
+            });
     }
 
     BusyIndicator {
@@ -73,7 +81,7 @@ Page {
         running: true
     }
 
-    function createContentInfoString(modelItem) {
+    function _createContentInfoString(modelItem) {
         if (modelItem["type"] === "dataitem")
             return qsTr("size: ") + modelItem["size"];
         else if (modelItem["type"] === "cluster")
@@ -82,17 +90,63 @@ Page {
             return qsTr("owner: ") + modelItem["ownerFirstName"] + " " + modelItem["ownerLastName"];
     }
 
-    function openItem(modelItem) {
+    function _openItem(modelItem) {
         if (modelItem["type"] === "cluster" ||
                 modelItem["type"] === "vault") {
             pageStack.push(Qt.resolvedUrl("ContainerPage.qml"),
                            {"containerId":modelItem["id"],
-                            "containerName":modelItem["name"]});
+                            "containerName":modelItem["name"],
+                            "containerType":modelItem["type"]});
         } else if (modelItem["type"] === "dataitem") {
             pageStack.push(Qt.resolvedUrl("DataItemDetailsPage.qml"),
                            {"parentContainerId":containerId,
                             "dataItemName":modelItem["name"]});
         }
+    }
+
+    function _goBack() {
+        pageStack.pop(null, PageStackAction.Animated);
+    }
+
+    function _handleClusterRemoved(id) {
+        if (id === containerId)
+            _goBack();
+    }
+
+    function _requestRemoveContainer() {
+        if (containerType === "cluster") {
+            elfCloud.clusterRemoved.connect(_handleClusterRemoved);
+            elfCloud.removeCluster(containerId);
+        }
+    }
+
+    function _removeContainer() {
+        remorse.execute(qsTr("Removing") + " " + containerName, _requestRemoveContainer);
+    }
+
+    function _addCluster() {
+        var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/AddClusterDialog.qml"));
+        dialog.onCreateCluster.connect( function(name) {
+                console.info("Creating cluster", name);
+                elfCloud.clusterAdded.connect(_refresh);
+                elfCloud.addCluster(containerId, name);
+            });
+    }
+
+    Component.onCompleted: {
+        coverText = containerType !== "top" ? containerName : qsTr("Vaults")
+    }
+
+    Component.onDestruction: {
+        elfCloud.storeDataItemCompleted.disconnect(_uploadCompleted);
+        elfCloud.vaultAdded.disconnect(page._refresh);
+        elfCloud.clusterAdded.disconnect(_refresh);
+        elfCloud.clusterRemoved.disconnect(_refresh);
+    }
+
+    onStatusChanged: {
+        if (status === PageStatus.Activating)
+            _refresh();
     }
 
     SilicaListView {
@@ -110,48 +164,36 @@ Page {
 
             MenuItem {
                 text: qsTr("Add vault")
-                visible: containerId === null
-                onClicked: {
-                    var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/AddVaultDialog.qml"));
-                    dialog.onCreateVault.connect( function(name) {
-                        console.info("Creating vault", name);
-                        elfCloud.addVault(name, page.refresh);
-                    });
-                }
+                visible: containerType === "top"
+                onClicked: _addVault()
+            }
+
+            MenuItem {
+                text: qsTr("Remove cluster")
+                visible: containerType === "cluster"
+                onClicked: _removeContainer()
             }
 
             MenuItem {
                 text: qsTr("Add cluster")
-                visible: containerId !== null
-                onClicked: {
-                    var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/AddClusterDialog.qml"));
-                    dialog.onCreateCluster.connect( function(name) {
-                        console.info("Creating cluster", name);
-                        elfCloud.addCluster(containerId, name, page.refresh);
-                    });
-                }
+                visible: containerType === "vault" || containerType === "cluster"
+                onClicked: _addCluster()
             }
 
             MenuItem {
                 text: qsTr("Upload file")
-                visible: containerId !== null
-                onClicked: {
-                    var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/FileChooserDialog.qml"))
-                    dialog.accepted.connect( function() {
-                        console.info("Uploading files: " + dialog.selectedPaths);
-                        elfCloud.storeDataItems(containerId, dialog.selectedPaths);
-                        });
-                }
+                visible: containerType === "vault" || containerType === "cluster"
+                onClicked: _upload()
             }
 
             MenuItem {
                 text: qsTr("Refresh")
-                onClicked: {
-                    page.refresh();
-                }
+                onClicked: _refresh();
             }
 
         }
+
+        RemorsePopup { id: remorse }
 
         delegate: BackgroundItem {
             id: itemContent
@@ -175,12 +217,12 @@ Page {
                 anchors.top: labelContentName.bottom
                 anchors.left: listIcon.right
                 anchors.leftMargin: Theme.paddingMedium
-                text: createContentInfoString(model.item)
+                text: _createContentInfoString(model.item)
                 font.pixelSize: Theme.fontSizeSmall
                 color: itemContent.highlighted ? Theme.highlightColor : Theme.secondaryColor
             }
 
-            onClicked: openItem(model.item)
+            onClicked: _openItem(model.item)
         }
 
         ViewPlaceholder {
