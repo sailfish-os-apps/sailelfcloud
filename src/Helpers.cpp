@@ -266,6 +266,28 @@ QString Helpers::getSettingsDir(void)
     return s.fileName();
 }
 
+void Helpers::handleProcessFinish(int exitCode, QProcess::ExitStatus status)
+{
+    Q_UNUSED(status);
+    emit applicationExited(exitCode);
+}
+
+void Helpers::handleProcessError(QProcess::ProcessError error)
+{
+    Q_UNUSED(error);
+    emit applicationExited(-88888);
+ }
+
+bool Helpers::viewFileWithApplication(const QString path) {
+    qDebug() << "Opening " << path << " with external application";
+    const QString COMMAND = "xdg-open";
+    m_process = new QProcess(this);
+    connect(m_process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(handleProcessFinish(int, QProcess::ExitStatus)));
+    connect(m_process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(handleProcessError(QProcess::ProcessError)));
+    m_process->start(COMMAND, QStringList(path));
+    return true;
+}
+
 void Helpers::prepareCache()
 {
     QDir dir;

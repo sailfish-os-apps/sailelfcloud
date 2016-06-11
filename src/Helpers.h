@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include <QProcess>
 
 class Helpers : public QObject {
    Q_OBJECT
@@ -43,10 +44,21 @@ public:
 
     Q_INVOKABLE QString generateLocalPathForRemoteDataItem(int parentId, const QString name) const;
 
+    Q_INVOKABLE bool viewFileWithApplication(const QString path);
+
     static void prepareCache();
     static void dropCache();
 
+signals:
+    void applicationExited(int exitCode);
+
+private slots:
+    void handleProcessFinish(int exitCode, QProcess::ExitStatus status);
+    void handleProcessError(QProcess::ProcessError error);
+
 private:
+    QProcess *m_process;
+
     static QString getStandardLocationPictures(void);
     static QString getStandardLocationCamera(void);
     static QString getStandardLocationDocuments(void);

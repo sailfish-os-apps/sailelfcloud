@@ -9,16 +9,11 @@ Page {
     property string dataItemName
     property int parentContainerId
 
-    function _displayUnknownFile(mime) {
+    function _displayUnknownFile(filename, mime) {
         busyIndication.running = false;
-        unknownFileMimeArea.text = qsTr("File mime type is not supported by this view") + ": " + mime;
+        unknownFileMimeArea.text = qsTr("File mime type '%1' is not supported by this view. Using external application.").arg(mime);
         unknownFileMimeArea.visible = true;
-    }
-
-    function _displayImageFile(filename) {
-        image.source = filename;
-        busyIndication.running = false;
-        flickableForImage.visible = true;
+        helpers.viewFileWithApplication(filename);
     }
 
     function _updateTextViewForPlainFile(text, mime) {
@@ -42,10 +37,8 @@ Page {
 
             if (mime === "text/plain")
                 _displayPlainFile(localFilename, mime);
-            else if (mime.indexOf("image/") >= 0)
-                _displayImageFile(localFilename);
             else
-                _displayUnknownFile(mime);
+                _displayUnknownFile(localFilename, mime);
         }
     }
 
@@ -121,34 +114,6 @@ Page {
             }
         }
         HorizontalScrollDecorator { flickable: flickableForText }
-    }
-
-
-    SilicaFlickable {
-        id: flickableForImage
-        visible: false
-        anchors.fill: parent
-
-        VerticalScrollDecorator { flickable: flickableForImage }
-
-        PageHeader { title: dataItemName }
-
-        Image {
-            id: image
-            anchors.fill: parent
-            asynchronous: true
-            fillMode: Image.PreserveAspectFit
-            sourceSize.height: page.height * 2
-
-            PinchArea {
-                anchors.fill: parent
-                pinch.target: parent
-                pinch.minimumScale: 1
-                pinch.maximumScale: 4
-            }
-        }
-
-        HorizontalScrollDecorator { flickable: flickableForImage }
     }
 }
 

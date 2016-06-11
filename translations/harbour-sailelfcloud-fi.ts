@@ -362,7 +362,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/SailElfCloud.qml" line="71"/>
+        <location filename="../qml/SailElfCloud.qml" line="72"/>
         <source> uploaded, items left </source>
         <translation type="unfinished"></translation>
     </message>
