@@ -20,8 +20,9 @@ Page {
                         "parentContainerId":parentContainerId});
     }
 
-    function _goBack() {
-        pageStack.pop();
+    function _goBackIfThisDataItemRemoved(parentId, name) {
+        if (parentContainerId === parentId && dataItemName === name)
+            pageStack.pop();
     }
 
     function _requestRemoveDataItem() {
@@ -30,6 +31,11 @@ Page {
 
     function _removeDataItem() {
         remorse.execute(qsTr("Deleting"), _requestRemoveDataItem);
+    }
+
+    function _refresh() {
+        _makeBusy();
+        elfCloud.getDataItemInfo(parentContainerId, dataItemName);
     }
 
     function _refreshAfterRename(_parentId, _oldName, newName) {
@@ -58,11 +64,6 @@ Page {
         flickable.visible = false;
     }
 
-    function _refresh() {
-        _makeBusy();
-        elfCloud.getDataItemInfo(parentContainerId, dataItemName);
-    }
-
     function _updatePageContentWithItemInfo(_parentId, _name, itemInfo) {
         descriptionField.value = itemInfo["description"];
         tagsField.value = _tagListToString(itemInfo["tags"]);
@@ -77,7 +78,7 @@ Page {
     Component.onCompleted: {
         elfCloud.dataItemInfoGot.connect(_updatePageContentWithItemInfo)
         elfCloud.dataItemRenamed.connect(_refreshAfterRename);
-        elfCloud.dataItemRemoved.connect(_goBack);
+        elfCloud.dataItemRemoved.connect(_goBackIfThisDataItemRemoved);
         coverText = dataItemName;
         _refresh();
     }
@@ -85,7 +86,7 @@ Page {
     Component.onDestruction: {
         elfCloud.dataItemInfoGot.disconnect(_updatePageContentWithItemInfo)
         elfCloud.dataItemRenamed.disconnect(_refreshAfterRename);
-        elfCloud.dataItemRemoved.disconnect(_goBack);
+        elfCloud.dataItemRemoved.disconnect(_goBackIfThisDataItemRemoved);
     }
 
     onStatusChanged: {

@@ -131,7 +131,10 @@ def getDataItemInfo(parentId, name):
 def updateDataItem(parentId, name, description=None, tags=None):
     client.update_dataitem(parentId, name, description, tags)
 
-def fetchDataItem(parentId, name, outputPath, key=None):
+def _sendDataItemFetchedSignal(status, parentId, name, outputPath):
+    pyotherside.send('fetch-dataitem-completed', status, parentId, name, outputPath)
+
+def _fetchDataItemCb(parentId, name, outputPath, key=None):
     _configEncryption()
     data = client.fetch_data(int(parentId), name)['data']
      
@@ -139,7 +142,11 @@ def fetchDataItem(parentId, name, outputPath, key=None):
         for d in data:
             outputFile.write(d)
 
-    return True
+    _sendDataItemFetchedSignal(True, parentId, name, outputPath)
+
+def fetchDataItem(parentId, name, outputPath, key=None):
+    threadPool.executeTask(_fetchDataItemCb, parentId, name, outputPath, key=None)
+
 
 
 SUBSCRIPTION_FIELD_MAP = {'id':'Id', 'status':'Status', 'start_date':'Start date',
@@ -157,7 +164,7 @@ def getSubscriptionInfo():
     response = worker.WorkData()
     threadPool.executeTask(_getSubscriptionInfoCb, response)
     return response.waitForData()
-    
+
 def storeDataItem(parentId, remotename, filename):
     _info("Storing: " + filename + " as " + remotename)
     fileobj = open(filename, "rb")
@@ -171,8 +178,10 @@ def storeDataItem(parentId, remotename, filename):
 def _sendDataItemStoredSignal(status, parentId, remoteName, localName, dataItemsLeft):
     pyotherside.send('store-dataitem-completed', status, parentId, remoteName, localName, dataItemsLeft)
 
+def _sendDataItemsStoredSignal(status, parentId, remoteLocalNames):
+    pyotherside.send('store-dataitems-completed', status, parentId, remoteLocalNames)
 
-def storeDataItems(parentId, remoteLocalNames):
+def _storeDataItemsCb(parentId, remoteLocalNames):
     dataItemsLeft = len(remoteLocalNames)
     
     for remote,local in remoteLocalNames:
@@ -180,7 +189,10 @@ def storeDataItems(parentId, remoteLocalNames):
         storeDataItem(parentId, remote, local)
         _sendDataItemStoredSignal(True, parentId, remote, local, dataItemsLeft)
         
-    
+    _sendDataItemsStoredSignal(True, parentId, remoteLocalNames)
+
+def storeDataItems(parentId, remoteLocalNames):
+    threadPool.executeTask(_storeDataItemsCb, parentId, remoteLocalNames)
       
 def removeDataItem(parentId, name):
     _info("Removing " + name)
@@ -201,6 +213,9 @@ def addCluster(parentId, name):
 
 def removeCluster(id):
     client.remove_cluster(int(id))
+
+def waitForRunningTasksCompleted():
+    threadPool.waitTasksCompletion()
 
 if __name__ == '__main__':
     pass

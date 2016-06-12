@@ -16,28 +16,22 @@ Page {
         noContentIndication.enabled = (contentListView.count === 0);
     }
 
-    function _updateContentListAndShowPage(_parentId, contentList) {
-        listModel.clear();
-        for (var i = 0; i < contentList.length; i++) {
-            console.debug("Adding:", contentList[i]["name"], "id:", contentList[i]["id"]);
-            listModel.append({"item": contentList[i]});
+    function _updateContentListAndShowPage(parentId, contentList) {
+        if (parentId === containerId) {
+            listModel.clear();
+            for (var i = 0; i < contentList.length; i++) {
+                console.debug("Adding:", contentList[i]["name"], "id:", contentList[i]["id"]);
+                listModel.append({"item": contentList[i]});
+            }
+            _makeVisible();
         }
-        _makeVisible();
-    }
-
-    function _updateForVaults() {
-        elfCloud.listVaults();
-    }
-
-    function _updateForContainers() {
-        elfCloud.listContent(containerId);
     }
 
     function _updateContent() {
         if (containerType === "top")
-            _updateForVaults();
+            elfCloud.listVaults();
         else
-            _updateForContainers();
+            elfCloud.listContent(containerId);
     }
 
     function _actBusy() {
@@ -58,10 +52,9 @@ Page {
         });
     }
 
-    function _uploadCompleted(parentId, _remoteName, _localName, _dataItemsLeft) {
-        if (containerId === parentId) { // if upload completed for our container
+    function _refreshIfForUs(parentId) {
+        if (containerId === parentId) // if upload completed for our container
             _refresh();
-        }
     }
 
     function _upload() {
@@ -111,6 +104,11 @@ Page {
             _goBack();
     }
 
+    function _handleDataItemRemoved(parentId) {
+        if (parentId === containerId)
+            _refresh();
+    }
+
     function _requestRemoveContainer() {
         if (containerType === "cluster")
             elfCloud.removeCluster(containerId);
@@ -129,25 +127,25 @@ Page {
     }
 
     Component.onCompleted: {
-        coverText = containerType !== "top" ? containerName : qsTr("Vaults")
-        elfCloud.contentListed.connect(_updateContentListAndShowPage)
-        elfCloud.storeDataItemCompleted.connect(_uploadCompleted);
-        elfCloud.vaultAdded.connect(page._refresh);
-        elfCloud.clusterAdded.connect(_refresh);
+        coverText = containerType !== "top" ? containerName : qsTr("Vaults");
+        elfCloud.contentListed.connect(_updateContentListAndShowPage);
+        elfCloud.storeDataItemsCompleted.connect(_refreshIfForUs);
+        elfCloud.vaultAdded.connect(page._refreshIfForUs);
+        elfCloud.clusterAdded.connect(_refreshIfForUs);
+        elfCloud.dataItemRenamed.connect(_refreshIfForUs);
         elfCloud.clusterRemoved.connect(_handleClusterRemoved);
+        elfCloud.dataItemRemoved.connect(_handleDataItemRemoved);
+        _refresh();
     }
 
     Component.onDestruction: {        
-        elfCloud.contentListed.disconnect(_updateContentListAndShowPage)
-        elfCloud.storeDataItemCompleted.disconnect(_uploadCompleted);
-        elfCloud.vaultAdded.disconnect(page._refresh);
-        elfCloud.clusterAdded.disconnect(_refresh);
-        elfCloud.clusterRemoved.disconnect(_refresh);
-    }
-
-    onStatusChanged: {
-        if (status === PageStatus.Activating)
-            _refresh();
+        elfCloud.contentListed.disconnect(_updateContentListAndShowPage);
+        elfCloud.storeDataItemsCompleted.disconnect(_refreshIfForUs);
+        elfCloud.vaultAdded.disconnect(page._refreshIfForUs);
+        elfCloud.clusterAdded.disconnect(_refreshIfForUs);
+        elfCloud.dataItemRenamed.disconnect(_refreshIfForUs);
+        elfCloud.clusterRemoved.disconnect(_handleClusterRemoved);
+        elfCloud.dataItemRemoved.disconnect(_handleDataItemRemoved);
     }
 
     SilicaListView {

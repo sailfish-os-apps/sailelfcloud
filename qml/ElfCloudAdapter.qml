@@ -50,6 +50,8 @@ Python {
 
         setHandler('connected', connected);
         setHandler('store-dataitem-completed', _storeDataItemCb);
+        setHandler('store-dataitems-completed', _storeDataItemsCb);
+        setHandler('fetch-dataitem-completed', _fetchDataItemCb);
     }
 
     function connect(username, password, onSuccess) {
@@ -106,26 +108,24 @@ Python {
 
     function fetchDataItem(parentId, name, outputPath) {
         fetchDataItemStarted(parentId, name, outputPath);
-        py.call("elfCloudAdapter.fetchDataItem", [parentId, name, outputPath],
-                function(status) {_fetchDataItemCb(status, parentId, name, outputPath); });
+        py.call("elfCloudAdapter.fetchDataItem", [parentId, name, outputPath]);
     }
 
 
-    function _fetchAndMoveDataItemCb(status, parentId, name, outputPath, overwrite) {
-        if (status) {
-            if (helpers.moveAndRenameFileAccordingToMime(outputPath, name, overwrite))
-                fetchAndMoveDataItemCompleted(parentId, name, outputPath);
-            else
-                fetchAndMoveDataItemFailed(parentId, name, outputPath, qsTr("Destination file exists"));
-        }
+    function _fetchAndMoveDataItemCb(parentId, name, outputPath, overwrite) {
+        if (helpers.moveAndRenameFileAccordingToMime(outputPath, name, overwrite))
+            fetchAndMoveDataItemCompleted(parentId, name, outputPath);
         else
-            fetchAndMoveDataItemFailed(parentId, name, outputPath, "failed");
+            fetchAndMoveDataItemFailed(parentId, name, outputPath, qsTr("Destination file exists"));
     }
 
     function fetchAndMoveDataItem(parentId, name, outputPath, overwrite) {
-        fetchDataItemStarted(parentId, name, outputPath);
-        py.call("elfCloudAdapter.fetchDataItem", [parentId, name, outputPath],
-                function(status) { _fetchAndMoveDataItemCb(status, parentId, name, outputPath, overwrite); });
+        fetchAndMoveDataItemStarted(parentId, name, outputPath);
+        fetchDataItemCompleted.connect(function (_parentId, _name) {
+                if (_parentId === parentId && _name === name)
+                    _fetchAndMoveDataItemCb(parentId, name, outputPath, overwrite);
+            });
+        py.call("elfCloudAdapter.fetchDataItem", [parentId, name, outputPath]);
     }
 
     function _storeDataItemCb(status, parentId, remoteName, localName, dataItemsLeft) {
@@ -149,8 +149,7 @@ Python {
         }
 
         storeDataItemsStarted(parentId, remoteLocalNames);
-        py.call("elfCloudAdapter.storeDataItems", [parentId, remoteLocalNames],
-                function(status) { _storeDataItemsCb(status, parentId, remoteLocalNames); });
+        py.call("elfCloudAdapter.storeDataItems", [parentId, remoteLocalNames]);
    }
 
     function _removeDataItemCb(status, parentId, name) {
