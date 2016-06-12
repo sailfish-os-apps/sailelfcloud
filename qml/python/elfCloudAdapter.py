@@ -5,7 +5,7 @@ Created on Apr 27, 2016
 '''
 
 import elfcloud
-import hexdump
+import worker
 
 try:
     import pyotherside
@@ -15,21 +15,25 @@ except ImportError:
     print("PyOtherSide not found, continuing anyway!")
     class pyotherside:
         def atexit(self, *args): pass
-        def send(self, *args): pass
+        def send(self, *args):
+            print("send:", args[0])
     sys.modules["pyotherside"] = pyotherside()
+
 
 APIKEY = 'swrqwb95d98ou8d'
 VALULT_TYPES = [elfcloud.utils.VAULT_TYPE_DEFAULT, 'com.ahola.sailelfcloud']
+MAX_WORKERS = 3
 client = None
+threadPool = worker.ThreadPool(MAX_WORKERS)
 
 def _debug(*text):
-    pyotherside.send('log-d', ''.join(text))
+    pyotherside.send('log-d', ' '.join(text))
 
 def _info(*text):
-    pyotherside.send('log-i', ''.join(text))
+    pyotherside.send('log-i', ' '.join(text))
 
 def _error(*text):
-    pyotherside.send('log-e', ''.join(text))
+    pyotherside.send('log-e', ' '.join(text))
 
 
 def _sendConnectedSignal(status, reason=None):
@@ -51,6 +55,9 @@ def connect(username, password):
     _info("elfCloud client connected")
     _sendConnectedSignal(True)
     return True
+
+def isConnected():
+    return client != None
 
 def disconnect():
     global client
@@ -134,34 +141,22 @@ def fetchDataItem(parentId, name, outputPath, key=None):
 
     return True
 
-def readPlainFile(filename):    
-    text = ""
-
-    with open(filename, "r") as f:
-        for l in f:
-            text += l
-                
-    return text
-
-def readBinFile(filename):    
-    text = ""
-
-    with open(filename, "rb") as f:
-        text = hexdump.hexdump(f,result="return")
-    
-    return text
-
 
 SUBSCRIPTION_FIELD_MAP = {'id':'Id', 'status':'Status', 'start_date':'Start date',
                           'end_date':'End date', 'storage_quota': 'Quota',
                           'subscription_type':'Subscription type'}
 
-def getSubscriptionInfo():
+def _getSubscriptionInfoCb(workData):
     info = client.get_subscription_info()
     currentSubscription = info['current_subscription']
     # Create list of dict for easier handling in QML
-    out = [{'fieldName':toName, 'fieldValue':str(currentSubscription[fromName])} for fromName, toName in SUBSCRIPTION_FIELD_MAP.items()]
-    return out
+    workData.setData([{'fieldName':toName, 'fieldValue':str(currentSubscription[fromName])} for fromName,
+                      toName in SUBSCRIPTION_FIELD_MAP.items()])
+
+def getSubscriptionInfo():
+    response = worker.WorkData()
+    threadPool.executeTask(_getSubscriptionInfoCb, response)
+    return response.waitForData()
     
 def storeDataItem(parentId, remotename, filename):
     _info("Storing: " + filename + " as " + remotename)
@@ -171,7 +166,6 @@ def storeDataItem(parentId, remotename, filename):
     result = client.store_data(int(parentId),
                                remotename,
                                fileobj)
-    
     return result
 
 def _sendDataItemStoredSignal(status, parentId, remoteName, localName, dataItemsLeft):

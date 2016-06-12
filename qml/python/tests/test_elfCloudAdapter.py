@@ -25,6 +25,7 @@ class Test(unittest.TestCase):
 
 
     def setUp(self):
+        self.assertTrue(elfCloudAdapter.isConnected(), "Client connection has failed")
         self.vaultId = elfCloudAdapter.addVault("ut_test_vault").id
         self.clusterId = elfCloudAdapter.addCluster(self.vaultId, "ut_test_cluster").id
 
@@ -43,63 +44,40 @@ class Test(unittest.TestCase):
             
         self.fail("Failed to find expeted vault")
 
-    def test_storeDataItem_TextFile(self):
-        localTempFile = tempfile.NamedTemporaryFile("r+")        
-        localTempFile.write("test data written by unit test")
-        localTempFile.flush()
-        elfCloudAdapter.storeDataItem(self.clusterId, "test_file_from_ut.txt", localTempFile.name)
-        localTempFile.close()
-        
-        elfCloudAdapter.fetchDataItem(self.clusterId, "test_file_from_ut.txt", "local_file.txt")
-        fileContent = elfCloudAdapter.readPlainFile("local_file.txt")
-        self.assertEqual("test data written by unit test", fileContent)
-
-        
-        elfCloudAdapter.removeDataItem(self.clusterId, "test_file_from_ut.txt")        
-
-    @unittest.skip("")
-    def test_storeDataItem_BinFile(self):
-        localTempFile = tempfile.NamedTemporaryFile("rb+")        
-        localTempFile.write(b"tes\0\0t data\0written by unit test\0") # binary file requires byte objects hence b"
-        localTempFile.flush()
-        elfCloudAdapter.storeDataItem(self.clusterId, "test_bin_file_from_ut.bin", localTempFile.name)
-        localTempFile.close()
-        elfCloudAdapter.removeDataItem(self.clusterId, "test_bin_file_from_ut.bin")
-
     def test_storeDataItems(self):
-        localTempFile1 = tempfile.NamedTemporaryFile("r+", delete=False)        
+        localTempFile1 = open("test_file_from_ut_1.txt", "w+")
         localTempFile1.write("test data written by unit test")
-        localTempFile1.flush()
-        localTempFile2 = tempfile.NamedTemporaryFile("rb+", delete=False)        
-        localTempFile2.write(b"tes\0\0t data\0written by unit test\0") # binary file requires byte objects hence b"
-        localTempFile2.flush()
         localTempFile1.close()
+        localTempFile2 = open("test_file_from_ut_2.bin", "wb+")
+        localTempFile2.write(b"tes\0\0t data\0written by unit test\0") # binary file requires byte objects hence b"
         localTempFile2.close()
 
         elfCloudAdapter.storeDataItems(self.clusterId, [(localTempFile1.name,"test_file_from_ut_1.txt"),
-                                                        (localTempFile2.name,"test_file_from_ut_2.txt")])        
+                                                        (localTempFile2.name,"test_file_from_ut_2.bin")])        
         content = elfCloudAdapter.listContent(self.clusterId)
         print ("content:", content)
                
-        elfCloudAdapter.updateDataItem(self.clusterId, "test_file_from_ut_1.txt", "New description", ["tag1", "tag 2"])
-        dataiteminfo = elfCloudAdapter.getDataItemInfo(self.clusterId, "test_file_from_ut_1.txt")
-        print ("dataitem info:", dataiteminfo)
-                
         elfCloudAdapter.removeDataItem(self.clusterId, "test_file_from_ut_1.txt")
-        elfCloudAdapter.removeDataItem(self.clusterId, "test_file_from_ut_2.txt")
+        elfCloudAdapter.removeDataItem(self.clusterId, "test_file_from_ut_2.bin")
+        
+    def test_setDataItemInfo(self):
+        tf = tempfile.NamedTemporaryFile("w", delete=False);
+        tf.write("aa")
+        tf.close()
+        
+        elfCloudAdapter.storeDataItem(self.clusterId, "test_file_for_dataitem_info.txt", tf.name);
 
+        elfCloudAdapter.updateDataItem(self.clusterId, "test_file_for_dataitem_info.txt", "New description", ["tag1", "tag 2"])
+        dataiteminfo = elfCloudAdapter.getDataItemInfo(self.clusterId, "test_file_for_dataitem_info.txt")
+        
+        self.assertEqual("test_file_for_dataitem_info.txt", dataiteminfo['name'])
+        self.assertEqual("New description", dataiteminfo['description'])        
+        self.assertListEqual(["tag1", "tag 2"], dataiteminfo['tags'])
 
-    @unittest.skip("")
-    def test_fetchDataItem_readFile_BinaryFileGiven_ShouldReturnValidTypeAndHexdump(self):
-        filename = elfCloudAdapter.fetchDataItem(self.clusterId, "binary_file.bin", None)
-        fileContent = elfCloudAdapter.readFile(filename)
-        self.assertEqual("bin", fileContent[0])
-        print (fileContent)
-    
     
     def test_getSubscriptionInfo(self):
         info = elfCloudAdapter.getSubscriptionInfo()
-        print(info)
+        print("subscription:", info)
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

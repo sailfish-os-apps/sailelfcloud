@@ -44,7 +44,6 @@ DISTFILES += \
     qml/pages/LoginPage.qml \
     qml/pages/DataItemDetailsPage.qml \
     qml/pages/Spacer.qml \
-    qml/python/hexdump.py \
     qml/pages/SubscriptionInfoPage.qml \
     qml/Settings.qml \
     qml/pages/ConnectionPage.qml \
