@@ -16,7 +16,7 @@ Page {
         noContentIndication.enabled = (contentListView.count === 0);
     }
 
-    function _updateContentListAndShowPage(contentList) {
+    function _updateContentListAndShowPage(_parentId, contentList) {
         listModel.clear();
         for (var i = 0; i < contentList.length; i++) {
             console.debug("Adding:", contentList[i]["name"], "id:", contentList[i]["id"]);
@@ -26,11 +26,11 @@ Page {
     }
 
     function _updateForVaults() {
-        elfCloud.listVaults(_updateContentListAndShowPage);
+        elfCloud.listVaults();
     }
 
     function _updateForContainers() {
-        elfCloud.listContent(containerId, _updateContentListAndShowPage);
+        elfCloud.listContent(containerId);
     }
 
     function _updateContent() {
@@ -54,7 +54,6 @@ Page {
         var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/AddVaultDialog.qml"));
         dialog.onCreateVault.connect( function(name) {
             console.info("Creating vault", name);
-            elfCloud.vaultAdded.connect(page._refresh);
             elfCloud.addVault(name);
         });
     }
@@ -69,7 +68,6 @@ Page {
         var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/FileChooserDialog.qml"))
         dialog.accepted.connect( function() {
             console.info("Uploading files: " + dialog.selectedPaths);
-            elfCloud.storeDataItemCompleted.connect(_uploadCompleted);
             elfCloud.storeDataItems(containerId, dialog.selectedPaths);
             });
     }
@@ -114,10 +112,8 @@ Page {
     }
 
     function _requestRemoveContainer() {
-        if (containerType === "cluster") {
-            elfCloud.clusterRemoved.connect(_handleClusterRemoved);
+        if (containerType === "cluster")
             elfCloud.removeCluster(containerId);
-        }
     }
 
     function _removeContainer() {
@@ -128,16 +124,21 @@ Page {
         var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/AddClusterDialog.qml"));
         dialog.onCreateCluster.connect( function(name) {
                 console.info("Creating cluster", name);
-                elfCloud.clusterAdded.connect(_refresh);
                 elfCloud.addCluster(containerId, name);
             });
     }
 
     Component.onCompleted: {
         coverText = containerType !== "top" ? containerName : qsTr("Vaults")
+        elfCloud.contentListed.connect(_updateContentListAndShowPage)
+        elfCloud.storeDataItemCompleted.connect(_uploadCompleted);
+        elfCloud.vaultAdded.connect(page._refresh);
+        elfCloud.clusterAdded.connect(_refresh);
+        elfCloud.clusterRemoved.connect(_handleClusterRemoved);
     }
 
-    Component.onDestruction: {
+    Component.onDestruction: {        
+        elfCloud.contentListed.disconnect(_updateContentListAndShowPage)
         elfCloud.storeDataItemCompleted.disconnect(_uploadCompleted);
         elfCloud.vaultAdded.disconnect(page._refresh);
         elfCloud.clusterAdded.disconnect(_refresh);

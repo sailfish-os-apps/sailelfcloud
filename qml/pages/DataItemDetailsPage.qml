@@ -25,7 +25,6 @@ Page {
     }
 
     function _requestRemoveDataItem() {
-        elfCloud.dataItemRemoved.connect(_goBack);
         elfCloud.removeDataItem(parentContainerId, dataItemName);
     }
 
@@ -39,7 +38,6 @@ Page {
     }
 
     function _renameDataItem() {
-        elfCloud.dataItemRenamed.connect(_refreshAfterRename);
         var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/RenameDialog.qml"), {"oldName":dataItemName});
         dialog.onRename.connect( function(newName) {
             elfCloud.renameDataItem(parentContainerId, dataItemName, newName);
@@ -55,7 +53,17 @@ Page {
         return tagList.join(",");
     }
 
-    function _updatePageContentWithItemInfo(itemInfo) {
+    function _makeBusy() {
+        busyIndication.running = true;
+        flickable.visible = false;
+    }
+
+    function _refresh() {
+        _makeBusy();
+        elfCloud.getDataItemInfo(parentContainerId, dataItemName);
+    }
+
+    function _updatePageContentWithItemInfo(_parentId, _name, itemInfo) {
         descriptionField.value = itemInfo["description"];
         tagsField.value = _tagListToString(itemInfo["tags"]);
         itemIdField.value = itemInfo["id"];
@@ -66,22 +74,16 @@ Page {
         _makeVisible();
     }
 
-    function _makeBusy() {
-        busyIndication.running = true;
-        flickable.visible = false;
-    }
-
-    function _refresh() {
-        _makeBusy();
-        elfCloud.getDataItemInfo(parentContainerId, dataItemName, _updatePageContentWithItemInfo);
-    }
-
     Component.onCompleted: {
+        elfCloud.dataItemInfoGot.connect(_updatePageContentWithItemInfo)
+        elfCloud.dataItemRenamed.connect(_refreshAfterRename);
+        elfCloud.dataItemRemoved.connect(_goBack);
         coverText = dataItemName;
         _refresh();
     }
 
     Component.onDestruction: {
+        elfCloud.dataItemInfoGot.disconnect(_updatePageContentWithItemInfo)
         elfCloud.dataItemRenamed.disconnect(_refreshAfterRename);
         elfCloud.dataItemRemoved.disconnect(_goBack);
     }

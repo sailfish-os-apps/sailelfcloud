@@ -26,8 +26,10 @@ Python {
     signal clusterRemoved(int id)
 
     signal dataItemRemoved(int parentId, string name)
-
     signal dataItemRenamed(int parentId, string oldName, string newName)
+    signal dataItemInfoGot(int parentId, string name, var info)
+
+    signal contentListed(int parentId, var content)
 
     property bool _ready: false // True if init done succesfully
     property var  _helpers: Helpers { }
@@ -58,6 +60,10 @@ Python {
         py.call("elfCloudAdapter.disconnect", [], onSuccess);
     }
 
+    function getSubscriptionInfo(onSuccess) {
+        py.call("elfCloudAdapter.getSubscriptionInfo", [], onSuccess);
+    }
+
     function _createContentDetailsList(content) {
         var list = []
         for (var i = 0; i < content.length; i++) {
@@ -68,19 +74,27 @@ Python {
         return list
     }
 
+    function _listContentCb(parentId, content) {
+        contentListed(parentId, _createContentDetailsList(content))
+    }
 
-    function listVaults(onSuccess) {
+    function listVaults() {
         py.call("elfCloudAdapter.listVaults", [],
-                function(vaults) {onSuccess(_createContentDetailsList(vaults))});
+                function(vaults) { _listContentCb(null, vaults); });
     }
 
-    function listContent(parentId, onSuccess) {
+    function listContent(parentId) {
         py.call("elfCloudAdapter.listContent", [parentId],
-                function(content) {onSuccess(_createContentDetailsList(content))});
+                function(content) { _listContentCb(parentId, content); });
     }
 
-    function getDataItemInfo(parentId, name, onSuccess) {
-        py.call("elfCloudAdapter.getDataItemInfo", [parentId, name], onSuccess);
+    function _getDataItemInfoCb(info, parentId, name) {
+        dataItemInfoGot(parentId, name, info)
+    }
+
+    function getDataItemInfo(parentId, name) {
+        py.call("elfCloudAdapter.getDataItemInfo", [parentId, name],
+                function(info) { _getDataItemInfoCb(info, parentId, name); });
     }
 
     function _fetchDataItemCb(status, parentId, name, outputPath) {
@@ -112,10 +126,6 @@ Python {
         fetchDataItemStarted(parentId, name, outputPath);
         py.call("elfCloudAdapter.fetchDataItem", [parentId, name, outputPath],
                 function(status) { _fetchAndMoveDataItemCb(status, parentId, name, outputPath, overwrite); });
-    }
-
-    function getSubscriptionInfo(onSuccess) {
-        py.call("elfCloudAdapter.getSubscriptionInfo", [], onSuccess);
     }
 
     function _storeDataItemCb(status, parentId, remoteName, localName, dataItemsLeft) {
