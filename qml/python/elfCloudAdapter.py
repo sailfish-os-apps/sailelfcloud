@@ -6,6 +6,7 @@ Created on Apr 27, 2016
 
 import elfcloud
 import worker
+import time
 
 try:
     import pyotherside
@@ -22,8 +23,9 @@ except ImportError:
 
 APIKEY = 'swrqwb95d98ou8d'
 VALULT_TYPES = [elfcloud.utils.VAULT_TYPE_DEFAULT, 'com.ahola.sailelfcloud']
-MAX_WORKERS = 3
+MAX_WORKERS = 5
 client = None
+keepaliveTimeoutEvent = None
 threadPool = worker.ThreadPool(MAX_WORKERS)
 
 def _debug(*text):
@@ -38,6 +40,14 @@ def _error(*text):
 
 def _sendConnectedSignal(status, reason=None):
     pyotherside.send('connected', status, reason)
+
+def _keepaliveConnection():
+    time.sleep(15)
+    try:
+        _debug("Keepalive timer triggered")
+        getSubscriptionInfo()
+    except elfcloud.exceptions.ECClientException as e:
+        _error(str(e))
 
 def connect(username, password):
     global client
@@ -60,9 +70,15 @@ def isConnected():
     return client != None
 
 def disconnect():
-    global client
+    global client, keepaliveTimeoutEvent
+    
+    if keepaliveTimeoutEvent:
+        try: keepalive.cancel(keepaliveTimeoutEvent)
+        except ValueError: pass
+        keepaliveTimeoutEvent = None
+    
     client = None
-    _info("elfCloud client disconnected")
+    _info("elfCloud client disconnected")    
     return True
 
 def listVaults():

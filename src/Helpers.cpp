@@ -299,5 +299,6 @@ void Helpers::prepareCache()
 
 void Helpers::dropCache()
 {
-
+    QDir dir(getCacheDir());
+    dir.removeRecursively();
 }

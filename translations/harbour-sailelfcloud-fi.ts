@@ -2,6 +2,44 @@
 <!DOCTYPE TS>
 <TS version="2.1">
 <context>
+    <name>AboutPage</name>
+    <message>
+        <location filename="../qml/pages/AboutPage.qml" line="29"/>
+        <source>SailElfCloud</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/AboutPage.qml" line="36"/>
+        <source>Version %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/AboutPage.qml" line="43"/>
+        <source>Copyright © 2016 Teemu Ahola</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/AboutPage.qml" line="57"/>
+        <source>This program is open source software licensed under the terms of the GNU General Public License.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/AboutPage.qml" line="57"/>
+        <source>You can find the source code at the</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/AboutPage.qml" line="58"/>
+        <source>GitHub Project Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/AboutPage.qml" line="72"/>
+        <source>Uses software from elfGROUP (https://secure.elfcloud.fi/en_US/)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AddClusterDialog</name>
     <message>
         <location filename="../qml/dialogs/AddClusterDialog.qml" line="17"/>
@@ -34,31 +72,36 @@
     <name>ConfigPage</name>
     <message>
         <location filename="../qml/pages/ConfigPage.qml" line="16"/>
+        <source>About</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/ConfigPage.qml" line="21"/>
         <source>Show subscription</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="32"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="37"/>
         <source>Configurations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="37"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="42"/>
         <source>Automatic login</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="38"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="43"/>
         <source>Allows automatic login when application starts.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="47"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="52"/>
         <source>Remember login</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="48"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="53"/>
         <source>Remembers login information such as username and password.</source>
         <translation type="unfinished"></translation>
     </message>

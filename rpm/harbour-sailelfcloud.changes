@@ -14,4 +14,6 @@
 * Sat May 21 2016 Teemu Ahola <teemuahola7@gmail.com> 0.0.1-2
 - Replaced pycrypto with pyaes in ElfCloud Weasel.
 
+* Mon Jun 13 2016 Teemu Ahola <teemuahola7@gmail.com> 0.1.0-1
+- First version for release.
 
