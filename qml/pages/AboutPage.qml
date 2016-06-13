@@ -25,7 +25,6 @@ Page
         Label
         {
             id: titleLabel
-
             text: qsTr("SailElfCloud")
             anchors { horizontalCenter: parent.horizontalCenter }
             color: Theme.highlightColor

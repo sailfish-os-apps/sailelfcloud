@@ -115,7 +115,11 @@ Page {
     }
 
     function _removeContainer() {
-        remorse.execute(qsTr("Removing") + " " + containerName, _requestRemoveContainer);
+        var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/RemoveContainerDialog.qml"),
+                                                   {"containerName": containerName});
+        dialog.accepted.connect(function() {
+            remorse.execute(qsTr("Removing") + " " + containerName, _requestRemoveContainer);
+            });
     }
 
     function _addCluster() {

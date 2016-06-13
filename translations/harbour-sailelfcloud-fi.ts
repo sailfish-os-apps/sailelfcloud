@@ -4,37 +4,37 @@
 <context>
     <name>AboutPage</name>
     <message>
-        <location filename="../qml/pages/AboutPage.qml" line="29"/>
+        <location filename="../qml/pages/AboutPage.qml" line="28"/>
         <source>SailElfCloud</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/AboutPage.qml" line="36"/>
+        <location filename="../qml/pages/AboutPage.qml" line="35"/>
         <source>Version %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/AboutPage.qml" line="43"/>
+        <location filename="../qml/pages/AboutPage.qml" line="42"/>
         <source>Copyright © 2016 Teemu Ahola</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/AboutPage.qml" line="57"/>
+        <location filename="../qml/pages/AboutPage.qml" line="56"/>
         <source>This program is open source software licensed under the terms of the GNU General Public License.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/AboutPage.qml" line="57"/>
+        <location filename="../qml/pages/AboutPage.qml" line="56"/>
         <source>You can find the source code at the</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/AboutPage.qml" line="58"/>
+        <location filename="../qml/pages/AboutPage.qml" line="57"/>
         <source>GitHub Project Page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/AboutPage.qml" line="72"/>
+        <location filename="../qml/pages/AboutPage.qml" line="71"/>
         <source>Uses software from elfGROUP (https://secure.elfcloud.fi/en_US/)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -122,8 +122,8 @@
 <context>
     <name>ContainerPage</name>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="130"/>
-        <location filename="../qml/pages/ContainerPage.qml" line="158"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="134"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="162"/>
         <source>Vaults</source>
         <translation type="unfinished"></translation>
     </message>
@@ -138,32 +138,32 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="118"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="121"/>
         <source>Removing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="165"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="169"/>
         <source>Add vault</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="171"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="175"/>
         <source>Remove cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="177"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="181"/>
         <source>Add cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="183"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="187"/>
         <source>Upload file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="189"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="193"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
@@ -355,6 +355,24 @@
     <message>
         <location filename="../qml/pages/LoginPage.qml" line="85"/>
         <source>Allows automatic login when application starts. Can be disabled from Configuration</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RemoveContainerDialog</name>
+    <message>
+        <location filename="../qml/dialogs/RemoveContainerDialog.qml" line="14"/>
+        <source>Remove %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/RemoveContainerDialog.qml" line="23"/>
+        <source>Cluster %1 and all items under it will be removed PERMANENTLY!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/RemoveContainerDialog.qml" line="24"/>
+        <source>Are you sure?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

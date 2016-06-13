@@ -62,7 +62,8 @@ DISTFILES += \
     qml/views/ImageSelectorView.qml \
     qml/pages/DataItemContentPage.qml \
     qml/pages/ContainerPage.qml \
-    qml/pages/AboutPage.qml
+    qml/pages/AboutPage.qml \
+    qml/dialogs/RemoveContainerDialog.qml
 
 unix: PKGCONFIG +=
 

@@ -9,11 +9,11 @@ Page {
     property string dataItemName
     property int parentContainerId
 
-    function _displayUnknownFile(filename, mime) {
+    function _displayUnknownFile(path, mime) {
         busyIndication.running = false;
         unknownFileMimeArea.text = qsTr("File mime type '%1' is not supported by this view. Using external application.").arg(mime);
         unknownFileMimeArea.visible = true;
-        helpers.viewFileWithApplication(filename);
+        Qt.openUrlExternally(path);
     }
 
     function _updateTextViewForPlainFile(text, mime) {
@@ -29,16 +29,16 @@ Page {
         _updateTextViewForPlainFile(helpers.readPlainFile(filename), mime);
     }
 
-    function _displayFile(parentId, name, localFilename) {
+    function _displayFile(parentId, name, localPath) {
         if (parentId === parentContainerId && name === dataItemName)
         {
-            var mime = helpers.getFileMimeType(localFilename);
-            console.debug("File:", localFilename, "mime type is", mime);
+            var mime = helpers.getFileMimeType(localPath);
+            console.debug("File:", localPath, "mime type is", mime);
 
             if (mime === "text/plain")
-                _displayPlainFile(localFilename, mime);
+                _displayPlainFile(localPath, mime);
             else
-                _displayUnknownFile(localFilename, mime);
+                _displayUnknownFile(localPath, mime);
         }
     }
 
