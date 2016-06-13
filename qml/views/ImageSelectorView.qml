@@ -1,6 +1,5 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import harbour.sailelfcloud.helpers 1.0
 import "../items"
 
 SilicaFlickable {
@@ -11,8 +10,6 @@ SilicaFlickable {
 
     signal selected()
     signal deselected()
-
-    Helpers { id: helpers }
 
     function populate() {
         console.info("Image location:", StandardPaths.pictures);

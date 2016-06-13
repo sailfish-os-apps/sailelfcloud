@@ -1,6 +1,5 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
-import harbour.sailelfcloud.helpers 1.0
 import "../views"
 
 Dialog {
@@ -10,8 +9,6 @@ Dialog {
     id: page
     objectName: "selectPicture"
     canAccept: false
-
-    Helpers { id: helpers }
 
     DialogHeader {
         id: title
