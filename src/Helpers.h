@@ -55,6 +55,7 @@ signals:
 private slots:
     void handleProcessFinish(int exitCode, QProcess::ExitStatus status);
     void handleProcessError(QProcess::ProcessError error);
+    void handleAboutToQuit();
 
 private:
     QProcess *m_process;

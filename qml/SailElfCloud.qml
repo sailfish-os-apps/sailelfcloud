@@ -1,7 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import org.nemomobile.notifications 1.0
-import harbour.sailelfcloud.helpers 1.0
 
 ApplicationWindow
 {
@@ -9,7 +8,6 @@ ApplicationWindow
 
     property string coverText: qsTr("elfCloud")
     property var elfCloud: ElfCloudAdapter { }
-    property var helpers: Helpers { }
 
     Notification {
         id: uploadStartedNotif

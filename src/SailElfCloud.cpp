@@ -17,9 +17,12 @@ int main(int argc, char *argv[])
     // For details see:
     // https://harbour.jolla.com/faq#1.5.0
 
-    qmlRegisterType<Helpers>("harbour.sailelfcloud.helpers", 1, 0, "Helpers");
-    Helpers helpers;
-    helpers.prepareCache();
+    //qmlRegisterType<Helpers>("harbour.sailelfcloud.helpers", 1, 0, "Helpers");
+    QScopedPointer<Helpers> helpers(new Helpers);
+    v->rootContext()->setContextProperty("helpers", helpers.data());
+    QObject::connect(app.data(), SIGNAL(aboutToQuit()),
+                     helpers.data(), SLOT(handleAboutToQuit()));
+    helpers->prepareCache();
 
     // Start the application.
     v->setSource(SailfishApp::pathTo("qml/SailElfCloud.qml"));

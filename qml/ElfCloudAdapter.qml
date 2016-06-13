@@ -1,6 +1,5 @@
 import QtQuick 2.0
 import io.thp.pyotherside 1.2
-import harbour.sailelfcloud.helpers 1.0
 
 Python {
 
@@ -32,7 +31,6 @@ Python {
     signal contentListed(int parentId, var content)
 
     property bool _ready: false // True if init done succesfully
-    property var  _helpers: Helpers { }
 
     id: py
 

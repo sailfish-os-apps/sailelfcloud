@@ -291,6 +291,12 @@ bool Helpers::viewFileWithApplication(const QString path) {
     return true;
 }
 
+void Helpers::handleAboutToQuit()
+{
+    qDebug() << "Quitting...";
+    dropCache();
+}
+
 void Helpers::prepareCache()
 {
     QDir dir;
