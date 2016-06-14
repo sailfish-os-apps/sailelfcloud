@@ -134,7 +134,7 @@ Page {
         coverText = containerType !== "top" ? containerName : qsTr("Vaults");
         elfCloud.contentListed.connect(_updateContentListAndShowPage);
         elfCloud.storeDataItemsCompleted.connect(_refreshIfForUs);
-        elfCloud.vaultAdded.connect(page._refreshIfForUs);
+        elfCloud.vaultAdded.connect(_refresh);
         elfCloud.clusterAdded.connect(_refreshIfForUs);
         elfCloud.dataItemRenamed.connect(_refreshIfForUs);
         elfCloud.clusterRemoved.connect(_handleClusterRemoved);
@@ -145,7 +145,7 @@ Page {
     Component.onDestruction: {        
         elfCloud.contentListed.disconnect(_updateContentListAndShowPage);
         elfCloud.storeDataItemsCompleted.disconnect(_refreshIfForUs);
-        elfCloud.vaultAdded.disconnect(page._refreshIfForUs);
+        elfCloud.vaultAdded.disconnect(_refresh);
         elfCloud.clusterAdded.disconnect(_refreshIfForUs);
         elfCloud.dataItemRenamed.disconnect(_refreshIfForUs);
         elfCloud.clusterRemoved.disconnect(_handleClusterRemoved);
