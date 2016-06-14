@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     helpers->prepareCache();
 
     // Start the application.
-    v->setSource(SailfishApp::pathTo("qml/SailElfCloud.qml"));
+    v->setSource(SailfishApp::pathTo("qml/harbour-sailelfcloud.qml"));
     v->show();
     return app->exec();
 }

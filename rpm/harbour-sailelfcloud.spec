@@ -6,6 +6,7 @@
 Name:       harbour-sailelfcloud
 
 # >> macros
+%define __provides_exclude_from ^%{_datadir}/.*$
 # << macros
 
 %{!?qtc_qmake:%define qtc_qmake %qmake}
@@ -17,7 +18,7 @@ Version:    0.1
 Release:    1
 Group:      Qt/Qt
 License:    LICENSE
-URL:        http://example.org/
+URL:        https://github.com/TeemuAhola/sailelfcloud
 Source0:    %{name}-%{version}.tar.bz2
 Source100:  harbour-sailelfcloud.yaml
 Requires:   sailfishsilica-qt5 >= 0.10.9
@@ -70,7 +71,3 @@ desktop-file-install --delete-original       \
 %{_datadir}/icons/hicolor/*/apps/%{name}.png
 # >> files
 # << files
-
-# >> macros
-%define __provides_exclude_from ^%{_datadir}/.*$
-# << macros

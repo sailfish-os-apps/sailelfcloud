@@ -38,7 +38,6 @@ DISTFILES += \
     translations/*.ts \
     qml/python/* \
     qml/icons/* \
-    qml/SailElfCloud.qml \
     qml/cover/CoverPage.qml \
     qml/ElfCloudAdapter.qml \
     qml/pages/LoginPage.qml \
@@ -64,7 +63,8 @@ DISTFILES += \
     qml/pages/ContainerPage.qml \
     qml/pages/AboutPage.qml \
     qml/dialogs/RemoveContainerDialog.qml \
-    qml/pages/ProblemPage.qml
+    qml/pages/ProblemPage.qml \
+    qml/harbour-sailelfcloud.qml
 
 unix: PKGCONFIG +=
 

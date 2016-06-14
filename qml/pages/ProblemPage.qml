@@ -11,10 +11,10 @@ Page
     function _getGuidelineTranslationForId(id) {
         switch(id) {
         case 204:
-            return qsTr("<style>a:link { color: " + Theme.highlightColor + "; }</style><br/>" +
-                qsTr("You must logon to the My elfCLOUD web application and accept EULA in order to use this service.") +
-                     "<br/><br/>" +
-                     "<a href=\"https://secure.elfcloud.fi/en_US/\">" + qsTr("https://secure.elfcloud.fi/en_US/") + "</a>");
+            return "<style>a:link { color: " + Theme.highlightColor + "; }</style><br/>" +
+                   qsTr("You must logon to the My elfCLOUD web application and accept EULA in order to use this service.") +
+                   "<br/><br/>" +
+                   "<a href=\"https://secure.elfcloud.fi/en_US/\">" + qsTr("https://secure.elfcloud.fi/en_US/") + "</a>";
         default:
             return ""
         }
@@ -67,6 +67,11 @@ Page
             font { family: Theme.fontFamily; pixelSize: Theme.fontSizeSmall }
             color: Theme.secondaryHighlightColor
             text: _getGuidelineTranslationForId(id)
+
+            onLinkActivated:
+            {
+                Qt.openUrlExternally(link);
+            }
         }
     }
 }

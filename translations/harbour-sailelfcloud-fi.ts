@@ -371,7 +371,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ProblemPage.qml" line="37"/>
+        <location filename="../qml/pages/ProblemPage.qml" line="40"/>
         <source>Problem occurred</source>
         <translation type="unfinished"></translation>
     </message>
@@ -408,59 +408,59 @@
     </message>
 </context>
 <context>
-    <name>SailElfCloud</name>
-    <message>
-        <location filename="../qml/SailElfCloud.qml" line="9"/>
-        <source>elfCloud</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/SailElfCloud.qml" line="15"/>
-        <location filename="../qml/SailElfCloud.qml" line="24"/>
-        <source>File upload</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/SailElfCloud.qml" line="16"/>
-        <source>On progress</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/SailElfCloud.qml" line="25"/>
-        <source>Compeleted</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/SailElfCloud.qml" line="32"/>
-        <source>File uploaded</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/SailElfCloud.qml" line="38"/>
-        <source>File download</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/SailElfCloud.qml" line="46"/>
-        <source>File downloaded</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/SailElfCloud.qml" line="54"/>
-        <source>File download failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/SailElfCloud.qml" line="70"/>
-        <source> uploaded, items left </source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>SubscriptionInfoPage</name>
     <message>
         <location filename="../qml/pages/SubscriptionInfoPage.qml" line="21"/>
         <source>Subscription Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>harbour-sailelfcloud</name>
+    <message>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="9"/>
+        <source>elfCloud</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="15"/>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="24"/>
+        <source>File upload</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="16"/>
+        <source>On progress</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="25"/>
+        <source>Compeleted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="32"/>
+        <source>File uploaded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="38"/>
+        <source>File download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="46"/>
+        <source>File downloaded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="54"/>
+        <source>File download failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="70"/>
+        <source> uploaded, items left </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
