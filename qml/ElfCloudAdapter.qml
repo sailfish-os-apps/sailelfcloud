@@ -30,6 +30,8 @@ Python {
 
     signal contentListed(int parentId, var content)
 
+    signal exceptionOccurred(int id, string message)
+
     property bool _ready: false // True if init done succesfully
 
     id: py
@@ -50,6 +52,7 @@ Python {
         setHandler('store-dataitem-completed', _storeDataItemCb);
         setHandler('store-dataitems-completed', _storeDataItemsCb);
         setHandler('fetch-dataitem-completed', _fetchDataItemCb);
+        setHandler('exception', exceptionOccurred);
     }
 
     function connect(username, password, onSuccess) {
@@ -211,4 +214,5 @@ Python {
     }
 
     onError: console.error("Exception: %1".arg(traceback));
+    onExceptionOccurred: console.error("Exception occurred: ", id, message)
 }

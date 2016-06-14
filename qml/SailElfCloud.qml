@@ -87,7 +87,12 @@ ApplicationWindow
         downloadFileFailedNotif.publish();
     }
 
-
+    function _handleException(id, message) {
+        pageStack.completeAnimation()
+        pageStack.push(Qt.resolvedUrl("pages/ProblemPage.qml"),
+                       {"id":id,
+                        "message":message});
+    }
 
     Component.onCompleted: {
         elfCloud.fetchAndMoveDataItemStarted.connect(_downloadStarted);
@@ -96,6 +101,7 @@ ApplicationWindow
         elfCloud.storeDataItemsStarted.connect(_uploadCompleted);
         elfCloud.storeDataItemsCompleted.connect(_uploadCompleted);
         elfCloud.storeDataItemCompleted.connect(_uploadFileCompleted);
+        elfCloud.exceptionOccurred.connect(_handleException);
     }
 
     initialPage: Qt.resolvedUrl("pages/MainPage.qml")

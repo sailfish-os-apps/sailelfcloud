@@ -53,7 +53,8 @@ Page
             font { family: Theme.fontFamily; pixelSize: Theme.fontSizeSmall }
             color: Theme.secondaryColor
             text: "<style>a:link { color: " + Theme.highlightColor + "; }</style><br/>" +
-                qsTr("This program is open source software licensed under the terms of the GNU General Public License.") + "<br/><br/>" + qsTr("You can find the source code at the") +
+                qsTr("This program is open source software licensed under the terms of the GNU General Public License.") +
+                "<br/><br/>" + qsTr("You can find the source code at the") +
                 "<br/> <a href=\"https://github.com/TeemuAhola/sailelfcloud\">" + qsTr("GitHub Project Page") + "</a>";
             onLinkActivated:
             {

@@ -24,17 +24,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/AboutPage.qml" line="56"/>
+        <location filename="../qml/pages/AboutPage.qml" line="57"/>
         <source>You can find the source code at the</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/AboutPage.qml" line="57"/>
+        <location filename="../qml/pages/AboutPage.qml" line="58"/>
         <source>GitHub Project Page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/AboutPage.qml" line="71"/>
+        <location filename="../qml/pages/AboutPage.qml" line="72"/>
         <source>Uses software from elfGROUP (https://secure.elfcloud.fi/en_US/)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -122,48 +122,48 @@
 <context>
     <name>ContainerPage</name>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="134"/>
-        <location filename="../qml/pages/ContainerPage.qml" line="162"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="135"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="163"/>
         <source>Vaults</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="77"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="78"/>
         <source>size: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="81"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="82"/>
         <source>owner: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="121"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="122"/>
         <source>Removing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="169"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="170"/>
         <source>Add vault</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="175"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="176"/>
         <source>Remove cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="181"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="182"/>
         <source>Add cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="187"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="188"/>
         <source>Upload file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="193"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="194"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
@@ -247,7 +247,7 @@
 <context>
     <name>ElfCloudAdapter</name>
     <message>
-        <location filename="../qml/ElfCloudAdapter.qml" line="117"/>
+        <location filename="../qml/ElfCloudAdapter.qml" line="120"/>
         <source>Destination file exists</source>
         <translation type="unfinished"></translation>
     </message>
@@ -355,6 +355,24 @@
     <message>
         <location filename="../qml/pages/LoginPage.qml" line="85"/>
         <source>Allows automatic login when application starts. Can be disabled from Configuration</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ProblemPage</name>
+    <message>
+        <location filename="../qml/pages/ProblemPage.qml" line="15"/>
+        <source>You must logon to the My elfCLOUD web application and accept EULA in order to use this service.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/ProblemPage.qml" line="17"/>
+        <source>https://secure.elfcloud.fi/en_US/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/ProblemPage.qml" line="37"/>
+        <source>Problem occurred</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -9,6 +9,7 @@ Page {
     property int containerId
     property string containerName
     property string containerType: "top" // top, vault or cluster
+    property bool _ready: false
 
     function _makeVisible() {
         busyIndication.running = false;

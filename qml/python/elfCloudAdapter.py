@@ -6,7 +6,6 @@ Created on Apr 27, 2016
 
 import elfcloud
 import worker
-import time
 
 try:
     import pyotherside
@@ -25,7 +24,6 @@ APIKEY = 'swrqwb95d98ou8d'
 VALULT_TYPES = [elfcloud.utils.VAULT_TYPE_DEFAULT, 'com.ahola.sailelfcloud']
 MAX_WORKERS = 5
 client = None
-keepaliveTimeoutEvent = None
 threadPool = worker.ThreadPool(MAX_WORKERS)
 
 def _debug(*text):
@@ -37,17 +35,11 @@ def _info(*text):
 def _error(*text):
     pyotherside.send('log-e', ' '.join(text))
 
+def _sendExceptionSignal(exception):
+    pyotherside.send('exception', exception.id, exception.message)
 
 def _sendConnectedSignal(status, reason=None):
     pyotherside.send('connected', status, reason)
-
-def _keepaliveConnection():
-    time.sleep(15)
-    try:
-        _debug("Keepalive timer triggered")
-        getSubscriptionInfo()
-    except elfcloud.exceptions.ECClientException as e:
-        _error(str(e))
 
 def connect(username, password):
     global client
@@ -70,61 +62,57 @@ def isConnected():
     return client != None
 
 def disconnect():
-    global client, keepaliveTimeoutEvent
-    
-    if keepaliveTimeoutEvent:
-        try: keepalive.cancel(keepaliveTimeoutEvent)
-        except ValueError: pass
-        keepaliveTimeoutEvent = None
-    
     client = None
     _info("elfCloud client disconnected")    
     return True
 
 def listVaults():
-    vaults = client.list_vaults()
-    vaultList = []   
-           
-    for vault in vaults:
-        vaultList.append({'name': vault.name,
-                          'id': vault.id,
-                          'size': 0,
-                          'type': 'vault',
-                          'vaultType': vault.vault_type,
-                          'permissions': vault.permissions,
-                          'modified': vault.modified_date,
-                          'accessed': vault.last_accessed_date,
-                          'ownerFirstName': vault.owner['firstname'],
-                          'ownerLastName': vault.owner['lastname']})
-
+    vaultList = []
+    try:
+        vaults = client.list_vaults()   
+               
+        for vault in vaults:
+            vaultList.append({'name': vault.name,
+                              'id': vault.id,
+                              'size': 0,
+                              'type': 'vault',
+                              'vaultType': vault.vault_type,
+                              'permissions': vault.permissions,
+                              'modified': vault.modified_date,
+                              'accessed': vault.last_accessed_date,
+                              'ownerFirstName': vault.owner['firstname'],
+                              'ownerLastName': vault.owner['lastname']})
+    except elfcloud.exceptions.ECAuthException as e:
+        _sendExceptionSignal(e)
     return vaultList
 
 def listContent(parentId):
-    parentId = int(parentId)
+    contentList = []
     _info("Getting content of %s" % parentId)
     
-    clusters, dataitems = client.list_contents(parentId)
-    contentList = []
-           
-    for cluster in clusters:
-        contentList.append({'name':        cluster.name,
-                            'id'  :        cluster.id,
-                            'dataItems':   cluster.dataitems,
-                            'descendants': cluster.descendants,
-                            'parentId':    cluster.parent_id,
-                            'modified':    cluster.modified_date,
-                            'accessed':    cluster.last_accessed_date, 
-                            'permissions': cluster.permissions,                            
-                            'type':        'cluster'})
-
-    for dataitem in dataitems:
-        contentList.append({'name':     dataitem.name,
-                            'id'  :     0,
-                            'size':     dataitem.size,
-                            'parentId': dataitem.parent_id,
-                            'type':     'dataitem',
-                            'metadata': dataitem.meta})
-
+    try:
+        clusters, dataitems = client.list_contents(int(parentId))
+               
+        for cluster in clusters:
+            contentList.append({'name':        cluster.name,
+                                'id'  :        cluster.id,
+                                'dataItems':   cluster.dataitems,
+                                'descendants': cluster.descendants,
+                                'parentId':    cluster.parent_id,
+                                'modified':    cluster.modified_date,
+                                'accessed':    cluster.last_accessed_date, 
+                                'permissions': cluster.permissions,                            
+                                'type':        'cluster'})
+    
+        for dataitem in dataitems:
+            contentList.append({'name':     dataitem.name,
+                                'id'  :     0,
+                                'size':     dataitem.size,
+                                'parentId': dataitem.parent_id,
+                                'type':     'dataitem',
+                                'metadata': dataitem.meta})
+    except elfcloud.exceptions.ECAuthException as e:
+        _sendExceptionSignal(e)
     return contentList
 
 
@@ -170,11 +158,15 @@ SUBSCRIPTION_FIELD_MAP = {'id':'Id', 'status':'Status', 'start_date':'Start date
                           'subscription_type':'Subscription type'}
 
 def _getSubscriptionInfoCb(workData):
-    info = client.get_subscription_info()
-    currentSubscription = info['current_subscription']
-    # Create list of dict for easier handling in QML
-    workData.setData([{'fieldName':toName, 'fieldValue':str(currentSubscription[fromName])} for fromName,
-                      toName in SUBSCRIPTION_FIELD_MAP.items()])
+    try:
+        info = client.get_subscription_info()
+        currentSubscription = info['current_subscription']
+        # Create list of dict for easier handling in QML
+        workData.setData([{'fieldName':toName, 'fieldValue':str(currentSubscription[fromName])} for fromName,
+                          toName in SUBSCRIPTION_FIELD_MAP.items()])
+    except elfcloud.exceptions.ECAuthException as e:
+        _sendExceptionSignal(e)
+        workData.setData([])
 
 def getSubscriptionInfo():
     response = worker.WorkData()
@@ -219,10 +211,14 @@ def renameDataItem(parentId, oldName, newName):
     return client.rename_dataitem(int(parentId), oldName, newName)
      
 def addVault(name):
-    return client.add_vault(name, VALULT_TYPES[0])
+    try:
+        return client.add_vault(name, VALULT_TYPES[0])
+    except elfcloud.exceptions.ECAuthException as e:
+        _sendExceptionSignal(e)
+        return None
 
-def removeVault(id):
-    return client.remove_vault(int(id))
+def removeVault(vaultId):
+    return client.remove_vault(int(vaultId))
 
 def addCluster(parentId, name):
     return client.add_cluster(name, int(parentId))

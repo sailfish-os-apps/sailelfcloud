@@ -63,7 +63,8 @@ DISTFILES += \
     qml/pages/DataItemContentPage.qml \
     qml/pages/ContainerPage.qml \
     qml/pages/AboutPage.qml \
-    qml/dialogs/RemoveContainerDialog.qml
+    qml/dialogs/RemoveContainerDialog.qml \
+    qml/pages/ProblemPage.qml
 
 unix: PKGCONFIG +=
 
