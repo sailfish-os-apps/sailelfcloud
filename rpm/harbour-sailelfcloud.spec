@@ -14,8 +14,8 @@ Name:       harbour-sailelfcloud
 %{!?qtc_make:%define qtc_make make}
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 Summary:    Sailfish elfCloud client
-Version:    0.1
-Release:    1
+Version:    1.0
+Release:    0
 Group:      Qt/Qt
 License:    LICENSE
 URL:        https://github.com/TeemuAhola/sailelfcloud
