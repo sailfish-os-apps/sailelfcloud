@@ -16,12 +16,13 @@ except ImportError:
     class pyotherside:
         def atexit(self, *args): pass
         def send(self, *args):
-            print("send:", args[0])
+            print("send:", [str(a) for a in args])
     sys.modules["pyotherside"] = pyotherside()
 
 
 APIKEY = 'swrqwb95d98ou8d'
 VALULT_TYPES = [elfcloud.utils.VAULT_TYPE_DEFAULT, 'com.ahola.sailelfcloud']
+DEFAULT_REQUEST_SIZE_BYTES =  256 * 1024 # Size of one request when sending or fetching
 MAX_WORKERS = 5
 client = None
 threadPool = worker.ThreadPool(MAX_WORKERS)
@@ -48,6 +49,7 @@ def connect(username, password):
                                  apikey=APIKEY,
                                  server_url=elfcloud.utils.SERVER_DEFAULT)    
         client.auth()
+        setRequestSize(DEFAULT_REQUEST_SIZE_BYTES)
     except Exception as e:
         _error(str(e))
         client = None
@@ -65,6 +67,9 @@ def disconnect():
     client = None
     _info("elfCloud client disconnected")    
     return True
+
+def setRequestSize(sizeInBytes):
+    client.set_request_size(sizeInBytes)
 
 def listVaults():
     vaultList = []
@@ -135,16 +140,23 @@ def getDataItemInfo(parentId, name):
 def updateDataItem(parentId, name, description=None, tags=None):
     client.update_dataitem(parentId, name, description, tags)
 
+def _sendDataItemChunkFetchedSignal(parentId, name, totalSize, sizeFetched):
+    pyotherside.send('fetch-dataitem-chunk', parentId, name, totalSize, sizeFetched)
+    
 def _sendDataItemFetchedSignal(status, parentId, name, outputPath):
     pyotherside.send('fetch-dataitem-completed', status, parentId, name, outputPath)
 
 def _fetchDataItemCb(parentId, name, outputPath, key=None):
     _configEncryption()
-    data = client.fetch_data(int(parentId), name)['data']
-     
+    data = client.fetch_data(int(parentId), name)['data'] 
+    dataLength = data.fileobj.getheader('Content-Length') # Nasty way to get total size since what if Content-Length does not exist.
+                                                          # I haven't found good way to provide this information in upper level sw.
+    dataFetched = 0
     with open(outputPath, mode='wb') as outputFile:
-        for d in data:
-            outputFile.write(d)
+        for chunk in data:
+            outputFile.write(chunk)
+            dataFetched += len(chunk)
+            _sendDataItemChunkFetchedSignal(parentId, name, dataLength, dataFetched)
 
     _sendDataItemFetchedSignal(True, parentId, name, outputPath)
 

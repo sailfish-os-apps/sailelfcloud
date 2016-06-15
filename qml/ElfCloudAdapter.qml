@@ -6,10 +6,12 @@ Python {
     signal connected(bool status, string reason)
 
     signal fetchDataItemStarted(int parentId, string name, string localName)
+    signal fetchDataItemChunkCompleted(int parentId, string name, int totalSize, int sizeFetched)
     signal fetchDataItemCompleted(int parentId, string name, string localName)
     signal fetchDataItemFailed(int parentId, string name, string localName, string reason)
 
     signal fetchAndMoveDataItemStarted(int parentId, string name, string localName)
+    signal fetchAndMoveDataItemChunkCompleted(int parentId, string name, string localName, int totalSize, int sizeFetched)
     signal fetchAndMoveDataItemCompleted(int parentId, string name, string localName)
     signal fetchAndMoveDataItemFailed(int parentId, string name, string localName, string reason)
 
@@ -53,6 +55,7 @@ Python {
         setHandler('store-dataitems-completed', _storeDataItemsCb);
         setHandler('fetch-dataitem-completed', _fetchDataItemCb);
         setHandler('exception', exceptionOccurred);
+        setHandler('fetch-dataitem-chunk', _fetchDataItemChunkCb);
     }
 
     function connect(username, password, onSuccess) {
@@ -100,6 +103,10 @@ Python {
                 function(info) { _getDataItemInfoCb(info, parentId, name); });
     }
 
+    function _fetchDataItemChunkCb(parentId, name, totalSize, sizeFetched) {
+        fetchDataItemChunkCompleted(parentId, name, totalSize, sizeFetched)
+    }
+
     function _fetchDataItemCb(status, parentId, name, outputPath) {
         if (status)
             fetchDataItemCompleted(parentId, name, outputPath);
@@ -120,11 +127,19 @@ Python {
             fetchAndMoveDataItemFailed(parentId, name, outputPath, qsTr("Destination file exists"));
     }
 
+    function fetchAndMoveDataItemChunkCb(parentId, name, outputPath, totalSize, sizeFetched) {
+        fetchAndMoveDataItemChunkCompleted(parentId, name, outputPath, totalSize, sizeFetched)
+    }
+
     function fetchAndMoveDataItem(parentId, name, outputPath, overwrite) {
         fetchAndMoveDataItemStarted(parentId, name, outputPath);
         fetchDataItemCompleted.connect(function (_parentId, _name) {
                 if (_parentId === parentId && _name === name)
                     _fetchAndMoveDataItemCb(parentId, name, outputPath, overwrite);
+            });
+        fetchDataItemChunkCompleted.connect(function (_parentId, _name, totalSize, sizeFetched) {
+                if (_parentId === parentId && _name === name)
+                    fetchAndMoveDataItemChunkCb(parentId, name, outputPath, totalSize, sizeFetched);
             });
         py.call("elfCloudAdapter.fetchDataItem", [parentId, name, outputPath]);
     }
