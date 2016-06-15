@@ -100,7 +100,8 @@ Page {
                 font.family: "Monospace"
                 color: Theme.secondaryColor
             }
-            Spacer {
+            Item {
+                width: parent.width
                 height: 2*Theme.paddingLarge
             }
             Label {
@@ -109,7 +110,8 @@ Page {
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 horizontalAlignment: Text.AlignLeft
             }
-            Spacer {
+            Item {
+                width: parent.width
                 height: 2*Theme.paddingLarge
             }
         }

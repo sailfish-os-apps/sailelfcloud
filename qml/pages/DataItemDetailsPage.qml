@@ -175,7 +175,10 @@ Page {
                             horizontalAlignment: Text.AlignHCenter
                             color: openButton.highlighted ? Theme.highlightColor : Theme.primaryColor
                         }
-                        Spacer { height: Theme.paddingLarge }
+                        Item {
+                            width: parent.width
+                            height: Theme.paddingLarge
+                        }
                     }
                 }
                 DetailItem {

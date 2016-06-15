@@ -42,7 +42,6 @@ DISTFILES += \
     qml/ElfCloudAdapter.qml \
     qml/pages/LoginPage.qml \
     qml/pages/DataItemDetailsPage.qml \
-    qml/pages/Spacer.qml \
     qml/pages/SubscriptionInfoPage.qml \
     qml/Settings.qml \
     qml/pages/ConnectionPage.qml \

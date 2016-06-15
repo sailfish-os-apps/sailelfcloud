@@ -204,42 +204,42 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="183"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="186"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="187"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="190"/>
         <source>Tags</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="191"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="194"/>
         <source>Id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="194"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="197"/>
         <source>ParentId</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="199"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="202"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="203"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="206"/>
         <source>Last access time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="207"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="210"/>
         <source>Hash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="211"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="214"/>
         <source>Key hash</source>
         <translation type="unfinished"></translation>
     </message>
