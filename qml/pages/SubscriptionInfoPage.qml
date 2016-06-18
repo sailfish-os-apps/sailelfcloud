@@ -9,16 +9,10 @@ Page {
                                          // when closing the page and call is still in progress.
                                          // This prevent accessing undefined variables.
 
-    signal populate(var infoItems)
-
-    onPopulate: {
+    function _subscriptionCb(infoItems) {
         for (var i = 0; i < infoItems.length; i++) {
             infoModel.append(infoItems[i]); // every element in info is {'fieldName':name,'fieldValue':value} mappings
         }
-    }
-
-    function _subscriptionCb(info) {
-        page.populate(info)
     }
 
     Component.onCompleted: {

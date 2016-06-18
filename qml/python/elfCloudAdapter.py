@@ -5,7 +5,8 @@ Created on Apr 27, 2016
 '''
 
 import elfcloud
-import worker, time
+import worker
+import time
 
 try:
     import pyotherside
@@ -75,7 +76,8 @@ SUBSCRIPTION_FIELD_MAP = {'id':'Id', 'status':'Status', 'start_date':'Start date
                           'end_date':'End date', 'storage_quota': 'Quota',
                           'subscription_type':'Subscription type'}
 
-def _getSubscriptionInfoCb(cbObj):
+@worker.run_async
+def getSubscriptionInfo(cbObj):
     try:
         info = client.get_subscription_info()
         subscr = info['current_subscription']
@@ -85,13 +87,11 @@ def _getSubscriptionInfoCb(cbObj):
     except elfcloud.exceptions.ECAuthException as e:
         _sendExceptionSignal(e)
 
-def getSubscriptionInfo(cbObj):
-    return threadPool.executeTask(_getSubscriptionInfoCb, cbObj)
-
 def setRequestSize(sizeInBytes):
     client.set_request_size(sizeInBytes)
 
-def listVaults():
+@worker.run_async
+def listVaults(cbObj):
     vaultList = []
     try:
         vaults = client.list_vaults()   
@@ -109,9 +109,11 @@ def listVaults():
                               'ownerLastName': vault.owner['lastname']})
     except elfcloud.exceptions.ECAuthException as e:
         _sendExceptionSignal(e)
-    return vaultList
 
-def listContent(parentId):
+    _sendCompletedSignal(cbObj, vaultList)
+
+@worker.run_async
+def listContent(cbObj, parentId):
     contentList = []
     _info("Getting content of %s" % parentId)
     
@@ -138,15 +140,16 @@ def listContent(parentId):
                                 'metadata': dataitem.meta})
     except elfcloud.exceptions.ECAuthException as e:
         _sendExceptionSignal(e)
-    return contentList
-
+        
+    _sendCompletedSignal(cbObj, contentList)
 
 def _configEncryption():
     client.set_encryption_key(None)
     client.set_iv(elfcloud.utils.IV_DEFAULT)
     client.encryption_mode = elfcloud.utils.ENC_NONE
 
-def _getDataItemInfo(cbObj, parentId, name):
+@worker.run_async
+def getDataItemInfo(cbObj, parentId, name):
     dataitem = client.get_dataitem(parentId, name)
     info = {'id': dataitem.dataitem_id,
             'name': dataitem.name,
@@ -157,9 +160,6 @@ def _getDataItemInfo(cbObj, parentId, name):
             'contentHash': (dataitem.content_hash if dataitem.content_hash else ''),
             'keyHash': (dataitem.key_hash if dataitem.key_hash else '')}
     _sendCompletedSignal(cbObj, info)
-
-def getDataItemInfo(cbObj, parentId, name):
-    return threadPool.executeTask(_getDataItemInfo, cbObj, parentId, name)
 
 def updateDataItem(parentId, name, description=None, tags=None):
     client.update_dataitem(parentId, name, description, tags)
@@ -216,37 +216,41 @@ def _storeDataItemsCb(parentId, remoteLocalNames):
 def storeDataItems(parentId, remoteLocalNames):
     return threadPool.executeTask(_storeDataItemsCb, parentId, remoteLocalNames)
 
-def _removeDataItemCb(cbObj, parentId, name):
+@worker.run_async
+def removeDataItem(cbObj, parentId, name):
     _info("Removing " + name) 
     client.remove_dataitem(parentId, name)
     _sendCompletedSignal(cbObj, parentId, name)
 
-def removeDataItem(cbObj, parentId, name):
-    return threadPool.executeTask(_removeDataItemCb, cbObj, int(parentId), name)
-
-def _renameDataItemCb(cbObj, parentId, oldName, newName):
+@worker.run_async
+def renameDataItem(cbObj, parentId, oldName, newName):
     _info("Renaming ", oldName, "to", newName)
     client.rename_dataitem(int(parentId), oldName, newName)
     _sendCompletedSignal(cbObj, parentId, oldName, newName)
-    
-def renameDataItem(cbObj, parentId, oldName, newName):
-    return threadPool.executeTask(_renameDataItemCb, cbObj, int(parentId), oldName, newName)
-     
-def addVault(name):
+
+@worker.run_async
+def addVault(cbObj, name):
     try:
-        return client.add_vault(name, VALULT_TYPES[0])
+        client.add_vault(name, VALULT_TYPES[0])
+        _sendCompletedSignal(cbObj, name)
     except elfcloud.exceptions.ECAuthException as e:
         _sendExceptionSignal(e)
         return None
 
-def removeVault(vaultId):
-    return client.remove_vault(int(vaultId))
+@worker.run_async
+def removeVault(cbObj, vaultId):
+    client.remove_vault(int(vaultId))
+    _sendCompletedSignal(cbObj, vaultId)
 
-def addCluster(parentId, name):
-    return client.add_cluster(name, int(parentId))
+@worker.run_async
+def addCluster(cbObj, parentId, name):
+    client.add_cluster(name, int(parentId))
+    _sendCompletedSignal(cbObj, parentId, name)
 
-def removeCluster(id):
-    client.remove_cluster(int(id))
+@worker.run_async
+def removeCluster(cbObj, clusterId):
+    client.remove_cluster(int(clusterId))
+    _sendCompletedSignal(cbObj, clusterId)
 
 def waitForRunningTasksCompleted():
     threadPool.waitTasksCompletion()

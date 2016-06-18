@@ -21,13 +21,6 @@ Python {
     signal storeDataItemFailed(int parentId, string remoteName, string localName, int dataItemsLeft, string reason)
     signal storeDataItemsCompleted(int parentId, var remoteLocalNames)
 
-    signal vaultAdded(string name)
-
-    signal clusterAdded(int parentId, string name)
-    signal clusterRemoved(int id)
-
-    signal contentListed(int parentId, var content)
-
     signal contentChanged(int containerId)
     signal exceptionOccurred(int id, string message)
 
@@ -68,7 +61,7 @@ Python {
 
     function _handleCompleted(cbObj) {
         var varArgs = _getVarArgs(_handleCompleted, arguments);
-        console.log("afsdfsfsfdsf", cbObj, varArgs)
+        console.debug("_handleCompleted", varArgs, cbObj, cbObj.completedCb);
         if (cbObj.completedCb !== undefined)
             cbObj.completedCb.apply(null, varArgs);
     }
@@ -83,12 +76,19 @@ Python {
         return cbObj;
     }
 
-    function getSubscriptionInfo(callback) {
+    function _call(func, callback) {
+        var callName = "elfCloudAdapter." + func;
         var cbObj = _createCbObj(callback);
-        if (py.call_sync("elfCloudAdapter.getSubscriptionInfo", [cbObj]))
+        var args = [cbObj].concat(_getVarArgs(_call, arguments));
+        console.debug("_call", callName, args, cbObj.completedCb);
+        if (py.call_sync(callName, args))
             return cbObj;
         else
             return undefined;
+    }
+
+    function getSubscriptionInfo(callback) {
+        return _call("getSubscriptionInfo", callback)
     }
 
 
@@ -100,6 +100,7 @@ Python {
         py.call("elfCloudAdapter.disconnect", [], onSuccess);
     }
 
+    // This function is needed to make a copy from content list got from python since it seems to vanish and cause null pointer accesses
     function _createContentDetailsList(content) {
         var list = []
         for (var i = 0; i < content.length; i++) {
@@ -110,26 +111,22 @@ Python {
         return list
     }
 
-    function _listContentCb(parentId, content) {
-        contentListed(parentId, _createContentDetailsList(content))
+    function listVaults(callback) {
+        return _call("listVaults", function(vaults) {
+                if (callback !== undefined)
+                    callback(_createContentDetailsList(vaults));
+            });
     }
 
-    function listVaults() {
-        py.call("elfCloudAdapter.listVaults", [],
-                function(vaults) { _listContentCb(null, vaults); });
-    }
-
-    function listContent(parentId) {
-        py.call("elfCloudAdapter.listContent", [parentId],
-                function(content) { _listContentCb(parentId, content); });
+    function listContent(parentId, callback) {
+        return _call("listContent", function(content) {
+                if (callback !== undefined)
+                    callback(_createContentDetailsList(content));
+            }, parentId);
     }
 
     function getDataItemInfo(parentId, name, callback) {
-        var cbObj = _createCbObj(callback);
-        if (py.call_sync("elfCloudAdapter.getDataItemInfo", [cbObj, parentId, name]))
-            return cbObj;
-        else
-            return undefined;
+        return _call("listContent", callback, parentId, name);
     }
 
 
@@ -207,46 +204,27 @@ Python {
    }
 
     function removeDataItem(parentId, name, callback) {
-        var cbObj = _createCbObj(function() { _callCbWithArgs(callback, arguments); contentChanged(parentId); });
-        if (py.call_sync("elfCloudAdapter.removeDataItem", [cbObj, parentId, name]))
-            return cbObj;
-        else
-            return undefined;
+        return _call("removeDataItem", function() { _callCbWithArgs(callback, arguments); contentChanged(parentId); },
+                     parentId, name)
     }
 
     function renameDataItem(parentId, oldName, newName, callback) {
-        var cbObj = _createCbObj(function() { _callCbWithArgs(callback, arguments); contentChanged(parentId); });
-        if (py.call_sync("elfCloudAdapter.renameDataItem", [cbObj, parentId, oldName, newName]))
-            return cbObj;
-        else
-            return undefined;
+        return _call("renameDataItem", function() { _callCbWithArgs(callback, arguments); contentChanged(parentId); },
+                     parentId, oldName, newName);
     }
 
-    function _addVaultCb(status, name) {
-        vaultAdded(name);
+    function addVault(name, callback) {
+        return _call("addVault", callback, name)
     }
 
-    function addVault(name) {
-        py.call("elfCloudAdapter.addVault", [name],
-                function(status) { _addVaultCb(status, name); });
+    function addCluster(parentId, name, callback) {
+        return _call("addCluster", function() { _callCbWithArgs(callback, arguments); contentChanged(parentId); },
+                     parentId, name)
     }
 
-    function _addClusterCb(status, parentId, name) {
-        clusterAdded(parentId, name);
-    }
-
-    function addCluster(parentId, name) {
-        py.call("elfCloudAdapter.addCluster", [parentId, name],
-                function(status) { _addClusterCb(status, parentId, name); });
-    }
-
-    function _removeClusterCb(status, id) {
-        clusterRemoved(id);
-    }
-
-    function removeCluster(id) {
-        py.call("elfCloudAdapter.removeCluster", [id],
-                function(status) { _removeClusterCb(status, id); });
+    function removeCluster(parentId, clusterId, callback) {
+        return _call("removeCluster", function() { _callCbWithArgs(callback, arguments); contentChanged(parentId); },
+                     clusterId)
     }
 
     Component.onCompleted: {
