@@ -6,10 +6,11 @@ import ".."
 Page {
     id: page
 
+    property int parentContainerId
     property int containerId
     property string containerName
     property string containerType: "top" // top, vault or cluster
-    property bool _ready: false
+    property var _asyncCallRef: undefined
 
     function _makeVisible() {
         busyIndication.running = false;
@@ -17,22 +18,20 @@ Page {
         noContentIndication.enabled = (contentListView.count === 0);
     }
 
-    function _updateContentListAndShowPage(parentId, contentList) {
-        if (parentId === containerId) {
-            listModel.clear();
-            for (var i = 0; i < contentList.length; i++) {
-                console.debug("Adding:", contentList[i]["name"], "id:", contentList[i]["id"]);
-                listModel.append({"item": contentList[i]});
-            }
-            _makeVisible();
+    function _updateContentListAndShowPage(contentList) {
+        listModel.clear();
+        for (var i = 0; i < contentList.length; i++) {
+            console.debug("Adding:", contentList[i]["name"], "id:", contentList[i]["id"]);
+            listModel.append({"item": contentList[i]});
         }
+        _makeVisible();
     }
 
     function _updateContent() {
         if (containerType === "top")
-            elfCloud.listVaults();
+            elfCloud.listVaults(_updateContentListAndShowPage);
         else
-            elfCloud.listContent(containerId);
+            elfCloud.listContent(containerId, _updateContentListAndShowPage);
     }
 
     function _actBusy() {
@@ -49,28 +48,17 @@ Page {
         var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/AddVaultDialog.qml"));
         dialog.onCreateVault.connect( function(name) {
             console.info("Creating vault", name);
-            elfCloud.addVault(name);
+            elfCloud.addVault(name, _refresh);
         });
-    }
-
-    function _refreshIfForUs(parentId) {
-        if (containerId === parentId) // if upload completed for our container
-            _refresh();
     }
 
     function _upload() {
         var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/FileChooserDialog.qml"))
         dialog.accepted.connect( function() {
             console.info("Uploading files: " + dialog.selectedPaths);
-            elfCloud.storeDataItems(containerId, dialog.selectedPaths);
+            _asyncCallRef = elfCloud.storeDataItems(containerId, dialog.selectedPaths, _refresh);
+            console.log("_asyncCallRef", _asyncCallRef)
             });
-    }
-
-    BusyIndicator {
-        id: busyIndication
-        size: BusyIndicatorSize.Large
-        anchors.centerIn: parent
-        running: true
     }
 
     function _createContentInfoString(modelItem) {
@@ -86,7 +74,8 @@ Page {
         if (modelItem["type"] === "cluster" ||
                 modelItem["type"] === "vault") {
             pageStack.push(Qt.resolvedUrl("ContainerPage.qml"),
-                           {"containerId":modelItem["id"],
+                           {"parentContainerId": containerId,
+                            "containerId":modelItem["id"],
                             "containerName":modelItem["name"],
                             "containerType":modelItem["type"]});
         } else if (modelItem["type"] === "dataitem") {
@@ -100,19 +89,13 @@ Page {
         pageStack.pop(null, PageStackAction.Animated);
     }
 
-    function _handleClusterRemoved(id) {
-        if (id === containerId)
-            _goBack();
-    }
-
-    function _handleDataItemRemoved(parentId) {
-        if (parentId === containerId)
-            _refresh();
+    function _handleClusterRemoved() {
+        _goBack();
     }
 
     function _requestRemoveContainer() {
         if (containerType === "cluster")
-            elfCloud.removeCluster(containerId);
+            elfCloud.removeCluster(parentContainerId, containerId, _handleClusterRemoved);
     }
 
     function _removeContainer() {
@@ -127,30 +110,37 @@ Page {
         var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/AddClusterDialog.qml"));
         dialog.onCreateCluster.connect( function(name) {
                 console.info("Creating cluster", name);
-                elfCloud.addCluster(containerId, name);
+                elfCloud.addCluster(containerId, name, _refresh);
             });
     }
 
+    function _handleContentChanged(_containerId) {
+        if (_containerId === containerId)
+            _refresh();
+    }
+
+    onStatusChanged: {
+        if (status == PageStatus.Activating)
+            setItemNameToCover(containerType == "top" ? qsTr("Vaults") : containerName)
+    }
+
     Component.onCompleted: {
-        coverText = containerType !== "top" ? containerName : qsTr("Vaults");
-        elfCloud.contentListed.connect(_updateContentListAndShowPage);
-        elfCloud.storeDataItemsCompleted.connect(_refreshIfForUs);
-        elfCloud.vaultAdded.connect(_refresh);
-        elfCloud.clusterAdded.connect(_refreshIfForUs);
-        elfCloud.dataItemRenamed.connect(_refreshIfForUs);
-        elfCloud.clusterRemoved.connect(_handleClusterRemoved);
-        elfCloud.dataItemRemoved.connect(_handleDataItemRemoved);
+        elfCloud.contentChanged.connect(_handleContentChanged);
         _refresh();
     }
 
     Component.onDestruction: {        
-        elfCloud.contentListed.disconnect(_updateContentListAndShowPage);
-        elfCloud.storeDataItemsCompleted.disconnect(_refreshIfForUs);
-        elfCloud.vaultAdded.disconnect(_refresh);
-        elfCloud.clusterAdded.disconnect(_refreshIfForUs);
-        elfCloud.dataItemRenamed.disconnect(_refreshIfForUs);
-        elfCloud.clusterRemoved.disconnect(_handleClusterRemoved);
-        elfCloud.dataItemRemoved.disconnect(_handleDataItemRemoved);
+        elfCloud.contentChanged.disconnect(_handleContentChanged);
+
+        if (_asyncCallRef !== undefined)
+            _asyncCallRef.invalidate();
+    }
+
+    BusyIndicator {
+        id: busyIndication
+        size: BusyIndicatorSize.Large
+        anchors.centerIn: parent
+        running: true
     }
 
     SilicaListView {

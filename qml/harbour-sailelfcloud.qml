@@ -1,13 +1,17 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import org.nemomobile.notifications 1.0
+import "cover"
 
 ApplicationWindow
 {
     id: application
 
-    property string coverText: qsTr("elfCloud")
     property var elfCloud: ElfCloudAdapter { }
+
+    function setItemNameToCover(name) {
+        coverPage.location = name
+    }
 
     Notification {
         id: uploadStartedNotif
@@ -56,19 +60,19 @@ ApplicationWindow
         previewBody: body
     }
 
-    function _uploadStarted(parentId, remoteLocalNames) {
+    function _uploadStarted() {
         uploadStartedNotif.publish();
     }
 
-    function _uploadCompleted(parentId, remoteLocalNames) {
+    function _uploadCompleted() {
         uploadCompletedNotif.publish();
         uploadFileCompletedNotif.close();
     }
 
     function _uploadFileCompleted(parentId, remoteName, localName, dataItemsLeft) {
         console.debug("Uploaded", localName, "to", parentId, ":", remoteName, " items left to upload ", dataItemsLeft);
-        uploadFileCompletedNotif.body = localName + qsTr(" uploaded, items left ") + dataItemsLeft;
-        uploadFileCompletedNotif.previewBody  = localName;
+        uploadFileCompletedNotif.body = helpers.getFilenameFromPath(localName) + qsTr(" uploaded, items left ") + dataItemsLeft;
+        uploadFileCompletedNotif.previewBody  = helpers.getFilenameFromPath(localName);
         uploadFileCompletedNotif.publish();
     }
 
@@ -105,7 +109,9 @@ ApplicationWindow
     }
 
     initialPage: Qt.resolvedUrl("pages/MainPage.qml")
-    cover: Qt.resolvedUrl("cover/CoverPage.qml")
+    cover: CoverPage {
+        id: coverPage
+    }
 
     allowedOrientations: Orientation.All
     _defaultPageOrientations: Orientation.All

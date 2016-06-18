@@ -6,6 +6,7 @@ Created on Apr 27, 2016
 
 import elfcloud
 import worker
+import time
 
 try:
     import pyotherside
@@ -23,9 +24,7 @@ except ImportError:
 APIKEY = 'swrqwb95d98ou8d'
 VALULT_TYPES = [elfcloud.utils.VAULT_TYPE_DEFAULT, 'com.ahola.sailelfcloud']
 DEFAULT_REQUEST_SIZE_BYTES =  256 * 1024 # Size of one request when sending or fetching
-MAX_WORKERS = 5
 client = None
-threadPool = worker.ThreadPool(MAX_WORKERS)
 
 def _debug(*text):
     pyotherside.send('log-d', ' '.join(text))
@@ -35,6 +34,9 @@ def _info(*text):
 
 def _error(*text):
     pyotherside.send('log-e', ' '.join(text))
+
+def _sendCompletedSignal(cbObj, *args):
+    pyotherside.send('completed', cbObj, *args)
 
 def _sendExceptionSignal(exception):
     pyotherside.send('exception', exception.id, exception.message)
@@ -68,10 +70,26 @@ def disconnect():
     _info("elfCloud client disconnected")    
     return True
 
+SUBSCRIPTION_FIELD_MAP = {'id':'Id', 'status':'Status', 'start_date':'Start date',
+                          'end_date':'End date', 'storage_quota': 'Quota',
+                          'subscription_type':'Subscription type'}
+
+@worker.run_async
+def getSubscriptionInfo(cbObj):
+    try:
+        info = client.get_subscription_info()
+        subscr = info['current_subscription']
+        # Create list of dict for easier handling in QML
+        info = [{'fieldName':toName, 'fieldValue':str(subscr[fromName])} for fromName,toName in SUBSCRIPTION_FIELD_MAP.items()]
+        _sendCompletedSignal(cbObj, info)
+    except elfcloud.exceptions.ECAuthException as e:
+        _sendExceptionSignal(e)
+
 def setRequestSize(sizeInBytes):
     client.set_request_size(sizeInBytes)
 
-def listVaults():
+@worker.run_async
+def listVaults(cbObj):
     vaultList = []
     try:
         vaults = client.list_vaults()   
@@ -89,9 +107,11 @@ def listVaults():
                               'ownerLastName': vault.owner['lastname']})
     except elfcloud.exceptions.ECAuthException as e:
         _sendExceptionSignal(e)
-    return vaultList
 
-def listContent(parentId):
+    _sendCompletedSignal(cbObj, vaultList)
+
+@worker.run_async
+def listContent(cbObj, parentId):
     contentList = []
     _info("Getting content of %s" % parentId)
     
@@ -118,17 +138,18 @@ def listContent(parentId):
                                 'metadata': dataitem.meta})
     except elfcloud.exceptions.ECAuthException as e:
         _sendExceptionSignal(e)
-    return contentList
-
+        
+    _sendCompletedSignal(cbObj, contentList)
 
 def _configEncryption():
     client.set_encryption_key(None)
     client.set_iv(elfcloud.utils.IV_DEFAULT)
     client.encryption_mode = elfcloud.utils.ENC_NONE
 
-def getDataItemInfo(parentId, name):
+@worker.run_async
+def getDataItemInfo(cbObj, parentId, name):
     dataitem = client.get_dataitem(parentId, name)
-    return {'id': dataitem.dataitem_id,
+    info = {'id': dataitem.dataitem_id,
             'name': dataitem.name,
             'size': dataitem.size,
             'description': (dataitem.description if dataitem.description else ''),
@@ -136,6 +157,7 @@ def getDataItemInfo(parentId, name):
             'accessed': (dataitem.last_accessed_date if dataitem.last_accessed_date else ''),
             'contentHash': (dataitem.content_hash if dataitem.content_hash else ''),
             'keyHash': (dataitem.key_hash if dataitem.key_hash else '')}
+    _sendCompletedSignal(cbObj, info)
 
 def updateDataItem(parentId, name, description=None, tags=None):
     client.update_dataitem(parentId, name, description, tags)
@@ -143,10 +165,8 @@ def updateDataItem(parentId, name, description=None, tags=None):
 def _sendDataItemChunkFetchedSignal(parentId, name, totalSize, sizeFetched):
     pyotherside.send('fetch-dataitem-chunk', parentId, name, totalSize, sizeFetched)
     
-def _sendDataItemFetchedSignal(status, parentId, name, outputPath):
-    pyotherside.send('fetch-dataitem-completed', status, parentId, name, outputPath)
-
-def _fetchDataItemCb(parentId, name, outputPath, key=None):
+@worker.run_async
+def fetchDataItem(cbObj, parentId, name, outputPath, key=None):
     _configEncryption()
     data = client.fetch_data(int(parentId), name)['data'] 
     dataLength = data.fileobj.getheader('Content-Length') # Nasty way to get total size since what if Content-Length does not exist.
@@ -158,88 +178,59 @@ def _fetchDataItemCb(parentId, name, outputPath, key=None):
             dataFetched += len(chunk)
             _sendDataItemChunkFetchedSignal(parentId, name, dataLength, dataFetched)
 
-    _sendDataItemFetchedSignal(True, parentId, name, outputPath)
+    _sendCompletedSignal(cbObj, True, parentId, name, outputPath)
 
-def fetchDataItem(parentId, name, outputPath, key=None):
-    threadPool.executeTask(_fetchDataItemCb, parentId, name, outputPath, key=None)
-
-
-
-SUBSCRIPTION_FIELD_MAP = {'id':'Id', 'status':'Status', 'start_date':'Start date',
-                          'end_date':'End date', 'storage_quota': 'Quota',
-                          'subscription_type':'Subscription type'}
-
-def _getSubscriptionInfoCb(workData):
-    try:
-        info = client.get_subscription_info()
-        currentSubscription = info['current_subscription']
-        # Create list of dict for easier handling in QML
-        workData.setData([{'fieldName':toName, 'fieldValue':str(currentSubscription[fromName])} for fromName,
-                          toName in SUBSCRIPTION_FIELD_MAP.items()])
-    except elfcloud.exceptions.ECAuthException as e:
-        _sendExceptionSignal(e)
-        workData.setData([])
-
-def getSubscriptionInfo():
-    response = worker.WorkData()
-    threadPool.executeTask(_getSubscriptionInfoCb, response)
-    return response.waitForData()
-
-def storeDataItem(parentId, remotename, filename):
+@worker.run_async
+def storeDataItem(cbObj, parentId, remotename, filename):
     _info("Storing: " + filename + " as " + remotename)
-    fileobj = open(filename, "rb")
     _configEncryption()
+    with open(filename, "rb") as fileobj:        
+        client.store_data(int(parentId), remotename, fileobj)
+    time.sleep(2)
+    _sendCompletedSignal(cbObj, parentId, remotename, filename)
 
-    result = client.store_data(int(parentId),
-                               remotename,
-                               fileobj)
-    return result
+@worker.run_async
+def removeDataItem(cbObj, parentId, name):
+    _info("Removing " + name) 
+    client.remove_dataitem(parentId, name)
+    _sendCompletedSignal(cbObj, parentId, name)
 
-def _sendDataItemStoredSignal(status, parentId, remoteName, localName, dataItemsLeft):
-    pyotherside.send('store-dataitem-completed', status, parentId, remoteName, localName, dataItemsLeft)
-
-def _sendDataItemsStoredSignal(status, parentId, remoteLocalNames):
-    pyotherside.send('store-dataitems-completed', status, parentId, remoteLocalNames)
-
-def _storeDataItemsCb(parentId, remoteLocalNames):
-    dataItemsLeft = len(remoteLocalNames)
-    
-    for remote,local in remoteLocalNames:
-        dataItemsLeft -= 1
-        storeDataItem(parentId, remote, local)
-        _sendDataItemStoredSignal(True, parentId, remote, local, dataItemsLeft)
-        
-    _sendDataItemsStoredSignal(True, parentId, remoteLocalNames)
-
-def storeDataItems(parentId, remoteLocalNames):
-    threadPool.executeTask(_storeDataItemsCb, parentId, remoteLocalNames)
-      
-def removeDataItem(parentId, name):
-    _info("Removing " + name)
-    return client.remove_dataitem(int(parentId), name)
-
-def renameDataItem(parentId, oldName, newName):
+@worker.run_async
+def renameDataItem(cbObj, parentId, oldName, newName):
     _info("Renaming ", oldName, "to", newName)
-    return client.rename_dataitem(int(parentId), oldName, newName)
-     
-def addVault(name):
+    client.rename_dataitem(int(parentId), oldName, newName)
+    _sendCompletedSignal(cbObj, parentId, oldName, newName)
+
+@worker.run_async
+def addVault(cbObj, name):
     try:
-        return client.add_vault(name, VALULT_TYPES[0])
+        vaultId = client.add_vault(name, VALULT_TYPES[0])
+        _sendCompletedSignal(cbObj, vaultId, name)
+        return vaultId
     except elfcloud.exceptions.ECAuthException as e:
         _sendExceptionSignal(e)
         return None
 
-def removeVault(vaultId):
-    return client.remove_vault(int(vaultId))
+def _addVault(name):
+    return client.add_vault(name, VALULT_TYPES[0])
 
-def addCluster(parentId, name):
+@worker.run_async
+def removeVault(cbObj, vaultId):
+    client.remove_vault(int(vaultId))
+    _sendCompletedSignal(cbObj, vaultId)
+
+@worker.run_async
+def addCluster(cbObj, parentId, name):
+    client.add_cluster(name, int(parentId))
+    _sendCompletedSignal(cbObj, parentId, name)
+    
+def _addCluster(parentId, name):
     return client.add_cluster(name, int(parentId))
 
-def removeCluster(id):
-    client.remove_cluster(int(id))
-
-def waitForRunningTasksCompleted():
-    threadPool.waitTasksCompletion()
+@worker.run_async
+def removeCluster(cbObj, clusterId):
+    client.remove_cluster(int(clusterId))
+    _sendCompletedSignal(cbObj, clusterId)
 
 if __name__ == '__main__':
     pass

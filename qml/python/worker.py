@@ -7,7 +7,6 @@ Created on Jun 12, 2016
 import threading
 import queue
 
-
 class WorkerThread(threading.Thread):
 
     def __init__(self, tasks):
@@ -34,6 +33,7 @@ class ThreadPool:
 
     def executeTask(self, func, *args, **kargs):
         self.tasks.put((func, args, kargs))
+        return True
 
     def waitTasksCompletion(self):
         self.tasks.join()
@@ -56,4 +56,17 @@ class WorkData():
         self._event.wait()
         return self.getData()
 
-    
+MAX_WORKERS = 5
+threadPool = ThreadPool(MAX_WORKERS)
+
+from functools import wraps
+
+def run_async(func):
+    @wraps(func)
+    def async_func(*args, **kwargs):
+        return threadPool.executeTask(func, *args, **kwargs)
+
+    return async_func
+
+def waitForRunningTasksCompleted():
+    threadPool.waitTasksCompletion()

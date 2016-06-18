@@ -63,7 +63,8 @@ DISTFILES += \
     qml/pages/AboutPage.qml \
     qml/dialogs/RemoveContainerDialog.qml \
     qml/pages/ProblemPage.qml \
-    qml/harbour-sailelfcloud.qml
+    qml/harbour-sailelfcloud.qml \
+    qml/items/ElfCloudAdapterCb.qml
 
 unix: PKGCONFIG +=
 
