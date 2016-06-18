@@ -5,7 +5,9 @@ import ".."
 
 Page {
     id: page
-    property string p: "testki"
+    property var _asycCallRef: undefined // Reference to async call so that we can clean it
+                                         // when closing the page and call is still in progress.
+                                         // This prevent accessing undefined variables.
 
     signal populate(var infoItems)
 
@@ -15,16 +17,19 @@ Page {
         }
     }
 
-    function subscription(info) {
-        console.log(p)
+    function _subscriptionCb(info) {
         page.populate(info)
     }
 
     Component.onCompleted: {
-        //var c = Qt.createComponent("../items/ElfCloudAdapterCb.qml");
-        //var cbObj = c.createObject(elfCloud);
-        //cbObj.subscriptionCb = subscription;
-        elfCloud.getSubscriptionInfo(subscription);
+        // Note that we store async call reference so that we can invalidate it
+        // if the elcCloud call is still in progress but this page is being closed.
+        _asycCallRef = elfCloud.getSubscriptionInfo(_subscriptionCb);
+    }
+
+    Component.onDestruction: {
+        if (_asycCallRef !== undefined)
+            _asycCallRef.invalidate();
     }
 
     SilicaListView {

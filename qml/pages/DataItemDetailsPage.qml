@@ -7,6 +7,7 @@ Page {
 
     property int parentContainerId
     property string dataItemName
+    property var _asycCallRef: undefined
 
     function _downloadDataItem() {
         var outputPath = helpers.generateLocalPathForRemoteDataItem(parentContainerId, dataItemName);
@@ -26,28 +27,12 @@ Page {
     }
 
     function _requestRemoveDataItem() {
-        elfCloud.removeDataItem(parentContainerId, dataItemName);
+        _asycCallRef = elfCloud.removeDataItem(parentContainerId, dataItemName,
+                                               _goBackIfThisDataItemRemoved);
     }
 
     function _removeDataItem() {
         remorse.execute(qsTr("Deleting"), _requestRemoveDataItem);
-    }
-
-    function _refresh() {
-        _makeBusy();
-        elfCloud.getDataItemInfo(parentContainerId, dataItemName);
-    }
-
-    function _refreshAfterRename(_parentId, _oldName, newName) {
-        dataItemName = newName;
-        _refresh();
-    }
-
-    function _renameDataItem() {
-        var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/RenameDialog.qml"), {"oldName":dataItemName});
-        dialog.onRename.connect( function(newName) {
-            elfCloud.renameDataItem(parentContainerId, dataItemName, newName);
-        });
     }
 
     function _makeVisible() {
@@ -64,7 +49,7 @@ Page {
         flickable.visible = false;
     }
 
-    function _updatePageContentWithItemInfo(_parentId, _name, itemInfo) {
+    function _updatePageContentWithItemInfo(itemInfo) {
         descriptionField.value = itemInfo["description"];
         tagsField.value = _tagListToString(itemInfo["tags"]);
         itemIdField.value = itemInfo["id"];
@@ -75,17 +60,32 @@ Page {
         _makeVisible();
     }
 
+    function _refresh() {
+        _makeBusy();
+        _asycCallRef = elfCloud.getDataItemInfo(parentContainerId, dataItemName,
+                                                _updatePageContentWithItemInfo);
+    }
+
+    function _refreshAfterRename(_parentId, _oldName, newName) {
+        dataItemName = newName;
+        _refresh();
+    }
+
+    function _renameDataItem() {
+        var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/RenameDialog.qml"), {"oldName":dataItemName});
+        dialog.onRename.connect( function(newName) {
+            _asycCallRef = elfCloud.renameDataItem(parentContainerId, dataItemName,
+                                                   newName, _refreshAfterRename);
+        });
+    }
+
     Component.onCompleted: {
-        elfCloud.dataItemInfoGot.connect(_updatePageContentWithItemInfo)
-        elfCloud.dataItemRenamed.connect(_refreshAfterRename);
-        elfCloud.dataItemRemoved.connect(_goBackIfThisDataItemRemoved);
         _refresh();
     }
 
     Component.onDestruction: {
-        elfCloud.dataItemInfoGot.disconnect(_updatePageContentWithItemInfo)
-        elfCloud.dataItemRenamed.disconnect(_refreshAfterRename);
-        elfCloud.dataItemRemoved.disconnect(_goBackIfThisDataItemRemoved);
+        if (_asycCallRef !== undefined)
+            _asycCallRef.invalidate();
     }
 
     onStatusChanged: {

@@ -71,6 +71,23 @@ def disconnect():
     _info("elfCloud client disconnected")    
     return True
 
+SUBSCRIPTION_FIELD_MAP = {'id':'Id', 'status':'Status', 'start_date':'Start date',
+                          'end_date':'End date', 'storage_quota': 'Quota',
+                          'subscription_type':'Subscription type'}
+
+def _getSubscriptionInfoCb(cbObj):
+    try:
+        info = client.get_subscription_info()
+        subscr = info['current_subscription']
+        # Create list of dict for easier handling in QML
+        info = [{'fieldName':toName, 'fieldValue':str(subscr[fromName])} for fromName,toName in SUBSCRIPTION_FIELD_MAP.items()]
+        _sendCompletedSignal(cbObj, info)
+    except elfcloud.exceptions.ECAuthException as e:
+        _sendExceptionSignal(e)
+
+def getSubscriptionInfo(cbObj):
+    return threadPool.executeTask(_getSubscriptionInfoCb, cbObj)
+
 def setRequestSize(sizeInBytes):
     client.set_request_size(sizeInBytes)
 
@@ -129,9 +146,9 @@ def _configEncryption():
     client.set_iv(elfcloud.utils.IV_DEFAULT)
     client.encryption_mode = elfcloud.utils.ENC_NONE
 
-def getDataItemInfo(parentId, name):
+def _getDataItemInfo(cbObj, parentId, name):
     dataitem = client.get_dataitem(parentId, name)
-    return {'id': dataitem.dataitem_id,
+    info = {'id': dataitem.dataitem_id,
             'name': dataitem.name,
             'size': dataitem.size,
             'description': (dataitem.description if dataitem.description else ''),
@@ -139,6 +156,10 @@ def getDataItemInfo(parentId, name):
             'accessed': (dataitem.last_accessed_date if dataitem.last_accessed_date else ''),
             'contentHash': (dataitem.content_hash if dataitem.content_hash else ''),
             'keyHash': (dataitem.key_hash if dataitem.key_hash else '')}
+    _sendCompletedSignal(cbObj, info)
+
+def getDataItemInfo(cbObj, parentId, name):
+    return threadPool.executeTask(_getDataItemInfo, cbObj, parentId, name)
 
 def updateDataItem(parentId, name, description=None, tags=None):
     client.update_dataitem(parentId, name, description, tags)
@@ -149,45 +170,22 @@ def _sendDataItemChunkFetchedSignal(parentId, name, totalSize, sizeFetched):
 def _sendDataItemFetchedSignal(status, parentId, name, outputPath):
     pyotherside.send('fetch-dataitem-completed', status, parentId, name, outputPath)
 
-def _fetchDataItemCb(parentId, name, outputPath, key=None):
+def _fetchDataItemCb(cbObj, parentId, name, outputPath, key=None):
     _configEncryption()
     data = client.fetch_data(int(parentId), name)['data'] 
     dataLength = data.fileobj.getheader('Content-Length') # Nasty way to get total size since what if Content-Length does not exist.
                                                           # I haven't found good way to provide this information in upper level sw.
     dataFetched = 0
-    time.sleep(6)
     with open(outputPath, mode='wb') as outputFile:
         for chunk in data:
             outputFile.write(chunk)
             dataFetched += len(chunk)
             _sendDataItemChunkFetchedSignal(parentId, name, dataLength, dataFetched)
 
-    _sendDataItemFetchedSignal(True, parentId, name, outputPath)
+    _sendCompletedSignal(cbObj, True, parentId, name, outputPath)
 
-def fetchDataItem(parentId, name, outputPath, key=None):
-    threadPool.executeTask(_fetchDataItemCb, parentId, name, outputPath, key=None)
-
-
-
-SUBSCRIPTION_FIELD_MAP = {'id':'Id', 'status':'Status', 'start_date':'Start date',
-                          'end_date':'End date', 'storage_quota': 'Quota',
-                          'subscription_type':'Subscription type'}
-
-def _getSubscriptionInfoCb(cbObj):
-    try:
-        info = client.get_subscription_info()
-        subscr = info['current_subscription']
-        # Create list of dict for easier handling in QML
-        #cbObj.subscription([{'fieldName':toName, 'fieldValue':str(subscr[fromName])} for fromName,toName in SUBSCRIPTION_FIELD_MAP.items()])
-        i = [{'fieldName':toName, 'fieldValue':str(subscr[fromName])} for fromName,toName in SUBSCRIPTION_FIELD_MAP.items()]
-        #lambda a, b: bound_method(a, b) 
-        _sendCompletedSignal(cbObj, i, "asas", 322323)
-    except elfcloud.exceptions.ECAuthException as e:
-        _sendExceptionSignal(e)
-
-def getSubscriptionInfo(cbObj):
-    threadPool.executeTask(_getSubscriptionInfoCb, cbObj)
-    return True
+def fetchDataItem(cbObj, parentId, name, outputPath, key=None):
+    return threadPool.executeTask(_fetchDataItemCb, cbObj, parentId, name, outputPath, key=None)
 
 def storeDataItem(parentId, remotename, filename):
     _info("Storing: " + filename + " as " + remotename)
@@ -216,15 +214,23 @@ def _storeDataItemsCb(parentId, remoteLocalNames):
     _sendDataItemsStoredSignal(True, parentId, remoteLocalNames)
 
 def storeDataItems(parentId, remoteLocalNames):
-    threadPool.executeTask(_storeDataItemsCb, parentId, remoteLocalNames)
+    return threadPool.executeTask(_storeDataItemsCb, parentId, remoteLocalNames)
 
-def removeDataItem(parentId, name):
-    _info("Removing " + name)
-    return client.remove_dataitem(int(parentId), name)
+def _removeDataItemCb(cbObj, parentId, name):
+    _info("Removing " + name) 
+    client.remove_dataitem(parentId, name)
+    _sendCompletedSignal(cbObj, parentId, name)
 
-def renameDataItem(parentId, oldName, newName):
+def removeDataItem(cbObj, parentId, name):
+    return threadPool.executeTask(_removeDataItemCb, cbObj, int(parentId), name)
+
+def _renameDataItemCb(cbObj, parentId, oldName, newName):
     _info("Renaming ", oldName, "to", newName)
-    return client.rename_dataitem(int(parentId), oldName, newName)
+    client.rename_dataitem(int(parentId), oldName, newName)
+    _sendCompletedSignal(cbObj, parentId, oldName, newName)
+    
+def renameDataItem(cbObj, parentId, oldName, newName):
+    return threadPool.executeTask(_renameDataItemCb, cbObj, int(parentId), oldName, newName)
      
 def addVault(name):
     try:

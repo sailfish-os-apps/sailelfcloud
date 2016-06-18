@@ -122,8 +122,8 @@
 <context>
     <name>ContainerPage</name>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="157"/>
-        <location filename="../qml/pages/ContainerPage.qml" line="167"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="155"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="165"/>
         <source>Vaults</source>
         <translation type="unfinished"></translation>
     </message>
@@ -143,27 +143,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="174"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="172"/>
         <source>Add vault</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="180"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="178"/>
         <source>Remove cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="186"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="184"/>
         <source>Add cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="192"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="190"/>
         <source>Upload file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="198"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="196"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
@@ -197,7 +197,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="33"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="35"/>
         <source>Deleting</source>
         <translation type="unfinished"></translation>
     </message>
@@ -260,7 +260,7 @@
 <context>
     <name>ElfCloudAdapter</name>
     <message>
-        <location filename="../qml/ElfCloudAdapter.qml" line="149"/>
+        <location filename="../qml/ElfCloudAdapter.qml" line="157"/>
         <source>Destination file exists</source>
         <translation type="unfinished"></translation>
     </message>
@@ -423,7 +423,7 @@
 <context>
     <name>SubscriptionInfoPage</name>
     <message>
-        <location filename="../qml/pages/SubscriptionInfoPage.qml" line="34"/>
+        <location filename="../qml/pages/SubscriptionInfoPage.qml" line="39"/>
         <source>Subscription Info</source>
         <translation type="unfinished"></translation>
     </message>

@@ -26,12 +26,9 @@ Python {
     signal clusterAdded(int parentId, string name)
     signal clusterRemoved(int id)
 
-    signal dataItemRemoved(int parentId, string name)
-    signal dataItemRenamed(int parentId, string oldName, string newName)
-    signal dataItemInfoGot(int parentId, string name, var info)
-
     signal contentListed(int parentId, var content)
 
+    signal contentChanged(int containerId)
     signal exceptionOccurred(int id, string message)
 
     property bool _ready: false // True if init done succesfully
@@ -60,26 +57,38 @@ Python {
         setHandler('completed', _handleCompleted);
     }
 
-    function getVarArgs(func, args) {
+    function _callCbWithArgs(cb, args) {
+        var argArray = Array.prototype.slice.call(args);
+        return cb.apply(null, argArray);
+    }
+
+    function _getVarArgs(func, args) {
         return Array.prototype.slice.call(args, func.length);
     }
 
     function _handleCompleted(cbObj) {
-        var varArgs = getVarArgs(_handleCompleted, arguments);
+        var varArgs = _getVarArgs(_handleCompleted, arguments);
         console.log("afsdfsfsfdsf", cbObj, varArgs)
-        cbObj.completedCb.apply(null, varArgs);
+        if (cbObj.completedCb !== undefined)
+            cbObj.completedCb.apply(null, varArgs);
     }
 
     function _createCbObj(callback) {
         var c = Qt.createComponent("items/ElfCloudAdapterCb.qml");
         var cbObj = c.createObject(elfCloud);
-        cbObj.completedCb = callback;
+
+        if (callback !== undefined)
+            cbObj.completedCb = callback;
+
         return cbObj;
     }
 
     function getSubscriptionInfo(callback) {
-        var cbObj = _createCbObj(callback)
-        py.call("elfCloudAdapter.getSubscriptionInfo", [cbObj]);
+        var cbObj = _createCbObj(callback);
+        if (py.call_sync("elfCloudAdapter.getSubscriptionInfo", [cbObj]))
+            return cbObj;
+        else
+            return undefined;
     }
 
 
@@ -115,14 +124,14 @@ Python {
                 function(content) { _listContentCb(parentId, content); });
     }
 
-    function _getDataItemInfoCb(info, parentId, name) {
-        dataItemInfoGot(parentId, name, info)
+    function getDataItemInfo(parentId, name, callback) {
+        var cbObj = _createCbObj(callback);
+        if (py.call_sync("elfCloudAdapter.getDataItemInfo", [cbObj, parentId, name]))
+            return cbObj;
+        else
+            return undefined;
     }
 
-    function getDataItemInfo(parentId, name) {
-        py.call("elfCloudAdapter.getDataItemInfo", [parentId, name],
-                function(info) { _getDataItemInfoCb(info, parentId, name); });
-    }
 
     function _fetchDataItemChunkCb(parentId, name, totalSize, sizeFetched) {
         fetchDataItemChunkCompleted(parentId, name, totalSize, sizeFetched)
@@ -197,22 +206,20 @@ Python {
         py.call("elfCloudAdapter.storeDataItems", [parentId, remoteLocalNames]);
    }
 
-    function _removeDataItemCb(status, parentId, name) {
-        dataItemRemoved(parentId, name);
+    function removeDataItem(parentId, name, callback) {
+        var cbObj = _createCbObj(function() { _callCbWithArgs(callback, arguments); contentChanged(parentId); });
+        if (py.call_sync("elfCloudAdapter.removeDataItem", [cbObj, parentId, name]))
+            return cbObj;
+        else
+            return undefined;
     }
 
-    function removeDataItem(parentId, name) {
-        py.call("elfCloudAdapter.removeDataItem", [parentId, name],
-                function(status) { _removeDataItemCb(status, parentId, name); });
-    }
-
-    function _renameDataItemCb(status, parentId, oldName, newName) {
-        dataItemRenamed(parentId, oldName, newName);
-    }
-
-    function renameDataItem(parentId, oldName, newName) {
-        py.call("elfCloudAdapter.renameDataItem", [parentId, oldName, newName],
-                function(status) { _renameDataItemCb(status, parentId, oldName, newName); });
+    function renameDataItem(parentId, oldName, newName, callback) {
+        var cbObj = _createCbObj(function() { _callCbWithArgs(callback, arguments); contentChanged(parentId); });
+        if (py.call_sync("elfCloudAdapter.renameDataItem", [cbObj, parentId, oldName, newName]))
+            return cbObj;
+        else
+            return undefined;
     }
 
     function _addVaultCb(status, name) {

@@ -105,8 +105,8 @@ Page {
             _goBack();
     }
 
-    function _handleDataItemRemoved(parentId) {
-        if (parentId === containerId)
+    function _handleContentChanged(_containerId) {
+        if (_containerId === containerId)
             _refresh();
     }
 
@@ -136,9 +136,8 @@ Page {
         elfCloud.storeDataItemsCompleted.connect(_refreshIfForUs);
         elfCloud.vaultAdded.connect(_refresh);
         elfCloud.clusterAdded.connect(_refreshIfForUs);
-        elfCloud.dataItemRenamed.connect(_refreshIfForUs);
         elfCloud.clusterRemoved.connect(_handleClusterRemoved);
-        elfCloud.dataItemRemoved.connect(_handleDataItemRemoved);
+        elfCloud.contentChanged.connect(_handleContentChanged);
         _refresh();
     }
 
@@ -147,9 +146,8 @@ Page {
         elfCloud.storeDataItemsCompleted.disconnect(_refreshIfForUs);
         elfCloud.vaultAdded.disconnect(_refresh);
         elfCloud.clusterAdded.disconnect(_refreshIfForUs);
-        elfCloud.dataItemRenamed.disconnect(_refreshIfForUs);
         elfCloud.clusterRemoved.disconnect(_handleClusterRemoved);
-        elfCloud.dataItemRemoved.disconnect(_handleDataItemRemoved);
+        elfCloud.contentChanged.disconnect(_handleContentChanged);
     }
 
     onStatusChanged: {

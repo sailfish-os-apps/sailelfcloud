@@ -10,13 +10,18 @@ QtObject {
     property var fetchDataItemCompletedCb: function() {}
     function fetchDataItemCompleted(parentId, name) { fetchDataItemCompletedCb(parentId, name); }
 
-    property var completedCb: function(_data) {}
-    function callCompleted(data) {
-        completedCb(data);
+    function _noop(data) {
+        console.debug("Noop called", Array.prototype.slice.call(data, _noop.length))
     }
 
+    property var completedCb: _noop
+
+    function invalidate() {
+        completedCb = _noop;
+    }
 
     Component.onDestruction: {
+        invalidate();
         elfCloud.fetchDataItemCompleted.disconnect(obj.fetchDataItemCompleted);
     }
 }

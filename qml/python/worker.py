@@ -34,6 +34,7 @@ class ThreadPool:
 
     def executeTask(self, func, *args, **kargs):
         self.tasks.put((func, args, kargs))
+        return True
 
     def waitTasksCompletion(self):
         self.tasks.join()
