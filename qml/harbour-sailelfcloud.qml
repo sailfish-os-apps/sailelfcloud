@@ -60,19 +60,19 @@ ApplicationWindow
         previewBody: body
     }
 
-    function _uploadStarted(parentId, remoteLocalNames) {
+    function _uploadStarted() {
         uploadStartedNotif.publish();
     }
 
-    function _uploadCompleted(parentId, remoteLocalNames) {
+    function _uploadCompleted() {
         uploadCompletedNotif.publish();
         uploadFileCompletedNotif.close();
     }
 
     function _uploadFileCompleted(parentId, remoteName, localName, dataItemsLeft) {
         console.debug("Uploaded", localName, "to", parentId, ":", remoteName, " items left to upload ", dataItemsLeft);
-        uploadFileCompletedNotif.body = localName + qsTr(" uploaded, items left ") + dataItemsLeft;
-        uploadFileCompletedNotif.previewBody  = localName;
+        uploadFileCompletedNotif.body = helpers.getFilenameFromPath(localName) + qsTr(" uploaded, items left ") + dataItemsLeft;
+        uploadFileCompletedNotif.previewBody  = helpers.getFilenameFromPath(localName);
         uploadFileCompletedNotif.publish();
     }
 

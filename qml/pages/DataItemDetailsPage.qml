@@ -12,7 +12,7 @@ Page {
     function _downloadDataItem() {
         var outputPath = helpers.generateLocalPathForRemoteDataItem(parentContainerId, dataItemName);
         console.debug("Downloading", dataItemName, "from", parentContainerId, "to", outputPath);
-        elfCloud.fetchAndMoveDataItem(parentContainerId, dataItemName, outputPath, false);
+        _asycCallRef = elfCloud.fetchAndMoveDataItem(parentContainerId, dataItemName, outputPath, false);
     }
 
     function _viewDataItemContent() {

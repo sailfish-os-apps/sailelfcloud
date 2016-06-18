@@ -24,9 +24,7 @@ except ImportError:
 APIKEY = 'swrqwb95d98ou8d'
 VALULT_TYPES = [elfcloud.utils.VAULT_TYPE_DEFAULT, 'com.ahola.sailelfcloud']
 DEFAULT_REQUEST_SIZE_BYTES =  256 * 1024 # Size of one request when sending or fetching
-MAX_WORKERS = 5
 client = None
-threadPool = worker.ThreadPool(MAX_WORKERS)
 
 def _debug(*text):
     pyotherside.send('log-d', ' '.join(text))
@@ -167,10 +165,8 @@ def updateDataItem(parentId, name, description=None, tags=None):
 def _sendDataItemChunkFetchedSignal(parentId, name, totalSize, sizeFetched):
     pyotherside.send('fetch-dataitem-chunk', parentId, name, totalSize, sizeFetched)
     
-def _sendDataItemFetchedSignal(status, parentId, name, outputPath):
-    pyotherside.send('fetch-dataitem-completed', status, parentId, name, outputPath)
-
-def _fetchDataItemCb(cbObj, parentId, name, outputPath, key=None):
+@worker.run_async
+def fetchDataItem(cbObj, parentId, name, outputPath, key=None):
     _configEncryption()
     data = client.fetch_data(int(parentId), name)['data'] 
     dataLength = data.fileobj.getheader('Content-Length') # Nasty way to get total size since what if Content-Length does not exist.
@@ -184,37 +180,14 @@ def _fetchDataItemCb(cbObj, parentId, name, outputPath, key=None):
 
     _sendCompletedSignal(cbObj, True, parentId, name, outputPath)
 
-def fetchDataItem(cbObj, parentId, name, outputPath, key=None):
-    return threadPool.executeTask(_fetchDataItemCb, cbObj, parentId, name, outputPath, key=None)
-
-def storeDataItem(parentId, remotename, filename):
+@worker.run_async
+def storeDataItem(cbObj, parentId, remotename, filename):
     _info("Storing: " + filename + " as " + remotename)
-    fileobj = open(filename, "rb")
     _configEncryption()
-
-    result = client.store_data(int(parentId),
-                               remotename,
-                               fileobj)
-    return result
-
-def _sendDataItemStoredSignal(status, parentId, remoteName, localName, dataItemsLeft):
-    pyotherside.send('store-dataitem-completed', status, parentId, remoteName, localName, dataItemsLeft)
-
-def _sendDataItemsStoredSignal(status, parentId, remoteLocalNames):
-    pyotherside.send('store-dataitems-completed', status, parentId, remoteLocalNames)
-
-def _storeDataItemsCb(parentId, remoteLocalNames):
-    dataItemsLeft = len(remoteLocalNames)
-    
-    for remote,local in remoteLocalNames:
-        dataItemsLeft -= 1
-        storeDataItem(parentId, remote, local)
-        _sendDataItemStoredSignal(True, parentId, remote, local, dataItemsLeft)
-        
-    _sendDataItemsStoredSignal(True, parentId, remoteLocalNames)
-
-def storeDataItems(parentId, remoteLocalNames):
-    return threadPool.executeTask(_storeDataItemsCb, parentId, remoteLocalNames)
+    with open(filename, "rb") as fileobj:        
+        client.store_data(int(parentId), remotename, fileobj)
+    time.sleep(2)
+    _sendCompletedSignal(cbObj, parentId, remotename, filename)
 
 @worker.run_async
 def removeDataItem(cbObj, parentId, name):
@@ -231,11 +204,15 @@ def renameDataItem(cbObj, parentId, oldName, newName):
 @worker.run_async
 def addVault(cbObj, name):
     try:
-        client.add_vault(name, VALULT_TYPES[0])
-        _sendCompletedSignal(cbObj, name)
+        vaultId = client.add_vault(name, VALULT_TYPES[0])
+        _sendCompletedSignal(cbObj, vaultId, name)
+        return vaultId
     except elfcloud.exceptions.ECAuthException as e:
         _sendExceptionSignal(e)
         return None
+
+def _addVault(name):
+    return client.add_vault(name, VALULT_TYPES[0])
 
 @worker.run_async
 def removeVault(cbObj, vaultId):
@@ -246,14 +223,14 @@ def removeVault(cbObj, vaultId):
 def addCluster(cbObj, parentId, name):
     client.add_cluster(name, int(parentId))
     _sendCompletedSignal(cbObj, parentId, name)
+    
+def _addCluster(parentId, name):
+    return client.add_cluster(name, int(parentId))
 
 @worker.run_async
 def removeCluster(cbObj, clusterId):
     client.remove_cluster(int(clusterId))
     _sendCompletedSignal(cbObj, clusterId)
-
-def waitForRunningTasksCompleted():
-    threadPool.waitTasksCompletion()
 
 if __name__ == '__main__':
     pass

@@ -122,48 +122,48 @@
 <context>
     <name>ContainerPage</name>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="128"/>
-        <location filename="../qml/pages/ContainerPage.qml" line="158"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="124"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="153"/>
         <source>Vaults</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="70"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="66"/>
         <source>size: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="74"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="70"/>
         <source>owner: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="109"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="105"/>
         <source>Removing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="165"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="160"/>
         <source>Add vault</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="171"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="166"/>
         <source>Remove cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="177"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="172"/>
         <source>Add cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="183"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="178"/>
         <source>Upload file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="189"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="184"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
@@ -260,7 +260,7 @@
 <context>
     <name>ElfCloudAdapter</name>
     <message>
-        <location filename="../qml/ElfCloudAdapter.qml" line="154"/>
+        <location filename="../qml/ElfCloudAdapter.qml" line="171"/>
         <source>Destination file exists</source>
         <translation type="unfinished"></translation>
     </message>

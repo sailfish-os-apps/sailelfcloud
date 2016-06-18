@@ -10,7 +10,7 @@ Page {
     property int containerId
     property string containerName
     property string containerType: "top" // top, vault or cluster
-    property bool _ready: false
+    property var _asyncCallRef: undefined
 
     function _makeVisible() {
         busyIndication.running = false;
@@ -52,16 +52,12 @@ Page {
         });
     }
 
-    function _refreshIfForUs(parentId) {
-        if (containerId === parentId) // if upload completed for our container
-            _refresh();
-    }
-
     function _upload() {
         var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/FileChooserDialog.qml"))
         dialog.accepted.connect( function() {
             console.info("Uploading files: " + dialog.selectedPaths);
-            elfCloud.storeDataItems(containerId, dialog.selectedPaths);
+            _asyncCallRef = elfCloud.storeDataItems(containerId, dialog.selectedPaths, _refresh);
+            console.log("_asyncCallRef", _asyncCallRef)
             });
     }
 
@@ -129,16 +125,15 @@ Page {
     }
 
     Component.onCompleted: {
-        elfCloud.storeDataItemsCompleted.connect(_refreshIfForUs);
-
         elfCloud.contentChanged.connect(_handleContentChanged);
         _refresh();
     }
 
     Component.onDestruction: {        
-        elfCloud.storeDataItemsCompleted.disconnect(_refreshIfForUs);
-
         elfCloud.contentChanged.disconnect(_handleContentChanged);
+
+        if (_asyncCallRef !== undefined)
+            _asyncCallRef.invalidate();
     }
 
     BusyIndicator {

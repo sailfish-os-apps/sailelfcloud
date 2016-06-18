@@ -68,3 +68,5 @@ def run_async(func):
 
     return async_func
 
+def waitForRunningTasksCompleted():
+    threadPool.waitTasksCompletion()

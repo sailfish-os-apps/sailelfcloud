@@ -14,7 +14,7 @@ CoverBackground {
         coverPage.downloadPercentage = 0;
     }
 
-    function _downloadChunkCompleted(parentId, name, localName, totalSize, sizeFetched) {
+    function _downloadChunkCompleted(parentId, name, totalSize, sizeFetched) {
         downloadPercentage = Math.round((sizeFetched / totalSize) * 100);
     }
 
@@ -22,13 +22,13 @@ CoverBackground {
     Component.onCompleted: {
         elfCloud.fetchAndMoveDataItemCompleted.connect(_downloadCompleted);
         elfCloud.fetchAndMoveDataItemFailed.connect(_downloadCompleted);
-        elfCloud.fetchAndMoveDataItemChunkCompleted.connect(_downloadChunkCompleted);
+        elfCloud.fetchDataItemChunkCompleted.connect(_downloadChunkCompleted);
     }
 
     Component.onDestruction: {
         elfCloud.fetchAndMoveDataItemCompleted.disconnect(_downloadCompleted);
         elfCloud.fetchAndMoveDataItemFailed.disconnect(_downloadCompleted);
-        elfCloud.fetchAndMoveDataItemChunkCompleted.disconnect(_downloadChunkCompleted);
+        elfCloud.fetchDataItemChunkCompleted.disconnect(_downloadChunkCompleted);
     }
 
     Timer

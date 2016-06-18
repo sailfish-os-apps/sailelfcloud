@@ -5,18 +5,15 @@ Python {
 
     signal connected(bool status, string reason)
 
-    signal fetchDataItemStarted(int parentId, string name, string localName)
     signal fetchDataItemChunkCompleted(int parentId, string name, int totalSize, int sizeFetched)
-    signal fetchDataItemCompleted(int parentId, string name, string localName)
-    signal fetchDataItemFailed(int parentId, string name, string localName, string reason)
 
     signal fetchAndMoveDataItemStarted(int parentId, string name, string localName)
-    signal fetchAndMoveDataItemChunkCompleted(int parentId, string name, string localName, int totalSize, int sizeFetched)
     signal fetchAndMoveDataItemCompleted(int parentId, string name, string localName)
     signal fetchAndMoveDataItemFailed(int parentId, string name, string localName, string reason)
 
     signal storeDataItemsStarted(int parentId, var remoteLocalNames)
     signal storeDataItemStarted(int parentId, string remoteName, string localName, int dataItemsLeft)
+    signal storeDataItemChunkCompleted(int parentId, string remoteName, string localName, int totalSize, int sizeStored)
     signal storeDataItemCompleted(int parentId, string remoteName, string localName, int dataItemsLeft)
     signal storeDataItemFailed(int parentId, string remoteName, string localName, int dataItemsLeft, string reason)
     signal storeDataItemsCompleted(int parentId, var remoteLocalNames)
@@ -41,18 +38,19 @@ Python {
                 });
 
         setHandler('connected', connected);
-        setHandler('store-dataitem-completed', _storeDataItemCb);
-        setHandler('store-dataitems-completed', _storeDataItemsCb);
-        setHandler('fetch-dataitem-completed', _fetchDataItemCb);
         setHandler('exception', exceptionOccurred);
         setHandler('fetch-dataitem-chunk', _fetchDataItemChunkCb);
-
+        setHandler('store-dataitem-chunk', _storeDataItemChunkCb);
         setHandler('completed', _handleCompleted);
     }
 
     function _callCbWithArgs(cb, args) {
         var argArray = Array.prototype.slice.call(args);
-        return cb.apply(null, argArray);
+
+        if (cb !== undefined)
+            return cb.apply(null, argArray);
+        else
+            return undefined
     }
 
     function _getVarArgs(func, args) {
@@ -62,18 +60,34 @@ Python {
     function _handleCompleted(cbObj) {
         var varArgs = _getVarArgs(_handleCompleted, arguments);
         console.debug("_handleCompleted", varArgs, cbObj, cbObj.completedCb);
-        if (cbObj.completedCb !== undefined)
+
+        if (cbObj.wrapperCb !== undefined)
+            cbObj.wrapperCb.apply(null, [cbObj].concat(varArgs));
+        else if (cbObj.completedCb !== undefined)
             cbObj.completedCb.apply(null, varArgs);
     }
 
-    function _createCbObj(callback) {
+    function _createCbObj(callback, wrapper) {
         var c = Qt.createComponent("items/ElfCloudAdapterCb.qml");
         var cbObj = c.createObject(elfCloud);
 
         if (callback !== undefined)
             cbObj.completedCb = callback;
 
+        cbObj.wrapperCb = wrapper;
+
         return cbObj;
+    }
+
+    function _callInCb(cbObj, func, wrapper) {
+        var callName = "elfCloudAdapter." + func;
+        var args = [cbObj].concat(_getVarArgs(_callInCb, arguments));
+        cbObj.wrapperCb = wrapper;
+        console.debug("_callInCb", callName, args, cbObj.completedCb, cbObj.wrapperCb);
+        if (py.call_sync(callName, args))
+            return cbObj;
+        else
+            return undefined;
     }
 
     function _call(func, callback) {
@@ -81,6 +95,17 @@ Python {
         var cbObj = _createCbObj(callback);
         var args = [cbObj].concat(_getVarArgs(_call, arguments));
         console.debug("_call", callName, args, cbObj.completedCb);
+        if (py.call_sync(callName, args))
+            return cbObj;
+        else
+            return undefined;
+    }
+
+    function _callWrap(func, callback, wrapper) {
+        var callName = "elfCloudAdapter." + func;
+        var cbObj = _createCbObj(callback, wrapper);
+        var args = [cbObj].concat(_getVarArgs(_callWrap, arguments));
+        console.debug("_callWrap", callName, args, cbObj.completedCb, cbObj.wrapperCb);
         if (py.call_sync(callName, args))
             return cbObj;
         else
@@ -126,7 +151,7 @@ Python {
     }
 
     function getDataItemInfo(parentId, name, callback) {
-        return _call("listContent", callback, parentId, name);
+        return _call("getDataItemInfo", callback, parentId, name);
     }
 
 
@@ -134,63 +159,48 @@ Python {
         fetchDataItemChunkCompleted(parentId, name, totalSize, sizeFetched)
     }
 
-    function _fetchDataItemCb(status, parentId, name, outputPath) {
-        if (status)
-            fetchDataItemCompleted(parentId, name, outputPath);
-        else
-            fetchDataItemFailed(parentId, name, outputPath, "failed");
+    function fetchDataItem(parentId, name, outputPath, callback) {
+        return _call("fetchDataItem", callback, parentId, name, outputPath);
     }
-
-    function fetchDataItem(parentId, name, outputPath) {
-        fetchDataItemStarted(parentId, name, outputPath);
-        py.call("elfCloudAdapter.fetchDataItem", [parentId, name, outputPath]);
-    }
-
 
     function _fetchAndMoveDataItemCb(parentId, name, outputPath, overwrite) {
-        if (helpers.moveAndRenameFileAccordingToMime(outputPath, name, overwrite))
+        if (helpers.moveAndRenameFileAccordingToMime(outputPath, name, overwrite)) {
             fetchAndMoveDataItemCompleted(parentId, name, outputPath);
-        else
+            return true;
+        } else {
             fetchAndMoveDataItemFailed(parentId, name, outputPath, qsTr("Destination file exists"));
+            return false;
+        }
     }
 
-    function _fetchAndMoveDataItemChunkCb(parentId, name, outputPath, totalSize, sizeFetched) {
-        fetchAndMoveDataItemChunkCompleted(parentId, name, outputPath, totalSize, sizeFetched)
-    }
-
-    function fetchAndMoveDataItem(parentId, name, outputPath, overwrite) {
+    function fetchAndMoveDataItem(parentId, name, outputPath, overwrite, callback) {
         fetchAndMoveDataItemStarted(parentId, name, outputPath);
-
-        var c = Qt.createComponent("items/ElfCloudAdapterCb.qml");
-        var cbObj = c.createObject(elfCloud);
-        cbObj.fetchDataItemCompletedCb = function (_parentId, _name) {
-                console.log("fetchDataItemCompletedCb!!!!!!!", _name, name)
-                if (_parentId === parentId && _name === name) {
-                    console.log("fetchDataItemCompletedCb!!!!!!! MATCHSSSSS", _name, name)
-                    _fetchAndMoveDataItemCb(parentId, name, outputPath, overwrite);
-                    elfCloud.fetchDataItemCompleted.disconnect(this.fetchDataItemCompleted);
-                }
-            };
-        fetchDataItemCompleted.connect(cbObj.fetchDataItemCompleted);
-        fetchDataItemChunkCompleted.connect(function (_parentId, _name, totalSize, sizeFetched) {
-                if (_parentId === parentId && _name === name)
-                    _fetchAndMoveDataItemChunkCb(parentId, name, outputPath, totalSize, sizeFetched);
-            });
-        py.call("elfCloudAdapter.fetchDataItem", [parentId, name, outputPath]);
+        return _call("fetchDataItem", function() {
+                var rc = _fetchAndMoveDataItemCb(parentId, name, outputPath, overwrite);
+                _callCbWithArgs(callback, arguments);
+            }, parentId, name, outputPath)
     }
 
-    function _storeDataItemCb(status, parentId, remoteName, localName, dataItemsLeft) {
-        if (status)
-            storeDataItemCompleted(parentId, remoteName, localName, dataItemsLeft);
-        else
-            storeDataItemFailed(parentId, remoteName, localName, dataItemsLeft, "failed");
+    function _storeDataItemChunkCb(parentId, remoteName, localName, totalSize, sizeStored) {
+        storeDataItemChunkCompleted(parentId, remoteName, localName, totalSize, sizeStored)
     }
 
-    function _storeDataItemsCb(status, parentId, remoteLocalNames) {
-        storeDataItemsCompleted(parentId, remoteLocalNames);
+    function _storeDataItemsCb(cbObj, parentId, remoteLocalNames, index) {
+
+        storeDataItemCompleted(parentId, remoteLocalNames[index][0], remoteLocalNames[index][1], remoteLocalNames.length-index);
+
+        if (++index < remoteLocalNames.length) {
+            storeDataItemStarted(parentId, remoteLocalNames[index][0], remoteLocalNames[index][1], remoteLocalNames.length-index);
+            _callInCb(cbObj, "storeDataItem", function(cbObj) { _storeDataItemsCb(cbObj, parentId, remoteLocalNames, index); },
+                parentId, remoteLocalNames[index][0], remoteLocalNames[index][1]);
+        } else {
+            cbObj.unsetWrapper();
+            _handleCompleted(cbObj, parentId, remoteLocalNames);
+            storeDataItemsCompleted(parentId, remoteLocalNames);
+        }
     }
 
-    function storeDataItems(parentId, localPaths) {
+    function storeDataItems(parentId, localPaths, callback) {
         var remoteLocalNames = []
 
         for (var i = 0; i < localPaths.length; i++) {
@@ -200,7 +210,10 @@ Python {
         }
 
         storeDataItemsStarted(parentId, remoteLocalNames);
-        py.call("elfCloudAdapter.storeDataItems", [parentId, remoteLocalNames]);
+        storeDataItemStarted(parentId, remoteLocalNames[0][0], remoteLocalNames[0][1], remoteLocalNames.length);
+        return _callWrap("storeDataItem", callback,
+                         function(cbObj) { _storeDataItemsCb(cbObj, parentId, remoteLocalNames, 0); },
+                         parentId, remoteLocalNames[0][0], remoteLocalNames[0][1])
    }
 
     function removeDataItem(parentId, name, callback) {

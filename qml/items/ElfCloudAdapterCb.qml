@@ -14,10 +14,15 @@ QtObject {
         console.debug("Noop called", Array.prototype.slice.call(data, _noop.length))
     }
 
-    property var completedCb: _noop
+    property var completedCb: _noop    // Callback from user
+    property var wrapperCb: undefined  // Wrapping callback from ElfCloudAdapter.qml
 
     function invalidate() {
         completedCb = _noop;
+    }
+
+    function unsetWrapper() {
+        wrapperCb = undefined;
     }
 
     Component.onDestruction: {

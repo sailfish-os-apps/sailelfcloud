@@ -29,7 +29,7 @@ Page {
         _updateTextViewForPlainFile(helpers.readPlainFile(filename), mime);
     }
 
-    function _displayFile(parentId, name, localPath) {
+    function _displayFile(status, parentId, name, localPath) {
         if (parentId === parentContainerId && name === dataItemName)
         {
             var mime = helpers.getFileMimeType(localPath);
@@ -45,16 +45,14 @@ Page {
     function _fetchDataItem() {
         var outputPath = helpers.generateLocalPathForRemoteDataItem(parentContainerId, dataItemName);
         console.debug("Fetching", dataItemName, "from", parentContainerId, "to", outputPath);
-        elfCloud.fetchDataItem(parentContainerId, dataItemName, outputPath);
+        elfCloud.fetchDataItem(parentContainerId, dataItemName, outputPath, _displayFile);
     }
 
     Component.onCompleted: {
-        elfCloud.fetchDataItemCompleted.connect(_displayFile);
         _fetchDataItem();
     }
 
     Component.onDestruction: {
-        elfCloud.fetchDataItemCompleted.disconnect(_displayFile);
     }
 
     BusyIndicator {
