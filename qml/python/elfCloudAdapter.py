@@ -6,7 +6,6 @@ Created on Apr 27, 2016
 
 import elfcloud
 import worker
-import time
 
 try:
     import pyotherside
@@ -186,7 +185,6 @@ def storeDataItem(cbObj, parentId, remotename, filename):
     _configEncryption()
     with open(filename, "rb") as fileobj:        
         client.store_data(int(parentId), remotename, fileobj)
-    time.sleep(2)
     _sendCompletedSignal(cbObj, parentId, remotename, filename)
 
 @worker.run_async
