@@ -4,6 +4,7 @@ Created on Apr 27, 2016
 @author: teemu
 '''
 
+import os
 import elfcloud
 import worker
 
@@ -179,12 +180,29 @@ def fetchDataItem(cbObj, parentId, name, outputPath, key=None):
 
     _sendCompletedSignal(cbObj, True, parentId, name, outputPath)
 
+def _sendDataItemChunkStoredSignal(parentId, remotename, localName, totalSize, storedSize):
+    pyotherside.send('store-dataitem-chunk', parentId, remotename, localName, totalSize, storedSize)
+
 @worker.run_async
 def storeDataItem(cbObj, parentId, remotename, filename):
     _info("Storing: " + filename + " as " + remotename)
     _configEncryption()
-    with open(filename, "rb") as fileobj:        
-        client.store_data(int(parentId), remotename, fileobj)
+    fileSize = os.path.getsize(filename)
+    
+    class _FileObj(object):
+        def __init__(self, fileobj):
+            self.fileobj = fileobj
+            self.readSize = 0
+            
+        def read(self, size):
+            data = self.fileobj.read(size)
+            self.readSize += len(data)
+            _sendDataItemChunkStoredSignal(parentId, remotename, filename, fileSize, self.readSize)
+            return data
+    
+    with open(filename, "rb") as fileobj:
+        fo = _FileObj(fileobj)     
+        client.store_data(int(parentId), remotename, fo)
     _sendCompletedSignal(cbObj, parentId, remotename, filename)
 
 @worker.run_async
@@ -202,12 +220,10 @@ def renameDataItem(cbObj, parentId, oldName, newName):
 @worker.run_async
 def addVault(cbObj, name):
     try:
-        vaultId = client.add_vault(name, VALULT_TYPES[0])
+        vaultId = client.add_vault(name, VALULT_TYPES[0]).id
         _sendCompletedSignal(cbObj, vaultId, name)
-        return vaultId
     except elfcloud.exceptions.ECAuthException as e:
         _sendExceptionSignal(e)
-        return None
 
 def _addVault(name):
     return client.add_vault(name, VALULT_TYPES[0])
@@ -219,12 +235,9 @@ def removeVault(cbObj, vaultId):
 
 @worker.run_async
 def addCluster(cbObj, parentId, name):
-    client.add_cluster(name, int(parentId))
-    _sendCompletedSignal(cbObj, parentId, name)
+    clusterId = client.add_cluster(name, int(parentId)).id
+    _sendCompletedSignal(cbObj, parentId, name, clusterId)
     
-def _addCluster(parentId, name):
-    return client.add_cluster(name, int(parentId))
-
 @worker.run_async
 def removeCluster(cbObj, clusterId):
     client.remove_cluster(int(clusterId))

@@ -7,7 +7,7 @@ Created on Apr 30, 2016
 """Depends on pyaes and elfcloud weasel."""
 
 import unittest
-import tempfile, filecmp, os
+import tempfile, filecmp, os, sys
 import elfCloudAdapter, worker
 
 # Set your own username and password
@@ -20,20 +20,40 @@ def setUpModule():
 def tearDownModule():
     elfCloudAdapter.disconnect()
 
+class mock_pyotherside:
+    
+    sentArgs = None
+    
+    @staticmethod
+    def atexit(*args): pass
+    @staticmethod
+    def send(signal, *args):
+        print("UT:", signal, [str(a) for a in args])
+        mock_pyotherside.sentArgs = args
+
+
+elfCloudAdapter.pyotherside = mock_pyotherside
+sys.modules["pyotherside"] = mock_pyotherside()
 
 class Test(unittest.TestCase):
 
     def setUp(self):
         self.assertTrue(elfCloudAdapter.isConnected(), "Client connection has failed")
-        self.vaultId = elfCloudAdapter._addVault("ut_test_vault").id
-        self.clusterId = elfCloudAdapter._addCluster(self.vaultId, "ut_test_cluster").id
+        elfCloudAdapter.addVault(None, "ut_test_vault")
+        worker.waitForRunningTasksCompleted()
+        self.vaultId = mock_pyotherside.sentArgs[1]
+        elfCloudAdapter.addCluster(None, self.vaultId, "ut_test_cluster")
+        worker.waitForRunningTasksCompleted()
+        self.clusterId = mock_pyotherside.sentArgs[3]
 
     def tearDown(self):
         elfCloudAdapter.removeVault(None, self.vaultId)
         worker.waitForRunningTasksCompleted()
 
     def test_listVaults_ShouldReturnAllVaults(self):
-        vaults = elfCloudAdapter.listVaults()
+        elfCloudAdapter.listVaults(None)
+        worker.waitForRunningTasksCompleted()
+        vaults = mock_pyotherside.sentArgs[1]
                
         for v in vaults:
             if (v['name'] == 'ut_test_vault'):
@@ -49,7 +69,9 @@ class Test(unittest.TestCase):
         elfCloudAdapter.storeDataItem(None, self.clusterId, "test_file_for_dataitem_info.txt", tf.name);
         worker.waitForRunningTasksCompleted()
         elfCloudAdapter.updateDataItem(self.clusterId, "test_file_for_dataitem_info.txt", "New description", ["tag1", "tag 2"])
-        dataiteminfo = elfCloudAdapter.getDataItemInfo(None, self.clusterId, "test_file_for_dataitem_info.txt")
+        elfCloudAdapter.getDataItemInfo(None, self.clusterId, "test_file_for_dataitem_info.txt")
+        worker.waitForRunningTasksCompleted()
+        dataiteminfo = mock_pyotherside.sentArgs[1]
         self.assertEqual("test_file_for_dataitem_info.txt", dataiteminfo['name'])
         self.assertEqual("New description", dataiteminfo['description'])        
         self.assertListEqual(["tag1", "tag 2"], dataiteminfo['tags'])
