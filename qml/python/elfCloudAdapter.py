@@ -5,7 +5,7 @@ Created on Apr 27, 2016
 '''
 
 import elfcloud
-import worker
+import worker, time
 
 try:
     import pyotherside
@@ -35,6 +35,9 @@ def _info(*text):
 
 def _error(*text):
     pyotherside.send('log-e', ' '.join(text))
+
+def _sendCompletedSignal(cbObj, *args):
+    pyotherside.send('completed', cbObj, *args)
 
 def _sendExceptionSignal(exception):
     pyotherside.send('exception', exception.id, exception.message)
@@ -152,6 +155,7 @@ def _fetchDataItemCb(parentId, name, outputPath, key=None):
     dataLength = data.fileobj.getheader('Content-Length') # Nasty way to get total size since what if Content-Length does not exist.
                                                           # I haven't found good way to provide this information in upper level sw.
     dataFetched = 0
+    time.sleep(6)
     with open(outputPath, mode='wb') as outputFile:
         for chunk in data:
             outputFile.write(chunk)
@@ -169,21 +173,21 @@ SUBSCRIPTION_FIELD_MAP = {'id':'Id', 'status':'Status', 'start_date':'Start date
                           'end_date':'End date', 'storage_quota': 'Quota',
                           'subscription_type':'Subscription type'}
 
-def _getSubscriptionInfoCb(workData):
+def _getSubscriptionInfoCb(cbObj):
     try:
         info = client.get_subscription_info()
-        currentSubscription = info['current_subscription']
+        subscr = info['current_subscription']
         # Create list of dict for easier handling in QML
-        workData.setData([{'fieldName':toName, 'fieldValue':str(currentSubscription[fromName])} for fromName,
-                          toName in SUBSCRIPTION_FIELD_MAP.items()])
+        #cbObj.subscription([{'fieldName':toName, 'fieldValue':str(subscr[fromName])} for fromName,toName in SUBSCRIPTION_FIELD_MAP.items()])
+        i = [{'fieldName':toName, 'fieldValue':str(subscr[fromName])} for fromName,toName in SUBSCRIPTION_FIELD_MAP.items()]
+        #lambda a, b: bound_method(a, b) 
+        _sendCompletedSignal(cbObj, i, "asas", 322323)
     except elfcloud.exceptions.ECAuthException as e:
         _sendExceptionSignal(e)
-        workData.setData([])
 
-def getSubscriptionInfo():
-    response = worker.WorkData()
-    threadPool.executeTask(_getSubscriptionInfoCb, response)
-    return response.waitForData()
+def getSubscriptionInfo(cbObj):
+    threadPool.executeTask(_getSubscriptionInfoCb, cbObj)
+    return True
 
 def storeDataItem(parentId, remotename, filename):
     _info("Storing: " + filename + " as " + remotename)
@@ -213,7 +217,7 @@ def _storeDataItemsCb(parentId, remoteLocalNames):
 
 def storeDataItems(parentId, remoteLocalNames):
     threadPool.executeTask(_storeDataItemsCb, parentId, remoteLocalNames)
-      
+
 def removeDataItem(parentId, name):
     _info("Removing " + name)
     return client.remove_dataitem(int(parentId), name)

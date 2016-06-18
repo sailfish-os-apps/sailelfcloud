@@ -122,8 +122,8 @@
 <context>
     <name>ContainerPage</name>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="135"/>
-        <location filename="../qml/pages/ContainerPage.qml" line="163"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="157"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="167"/>
         <source>Vaults</source>
         <translation type="unfinished"></translation>
     </message>
@@ -143,28 +143,41 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="170"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="174"/>
         <source>Add vault</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="176"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="180"/>
         <source>Remove cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="182"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="186"/>
         <source>Add cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="188"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="192"/>
         <source>Upload file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="194"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="198"/>
         <source>Refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CoverPage</name>
+    <message>
+        <location filename="../qml/cover/CoverPage.qml" line="92"/>
+        <source>Upload</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/cover/CoverPage.qml" line="109"/>
+        <source>Download</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -247,7 +260,7 @@
 <context>
     <name>ElfCloudAdapter</name>
     <message>
-        <location filename="../qml/ElfCloudAdapter.qml" line="120"/>
+        <location filename="../qml/ElfCloudAdapter.qml" line="149"/>
         <source>Destination file exists</source>
         <translation type="unfinished"></translation>
     </message>
@@ -410,7 +423,7 @@
 <context>
     <name>SubscriptionInfoPage</name>
     <message>
-        <location filename="../qml/pages/SubscriptionInfoPage.qml" line="21"/>
+        <location filename="../qml/pages/SubscriptionInfoPage.qml" line="34"/>
         <source>Subscription Info</source>
         <translation type="unfinished"></translation>
     </message>
@@ -418,48 +431,43 @@
 <context>
     <name>harbour-sailelfcloud</name>
     <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="9"/>
-        <source>elfCloud</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="15"/>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="24"/>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="19"/>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="28"/>
         <source>File upload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="16"/>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="20"/>
         <source>On progress</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="25"/>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="29"/>
         <source>Compeleted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="32"/>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="36"/>
         <source>File uploaded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="38"/>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="42"/>
         <source>File download</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="46"/>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="50"/>
         <source>File downloaded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="54"/>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="58"/>
         <source>File download failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="70"/>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="74"/>
         <source> uploaded, items left </source>
         <translation type="unfinished"></translation>
     </message>

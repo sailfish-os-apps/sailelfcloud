@@ -79,7 +79,6 @@ Page {
         elfCloud.dataItemInfoGot.connect(_updatePageContentWithItemInfo)
         elfCloud.dataItemRenamed.connect(_refreshAfterRename);
         elfCloud.dataItemRemoved.connect(_goBackIfThisDataItemRemoved);
-        coverText = dataItemName;
         _refresh();
     }
 
@@ -92,6 +91,7 @@ Page {
     onStatusChanged: {
         if (status === PageStatus.Activating) {
             openButton.enabled = true; // may be disabled if button is pressed
+            setItemNameToCover(dataItemName);
         }
     }
 

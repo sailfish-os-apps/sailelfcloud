@@ -1,13 +1,17 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import org.nemomobile.notifications 1.0
+import "cover"
 
 ApplicationWindow
 {
     id: application
 
-    property string coverText: qsTr("elfCloud")
     property var elfCloud: ElfCloudAdapter { }
+
+    function setItemNameToCover(name) {
+        coverPage.location = name
+    }
 
     Notification {
         id: uploadStartedNotif
@@ -105,7 +109,9 @@ ApplicationWindow
     }
 
     initialPage: Qt.resolvedUrl("pages/MainPage.qml")
-    cover: Qt.resolvedUrl("cover/CoverPage.qml")
+    cover: CoverPage {
+        id: coverPage
+    }
 
     allowedOrientations: Orientation.All
     _defaultPageOrientations: Orientation.All

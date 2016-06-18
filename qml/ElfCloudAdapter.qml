@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import io.thp.pyotherside 1.2
+import io.thp.pyotherside 1.4
 
 Python {
 
@@ -56,7 +56,32 @@ Python {
         setHandler('fetch-dataitem-completed', _fetchDataItemCb);
         setHandler('exception', exceptionOccurred);
         setHandler('fetch-dataitem-chunk', _fetchDataItemChunkCb);
+
+        setHandler('completed', _handleCompleted);
     }
+
+    function getVarArgs(func, args) {
+        return Array.prototype.slice.call(args, func.length);
+    }
+
+    function _handleCompleted(cbObj) {
+        var varArgs = getVarArgs(_handleCompleted, arguments);
+        console.log("afsdfsfsfdsf", cbObj, varArgs)
+        cbObj.completedCb.apply(null, varArgs);
+    }
+
+    function _createCbObj(callback) {
+        var c = Qt.createComponent("items/ElfCloudAdapterCb.qml");
+        var cbObj = c.createObject(elfCloud);
+        cbObj.completedCb = callback;
+        return cbObj;
+    }
+
+    function getSubscriptionInfo(callback) {
+        var cbObj = _createCbObj(callback)
+        py.call("elfCloudAdapter.getSubscriptionInfo", [cbObj]);
+    }
+
 
     function connect(username, password, onSuccess) {
         py.call("elfCloudAdapter.connect", [username, password], onSuccess);
@@ -64,10 +89,6 @@ Python {
 
     function disconnect(onSuccess) {
         py.call("elfCloudAdapter.disconnect", [], onSuccess);
-    }
-
-    function getSubscriptionInfo(onSuccess) {
-        py.call("elfCloudAdapter.getSubscriptionInfo", [], onSuccess);
     }
 
     function _createContentDetailsList(content) {
@@ -127,19 +148,27 @@ Python {
             fetchAndMoveDataItemFailed(parentId, name, outputPath, qsTr("Destination file exists"));
     }
 
-    function fetchAndMoveDataItemChunkCb(parentId, name, outputPath, totalSize, sizeFetched) {
+    function _fetchAndMoveDataItemChunkCb(parentId, name, outputPath, totalSize, sizeFetched) {
         fetchAndMoveDataItemChunkCompleted(parentId, name, outputPath, totalSize, sizeFetched)
     }
 
     function fetchAndMoveDataItem(parentId, name, outputPath, overwrite) {
         fetchAndMoveDataItemStarted(parentId, name, outputPath);
-        fetchDataItemCompleted.connect(function (_parentId, _name) {
-                if (_parentId === parentId && _name === name)
+
+        var c = Qt.createComponent("items/ElfCloudAdapterCb.qml");
+        var cbObj = c.createObject(elfCloud);
+        cbObj.fetchDataItemCompletedCb = function (_parentId, _name) {
+                console.log("fetchDataItemCompletedCb!!!!!!!", _name, name)
+                if (_parentId === parentId && _name === name) {
+                    console.log("fetchDataItemCompletedCb!!!!!!! MATCHSSSSS", _name, name)
                     _fetchAndMoveDataItemCb(parentId, name, outputPath, overwrite);
-            });
+                    elfCloud.fetchDataItemCompleted.disconnect(this.fetchDataItemCompleted);
+                }
+            };
+        fetchDataItemCompleted.connect(cbObj.fetchDataItemCompleted);
         fetchDataItemChunkCompleted.connect(function (_parentId, _name, totalSize, sizeFetched) {
                 if (_parentId === parentId && _name === name)
-                    fetchAndMoveDataItemChunkCb(parentId, name, outputPath, totalSize, sizeFetched);
+                    _fetchAndMoveDataItemChunkCb(parentId, name, outputPath, totalSize, sizeFetched);
             });
         py.call("elfCloudAdapter.fetchDataItem", [parentId, name, outputPath]);
     }
@@ -217,6 +246,7 @@ Python {
         if (!py._ready) {
             console.log("elfCloudAdapter starting up...");
             console.log("Python version: " + pythonVersion());
+            console.log("PyOtherSide version: " + pluginVersion());
             __setHandlers();
             addImportPath(Qt.resolvedUrl("python/"));
             addImportPath(Qt.resolvedUrl("../lib/pyaes-0.1.0-py3.4.egg"));

@@ -5,13 +5,26 @@ import ".."
 
 Page {
     id: page
+    property string p: "testki"
+
+    signal populate(var infoItems)
+
+    onPopulate: {
+        for (var i = 0; i < infoItems.length; i++) {
+            infoModel.append(infoItems[i]); // every element in info is {'fieldName':name,'fieldValue':value} mappings
+        }
+    }
+
+    function subscription(info) {
+        console.log(p)
+        page.populate(info)
+    }
 
     Component.onCompleted: {
-        elfCloud.getSubscriptionInfo(function(info) {
-            for (var i = 0; i < info.length; i++) {
-                infoModel.append(info[i]); // every element in info is {'fieldName':name,'fieldValue':value} mappings
-            }
-        });
+        //var c = Qt.createComponent("../items/ElfCloudAdapterCb.qml");
+        //var cbObj = c.createObject(elfCloud);
+        //cbObj.subscriptionCb = subscription;
+        elfCloud.getSubscriptionInfo(subscription);
     }
 
     SilicaListView {

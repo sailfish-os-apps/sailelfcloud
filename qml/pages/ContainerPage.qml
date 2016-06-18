@@ -132,7 +132,6 @@ Page {
     }
 
     Component.onCompleted: {
-        coverText = containerType !== "top" ? containerName : qsTr("Vaults");
         elfCloud.contentListed.connect(_updateContentListAndShowPage);
         elfCloud.storeDataItemsCompleted.connect(_refreshIfForUs);
         elfCloud.vaultAdded.connect(_refresh);
@@ -151,6 +150,11 @@ Page {
         elfCloud.dataItemRenamed.disconnect(_refreshIfForUs);
         elfCloud.clusterRemoved.disconnect(_handleClusterRemoved);
         elfCloud.dataItemRemoved.disconnect(_handleDataItemRemoved);
+    }
+
+    onStatusChanged: {
+        if (status == PageStatus.Activating)
+            setItemNameToCover(containerType == "top" ? qsTr("Vaults") : containerName)
     }
 
     SilicaListView {
