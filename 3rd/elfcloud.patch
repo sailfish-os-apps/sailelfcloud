@@ -8,6 +8,17 @@ index 0000000..1d2eaad
 +/dist
 +/**/__pycache__
 +../**/.settings*
+diff --git elfcloud/elfcloud-weasel-1.2.2/LICENSE.txt elfcloud/elfcloud-weasel-1.2.2/LICENSE.txt
+index bc0fa62..7a33b38 100644
+--- elfcloud/elfcloud-weasel-1.2.2/LICENSE.txt
++++ elfcloud/elfcloud-weasel-1.2.2/LICENSE.txt
+@@ -1,5 +1,5 @@
+ 
+-Copyright 2010-2013 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure Services
++Copyright 2010-2013 elfCLOUD / elfcloud.fi - SCIS Secure Cloud Infrastructure Services
+ 
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
 diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud/cli/__init__.py elfcloud/elfcloud-weasel-1.2.2/elfcloud/cli/__init__.py
 index 6c6b368..2e74293 100644
 --- elfcloud/elfcloud-weasel-1.2.2/elfcloud/cli/__init__.py
@@ -838,10 +849,10 @@ index 844c111..49865cc 100644
      def test_parse_file_aes256(self):
          fh, iv, key = self.generate_key(16, 32)
 diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud/utils.py elfcloud/elfcloud-weasel-1.2.2/elfcloud/utils.py
-index 7a0f9f0..b1d2d58 100644
+index 7a0f9f0..467f8c8 100644
 --- elfcloud/elfcloud-weasel-1.2.2/elfcloud/utils.py
 +++ elfcloud/elfcloud-weasel-1.2.2/elfcloud/utils.py
-@@ -1,138 +1,138 @@
+@@ -1,138 +1,139 @@
 -# -*- coding: utf-8 -*-
 -__license__ = """
 -Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure Services
@@ -998,6 +1009,7 @@ index 7a0f9f0..b1d2d58 100644
 +"""
 +import re
 +import hashlib
++import binascii
 +
 +from .exceptions import ECCryptException
 +from .exceptions import ClientMetaException
@@ -1086,9 +1098,9 @@ index 7a0f9f0..b1d2d58 100644
 +                        raise ClientMetaException("Comma is not allowed in tag")
 +                value = ",".join(value)
 +
-+            #ascii_key = key.encode("ascii")
-+            #ascii_value = value.encode("ascii")
-+            meta_list.extend([key, value])
++            ascii_key = key 
++            ascii_value = value
++            meta_list.extend([ascii_key, ascii_value])
 +
 +        meta_string = "v{0}:".format(version)
 +        meta_string += ':'.join(meta_list)
@@ -1117,7 +1129,7 @@ index 7a0f9f0..b1d2d58 100644
 +            m = hashlib.md5()
 +            m.update(final_hash)
 +            final_hash = m.digest()
-+        return final_hash.encode("hex")
++        return binascii.hexlify(final_hash).decode("utf-8")
 diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud_weasel.egg-info/.gitignore elfcloud/elfcloud-weasel-1.2.2/elfcloud_weasel.egg-info/.gitignore
 new file mode 100644
 index 0000000..adb0c97
@@ -1126,7 +1138,7 @@ index 0000000..adb0c97
 @@ -0,0 +1 @@
 +/PKG-INFO
 diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud_weasel.egg-info/PKG-INFO elfcloud/elfcloud-weasel-1.2.2/elfcloud_weasel.egg-info/PKG-INFO
-index b999488..d1b8e6b 100644
+index b999488..4afa9ec 100644
 --- elfcloud/elfcloud-weasel-1.2.2/elfcloud_weasel.egg-info/PKG-INFO
 +++ elfcloud/elfcloud-weasel-1.2.2/elfcloud_weasel.egg-info/PKG-INFO
 @@ -1,4 +1,4 @@
@@ -1135,6 +1147,15 @@ index b999488..d1b8e6b 100644
  Name: elfcloud-weasel
  Version: 1.2.2
  Summary: elfcloud.fi Weasel
+@@ -6,7 +6,7 @@ Home-page: http://elfcloud.fi/
+ Author: elfcloud
+ Author-email: support.dev@elfcloud.fi
+ License: 
+-Copyright 2010-2013 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure Services
++Copyright 2010-2013 elfCLOUD / elfcloud.fi - SCIS Secure Cloud Infrastructure Services
+ 
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
 @@ -20,10 +20,10 @@ Copyright 2010-2013 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure
     See the License for the specific language governing permissions and
     limitations under the License.
