@@ -12,6 +12,7 @@ Page {
         contentHeight: column.height
 
         PullDownMenu {
+
             MenuItem {
                 text: qsTr("About")
                 onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"));
@@ -19,8 +20,18 @@ Page {
 
             MenuItem {
                 text: qsTr("Show subscription")
+                enabled: elfCloud.isConnected()
                 onClicked: pageStack.push(Qt.resolvedUrl("SubscriptionInfoPage.qml"),
                                           {"elfCloud":elfCloud});
+            }
+
+            MenuItem {
+                text: qsTr("Disconnect")
+                enabled: elfCloud.isConnected()
+                onClicked: elfCloud.disconnect(function(status) {
+                    console.log("Disconnected");
+                    pageStack.replaceAbove(null, Qt.resolvedUrl("../pages/MainPage.qml"), {"autologinDisabled": true});
+                });
             }
         }
 

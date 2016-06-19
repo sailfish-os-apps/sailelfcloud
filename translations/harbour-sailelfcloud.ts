@@ -58,12 +58,7 @@
 <context>
     <name>CommonPullDownMenu</name>
     <message>
-        <location filename="../qml/items/CommonPullDownMenu.qml" line="8"/>
-        <source>Disconnect</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/items/CommonPullDownMenu.qml" line="15"/>
+        <location filename="../qml/items/CommonPullDownMenu.qml" line="7"/>
         <source>Configuration</source>
         <translation type="unfinished"></translation>
     </message>
@@ -71,37 +66,42 @@
 <context>
     <name>ConfigPage</name>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="16"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="17"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="21"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="22"/>
         <source>Show subscription</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="37"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="29"/>
+        <source>Disconnect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/ConfigPage.qml" line="48"/>
         <source>Configurations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="42"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="53"/>
         <source>Automatic login</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="43"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="54"/>
         <source>Allows automatic login when application starts.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="52"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="63"/>
         <source>Remember login</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="53"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="64"/>
         <source>Remembers login information such as username and password.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -260,7 +260,7 @@
 <context>
     <name>ElfCloudAdapter</name>
     <message>
-        <location filename="../qml/ElfCloudAdapter.qml" line="172"/>
+        <location filename="../qml/ElfCloudAdapter.qml" line="176"/>
         <source>Destination file exists</source>
         <translation type="unfinished"></translation>
     </message>
