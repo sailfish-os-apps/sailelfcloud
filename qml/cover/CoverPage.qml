@@ -5,30 +5,42 @@ import ".."
 CoverBackground {
 
     property string location
-    property int uploadPercentage
-    property int downloadPercentage
+    property int _uploadPercentage: 0
+    property int _downloadPercentage: 0
 
 
     function _downloadCompleted(parentId, dataItemName, localPath) {
-        percentageRefreshTimer.restart() // Keep visible one interval
-        coverPage.downloadPercentage = 0;
+        _downloadPercentage = 0;
     }
 
-    function _downloadChunkCompleted(parentId, name, totalSize, sizeFetched) {
-        downloadPercentage = Math.round((sizeFetched / totalSize) * 100);
+    function _downloadChunkCompleted(parentId, name, totalSize, fetchedSize) {
+        _downloadPercentage = Math.ceil((fetchedSize / totalSize) * 100);
+        percentageRefreshTimer.running = true;
     }
 
+    function _uploadCompleted(parentId, remoteLocalNames) {
+        _uploadPercentage = 0;
+    }
+
+    function _uploadChunkCompleted(parentId, remoteName, localName, totalSize, storedSize) {
+        _uploadPercentage = Math.ceil((storedSize / totalSize) * 100);
+        percentageRefreshTimer.running = true;
+    }
 
     Component.onCompleted: {
         elfCloud.fetchAndMoveDataItemCompleted.connect(_downloadCompleted);
         elfCloud.fetchAndMoveDataItemFailed.connect(_downloadCompleted);
         elfCloud.fetchDataItemChunkCompleted.connect(_downloadChunkCompleted);
+        elfCloud.storeDataItemsCompleted.connect(_uploadCompleted);
+        elfCloud.storeDataItemChunkCompleted.connect(_uploadChunkCompleted);
     }
 
     Component.onDestruction: {
         elfCloud.fetchAndMoveDataItemCompleted.disconnect(_downloadCompleted);
         elfCloud.fetchAndMoveDataItemFailed.disconnect(_downloadCompleted);
         elfCloud.fetchDataItemChunkCompleted.disconnect(_downloadChunkCompleted);
+        elfCloud.storeDataItemsCompleted.disconnect(_uploadCompleted);
+        elfCloud.storeDataItemChunkCompleted.disconnect(_uploadChunkCompleted);
     }
 
     Timer
@@ -36,14 +48,13 @@ CoverBackground {
         id: percentageRefreshTimer
         interval: 3 * 1000
         repeat: true
-        running: uploadPercentage > 0 || downloadPercentage > 0
         onTriggered:
         {
-            if (downloadPercentage > 0)
-                downloadingLabel.text = downloadPercentage + "%";
-
-            if (uploadPercentage > 0)
-                uploadingLabel.text = uploadPercentage + "%";
+            downloadingLabel.text = _downloadPercentage + "%";
+            uploadingLabel.text = _uploadPercentage + "%";
+            downloadingLabel.visible = (_downloadPercentage > 0);
+            uploadingLabel.visible = (_uploadPercentage > 0);
+            running = (_downloadPercentage > 0 || _uploadPercentage > 0);
         }
     }
 
@@ -52,7 +63,7 @@ CoverBackground {
         id: locationScrollerTimer
         interval: 200
         repeat: true
-        running: !!location
+        running: !!locationLabel.text
         onTriggered:
         {
             if (locationLabel.truncated)
@@ -90,11 +101,12 @@ CoverBackground {
             horizontalAlignment: Text.AlignHCenter
             font { family: Theme.fontFamily; pixelSize: Theme.fontSizeMedium }
             text: qsTr("Upload")
-            visible: !!uploadingLabel.text
+            visible: uploadingLabel.visible
         }
 
         Label {
             id: uploadingLabel
+            visible: false
             width: parent.width
             color: Theme.primaryColor
             horizontalAlignment: Text.AlignHCenter
@@ -107,11 +119,12 @@ CoverBackground {
             horizontalAlignment: Text.AlignHCenter
             font { family: Theme.fontFamily; pixelSize: Theme.fontSizeMedium }
             text: qsTr("Download")
-            visible: !!downloadingLabel.text
+            visible: downloadingLabel.visible
         }
 
         Label {
             id: downloadingLabel
+            visible: false
             width: parent.width
             color: Theme.primaryColor
             horizontalAlignment: Text.AlignHCenter

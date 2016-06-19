@@ -5,15 +5,16 @@ Python {
 
     signal connected(bool status, string reason)
 
-    signal fetchDataItemChunkCompleted(int parentId, string name, int totalSize, int sizeFetched)
+    signal fetchDataItemChunkCompleted(int parentId, string name, int totalSize, int fetchedSize)
 
     signal fetchAndMoveDataItemStarted(int parentId, string name, string localName)
     signal fetchAndMoveDataItemCompleted(int parentId, string name, string localName)
     signal fetchAndMoveDataItemFailed(int parentId, string name, string localName, string reason)
 
+    signal storeDataItemChunkCompleted(int parentId, string remoteName, string localName, int totalSize, int storedSize)
+
     signal storeDataItemsStarted(int parentId, var remoteLocalNames)
     signal storeDataItemStarted(int parentId, string remoteName, string localName, int dataItemsLeft)
-    signal storeDataItemChunkCompleted(int parentId, string remoteName, string localName, int totalSize, int sizeStored)
     signal storeDataItemCompleted(int parentId, string remoteName, string localName, int dataItemsLeft)
     signal storeDataItemFailed(int parentId, string remoteName, string localName, int dataItemsLeft, string reason)
     signal storeDataItemsCompleted(int parentId, var remoteLocalNames)

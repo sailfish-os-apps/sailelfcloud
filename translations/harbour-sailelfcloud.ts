@@ -171,12 +171,12 @@
 <context>
     <name>CoverPage</name>
     <message>
-        <location filename="../qml/cover/CoverPage.qml" line="92"/>
+        <location filename="../qml/cover/CoverPage.qml" line="103"/>
         <source>Upload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/cover/CoverPage.qml" line="109"/>
+        <location filename="../qml/cover/CoverPage.qml" line="121"/>
         <source>Download</source>
         <translation type="unfinished"></translation>
     </message>
@@ -260,7 +260,7 @@
 <context>
     <name>ElfCloudAdapter</name>
     <message>
-        <location filename="../qml/ElfCloudAdapter.qml" line="171"/>
+        <location filename="../qml/ElfCloudAdapter.qml" line="172"/>
         <source>Destination file exists</source>
         <translation type="unfinished"></translation>
     </message>
