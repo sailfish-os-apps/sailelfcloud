@@ -126,6 +126,10 @@ Python {
         py.call("elfCloudAdapter.disconnect", [], onSuccess);
     }
 
+    function isConnected() {
+        return py.call_sync("elfCloudAdapter.isConnected", []);
+    }
+
     // This function is needed to make a copy from content list got from python since it seems to vanish and cause null pointer accesses
     function _createContentDetailsList(content) {
         var list = []

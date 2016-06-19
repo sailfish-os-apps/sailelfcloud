@@ -66,6 +66,7 @@ def isConnected():
     return client != None
 
 def disconnect():
+    global client
     client = None
     _info("elfCloud client disconnected")    
     return True
