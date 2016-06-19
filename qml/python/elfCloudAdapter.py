@@ -70,6 +70,12 @@ def disconnect():
     _info("elfCloud client disconnected")    
     return True
 
+def setEncryption(key, iv):
+    client.encryption_mode = elfcloud.utils.ENC_AES256
+    client.set_encryption_key(key)
+    client.set_iv(iv)
+    print ("set encryption", client.encryption_mode, client._encryption_mode)
+
 SUBSCRIPTION_FIELD_MAP = {'id':'Id', 'status':'Status', 'start_date':'Start date',
                           'end_date':'End date', 'storage_quota': 'Quota',
                           'subscription_type':'Subscription type'}
@@ -141,11 +147,6 @@ def listContent(cbObj, parentId):
         
     _sendCompletedSignal(cbObj, contentList)
 
-def _configEncryption():
-    client.set_encryption_key(None)
-    client.set_iv(elfcloud.utils.IV_DEFAULT)
-    client.encryption_mode = elfcloud.utils.ENC_NONE
-
 @worker.run_async
 def getDataItemInfo(cbObj, parentId, name):
     dataitem = client.get_dataitem(parentId, name)
@@ -167,7 +168,6 @@ def _sendDataItemChunkFetchedSignal(parentId, name, totalSize, sizeFetched):
     
 @worker.run_async
 def fetchDataItem(cbObj, parentId, name, outputPath, key=None):
-    _configEncryption()
     data = client.fetch_data(int(parentId), name)['data'] 
     dataLength = data.fileobj.getheader('Content-Length') # Nasty way to get total size since what if Content-Length does not exist.
                                                           # I haven't found good way to provide this information in upper level sw.
@@ -186,7 +186,6 @@ def _sendDataItemChunkStoredSignal(parentId, remotename, localName, totalSize, s
 @worker.run_async
 def storeDataItem(cbObj, parentId, remotename, filename):
     _info("Storing: " + filename + " as " + remotename)
-    _configEncryption()
     fileSize = os.path.getsize(filename)
     
     class _FileObj(object):
@@ -242,6 +241,6 @@ def addCluster(cbObj, parentId, name):
 def removeCluster(cbObj, clusterId):
     client.remove_cluster(int(clusterId))
     _sendCompletedSignal(cbObj, clusterId)
-
+    
 if __name__ == '__main__':
     pass

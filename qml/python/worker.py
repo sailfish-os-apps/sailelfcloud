@@ -59,9 +59,8 @@ class WorkData():
 MAX_WORKERS = 5
 threadPool = ThreadPool(MAX_WORKERS)
 
-from functools import wraps
-
 def run_async(func):
+    from functools import wraps
     @wraps(func)
     def async_func(*args, **kwargs):
         return threadPool.executeTask(func, *args, **kwargs)
