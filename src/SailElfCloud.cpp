@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     v->rootContext()->setContextProperty("helpers", helpers.data());
     QObject::connect(app.data(), SIGNAL(aboutToQuit()),
                      helpers.data(), SLOT(handleAboutToQuit()));
-    helpers->prepareCache();
+    helpers->init();
 
     // Start the application.
     v->setSource(SailfishApp::pathTo("qml/harbour-sailelfcloud.qml"));

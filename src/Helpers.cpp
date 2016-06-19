@@ -11,6 +11,12 @@
 
 #include "Helpers.h"
 
+bool Helpers::containsRememberLogin(void) const
+{
+    QSettings s;
+    return s.contains("user/remember");
+}
+
 bool Helpers::isRememberLogin(void) const
 {
     QSettings s;
@@ -291,20 +297,37 @@ bool Helpers::viewFileWithApplication(const QString path) {
     return true;
 }
 
-void Helpers::handleAboutToQuit()
-{
-    qDebug() << "Quitting...";
-    dropCache();
-}
-
-void Helpers::prepareCache()
+void Helpers::prepareCache(void)
 {
     QDir dir;
     dir.mkpath(getCacheDir());
 }
 
-void Helpers::dropCache()
+void Helpers::initConfig(void)
+{
+    if (!containsRememberLogin())
+        setRememberLogin();
+}
+
+void Helpers::init(void)
+{
+    initConfig();
+    prepareCache();
+}
+
+void Helpers::dropCache(void)
 {
     QDir dir(getCacheDir());
     dir.removeRecursively();
+}
+
+void Helpers::uninit(void)
+{
+    dropCache();
+}
+
+void Helpers::handleAboutToQuit(void)
+{
+    qDebug() << "Quitting...";
+    uninit();
 }

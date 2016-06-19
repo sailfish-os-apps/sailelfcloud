@@ -70,19 +70,9 @@ Page {
             }
 
             TextSwitch {
-                id: rememberLogin
-                text: qsTr("Remember login")
-                description: qsTr("Remembers login information such as username and password.")
-                checked: helpers.isRememberLogin()
-                onCheckedChanged: {
-                    checked ? helpers.setRememberLogin() : helpers.clearRememberLogin();
-                }
-            }
-
-            TextSwitch {
                 id: autologin
                 text: qsTr("Automatic login")
-                description: qsTr("Allows automatic login when application starts. Can be disabled from Configuration")
+                description: qsTr("Allows automatic login when application starts. Can be disabled from Configuration.")
                 checked: helpers.isAutoLogin()
             }
 
@@ -97,6 +87,23 @@ Page {
                                    {'username':usernameField.text,'password':passwordField.text});
                 }
             }
+            Text
+            {
+                anchors { left: parent.left; right: parent.right;
+                    leftMargin: Theme.horizontalPageMargin; rightMargin: Theme.horizontalPageMargin }
+                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                horizontalAlignment: Text.AlignJustify
+                color: Theme.secondaryHighlightColor
+                textFormat: Text.RichText
+                font { family: Theme.fontFamily; pixelSize: Theme.fontSizeSmall }
+                text: "<style>a:link { color: " + Theme.highlightColor + "; }</style>" +
+                      qsTr("See <a href=\"ConfigPage.qml\">Config page</a> for more properties to change.")
+                onLinkActivated:
+                {
+                    pageStack.push(Qt.resolvedUrl(link));
+                }
+            }
+
         }
     }
 }

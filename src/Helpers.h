@@ -10,9 +10,13 @@ class Helpers : public QObject {
 public:
     explicit Helpers (QObject* parent = 0) : QObject(parent) {}
 
+    void init(void);
+    void uninit(void);
+
     Q_INVOKABLE bool isRememberLogin(void) const;
     Q_INVOKABLE void setRememberLogin(void) const;
     Q_INVOKABLE void clearRememberLogin(void) const;
+    bool containsRememberLogin(void) const;
 
     Q_INVOKABLE QString getSettingsUserName(void) const;
     Q_INVOKABLE void setSettingsUserName(const QString name) const;
@@ -46,16 +50,13 @@ public:
 
     Q_INVOKABLE bool viewFileWithApplication(const QString path);
 
-    static void prepareCache();
-    static void dropCache();
-
 signals:
     void applicationExited(int exitCode);
 
 private slots:
     void handleProcessFinish(int exitCode, QProcess::ExitStatus status);
     void handleProcessError(QProcess::ProcessError error);
-    void handleAboutToQuit();
+    void handleAboutToQuit(void);
 
 private:
     QProcess *m_process;
@@ -72,6 +73,9 @@ private:
     static QString getOfflineStorageDir(void);
     static QString getSettingsDir(void);
 
+    static void prepareCache(void);
+    static void dropCache(void);
+    void initConfig(void);
 };
 
 #endif // HELPERS
