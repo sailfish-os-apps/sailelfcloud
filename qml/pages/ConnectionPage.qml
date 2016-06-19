@@ -18,7 +18,12 @@ Page {
             connectionProblemLabel.text = qsTr("Failed to connect");
             connectionProblemLabel.visible = true;
             connectionProblemReasonArea.text = reason;
-            connectionProblemReasonArea.visible = true;
+            connectionProblemReasonArea.visible = true;            
+            connectionProblemSolutionArea.text =
+                "<style>a:link { color: " + Theme.highlightColor + "; }</style><br/>" +
+                "<br/>" + qsTr("Are you missing account? Create one in") +
+                "<br/> <a href=\"https://secure.elfcloud.fi/en_US/\"> https://secure.elfcloud.fi/en_US/</a>";
+
             helpers.clearAutoLogin();
         }
     }
@@ -59,6 +64,23 @@ Page {
         readOnly: true
         wrapMode: TextEdit.Wrap
         visible: false
+    }
+    Text
+    {
+        id: connectionProblemSolutionArea
+        width: parent.width
+        anchors { top: connectionProblemReasonArea.bottom;
+                  left: parent.left;
+                  right: parent.right }
+        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+        horizontalAlignment: Text.AlignHCenter
+        textFormat: Text.RichText
+        font { family: Theme.fontFamily; pixelSize: Theme.fontSizeSmall }
+        color: Theme.secondaryColor
+        onLinkActivated:
+        {
+            Qt.openUrlExternally(link);
+        }
     }
 }
 

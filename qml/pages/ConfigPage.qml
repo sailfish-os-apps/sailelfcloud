@@ -4,6 +4,11 @@ import Sailfish.Silica 1.0
 Page {
     id: page
 
+    onStatusChanged: {
+        if (status === PageStatus.Active)
+            pageStack.pushAttached(Qt.resolvedUrl("EncryptionConfigPage.qml"));
+    }
+
     // To enable PullDownMenu, place our content in a SilicaFlickable
     SilicaFlickable {
         anchors.fill: parent

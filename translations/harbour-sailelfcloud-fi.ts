@@ -66,42 +66,42 @@
 <context>
     <name>ConfigPage</name>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="17"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="22"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="22"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="27"/>
         <source>Show subscription</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="29"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="34"/>
         <source>Disconnect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="48"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="53"/>
         <source>Configurations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="53"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="58"/>
         <source>Automatic login</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="54"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="59"/>
         <source>Allows automatic login when application starts.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="63"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="68"/>
         <source>Remember login</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="64"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="69"/>
         <source>Remembers login information such as username and password.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -114,7 +114,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConnectionPage.qml" line="34"/>
+        <location filename="../qml/pages/ConnectionPage.qml" line="24"/>
+        <source>Are you missing account? Create one in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/ConnectionPage.qml" line="39"/>
         <source>Connecting</source>
         <translation type="unfinished"></translation>
     </message>
@@ -266,6 +271,44 @@
     </message>
 </context>
 <context>
+    <name>EncryptionConfigPage</name>
+    <message>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="36"/>
+        <source>Encryption configurations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="40"/>
+        <source>Encryption key creation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="47"/>
+        <source>Create</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="56"/>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="57"/>
+        <source>From file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="58"/>
+        <source>From clip-board</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="63"/>
+        <source>Available encryption keys</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FileChooserDialog</name>
     <message>
         <location filename="../qml/dialogs/FileChooserDialog.qml" line="15"/>
@@ -319,6 +362,29 @@
     </message>
 </context>
 <context>
+    <name>ImportFromClipboardDialog</name>
+    <message>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="15"/>
+        <source>Key data of 16, 24 or 32 bytes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="16"/>
+        <source>Key data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="25"/>
+        <source>Key initialization vector of 16 bytes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="26"/>
+        <source>Key initialization vector</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>LoginPage</name>
     <message>
         <location filename="../qml/pages/LoginPage.qml" line="19"/>
@@ -351,17 +417,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/LoginPage.qml" line="74"/>
+        <location filename="../qml/pages/LoginPage.qml" line="82"/>
+        <source>No encryption keys found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/LoginPage.qml" line="83"/>
+        <source>Click &lt;a href=&quot;EncryptionConfigPage.qml&quot;&gt;here&lt;/a&gt; to configure.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/LoginPage.qml" line="92"/>
         <source>Automatic login</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/LoginPage.qml" line="75"/>
+        <location filename="../qml/pages/LoginPage.qml" line="93"/>
         <source>Allows automatic login when application starts. Can be disabled from Configuration.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/LoginPage.qml" line="100"/>
+        <location filename="../qml/pages/LoginPage.qml" line="118"/>
         <source>See &lt;a href=&quot;ConfigPage.qml&quot;&gt;Config page&lt;/a&gt; for more properties to change.</source>
         <translation type="unfinished"></translation>
     </message>

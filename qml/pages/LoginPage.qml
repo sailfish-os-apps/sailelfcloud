@@ -69,6 +69,24 @@ Page {
                 EnterKey.onClicked: focus = false
             }
 
+            Text
+            {
+                anchors { left: parent.left; right: parent.right;
+                    leftMargin: Theme.horizontalPageMargin; rightMargin: Theme.horizontalPageMargin }
+                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                horizontalAlignment: Text.AlignJustify
+                color: Theme.secondaryHighlightColor
+                textFormat: Text.RichText
+                font { family: Theme.fontFamily; pixelSize: Theme.fontSizeSmall }
+                text: "<style>a:link { color: " + Theme.highlightColor + "; }</style>" +
+                      qsTr("No encryption keys found.") + " " +
+                      qsTr("Click <a href=\"EncryptionConfigPage.qml\">here</a> to configure.")
+                onLinkActivated:
+                {
+                    pageStack.push(Qt.resolvedUrl(link));
+                }
+            }
+
             TextSwitch {
                 id: autologin
                 text: qsTr("Automatic login")
@@ -103,7 +121,6 @@ Page {
                     pageStack.push(Qt.resolvedUrl(link));
                 }
             }
-
         }
     }
 }

@@ -64,7 +64,9 @@ DISTFILES += \
     qml/dialogs/RemoveContainerDialog.qml \
     qml/pages/ProblemPage.qml \
     qml/harbour-sailelfcloud.qml \
-    qml/items/ElfCloudAdapterCb.qml
+    qml/items/ElfCloudAdapterCb.qml \
+    qml/pages/EncryptionConfigPage.qml \
+    qml/dialogs/ImportFromClipboardDialog.qml
 
 unix: PKGCONFIG +=
 
