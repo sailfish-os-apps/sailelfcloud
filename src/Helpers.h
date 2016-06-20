@@ -50,6 +50,8 @@ public:
 
     Q_INVOKABLE bool viewFileWithApplication(const QString path);
 
+    Q_INVOKABLE QString hashDataBeaverMd5Hex(const QString dataInHexString);
+
 signals:
     void applicationExited(int exitCode);
 

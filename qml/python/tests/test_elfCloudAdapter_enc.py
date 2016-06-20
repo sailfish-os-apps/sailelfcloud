@@ -62,8 +62,6 @@ class Test(unittest.TestCase):
         os.remove(localTempFile1.name)
         os.remove("output_large_test_file_from_ut_1.bin")
         
-        
-
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

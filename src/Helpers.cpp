@@ -7,6 +7,7 @@
 #include <QMimeDatabase>
 #include <QMimeType>
 #include <QTextStream>
+#include <QCryptographicHash>
 #include <QDebug>
 
 #include "Helpers.h"
@@ -287,7 +288,8 @@ void Helpers::handleProcessError(QProcess::ProcessError error)
     emit applicationExited(-88888);
  }
 
-bool Helpers::viewFileWithApplication(const QString path) {
+bool Helpers::viewFileWithApplication(const QString path)
+{
     qDebug() << "Opening " << path << " with external application";
     const QString COMMAND = "xdg-open";
     m_process = new QProcess(this);
@@ -295,6 +297,19 @@ bool Helpers::viewFileWithApplication(const QString path) {
     connect(m_process, SIGNAL(error(QProcess::ProcessError)), this, SLOT(handleProcessError(QProcess::ProcessError)));
     m_process->start(COMMAND, QStringList(path));
     return true;
+}
+
+// elfCloud Beaver compatible MD5 hasher for initialization vector and key
+QString Helpers::hashDataBeaverMd5Hex(const QString dataInHexString)
+{
+    QByteArray result = QByteArray::fromHex(dataInHexString.toLocal8Bit());
+
+    for (int i = 0; i < 10000; i++)
+    {
+        result = QCryptographicHash::hash(result, QCryptographicHash::Md5);
+    }
+
+    return result.toHex();
 }
 
 void Helpers::prepareCache(void)

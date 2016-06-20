@@ -364,23 +364,33 @@
 <context>
     <name>ImportFromClipboardDialog</name>
     <message>
-        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="15"/>
-        <source>Key data of 16, 24 or 32 bytes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="16"/>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="24"/>
         <source>Key data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="25"/>
-        <source>Key initialization vector of 16 bytes</source>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="46"/>
+        <source>Initialization vector of 16 bytes (in hex)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="26"/>
-        <source>Key initialization vector</source>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="47"/>
+        <source>Initialization vector</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="23"/>
+        <source>Key data of 16, 24 or 32 bytes (in hex)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="17"/>
+        <source>Type or copy-paste key and initialization vector in hex string format.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="69"/>
+        <source>Key and initialization vector hash</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
