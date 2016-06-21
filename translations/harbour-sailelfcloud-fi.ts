@@ -176,12 +176,12 @@
 <context>
     <name>CoverPage</name>
     <message>
-        <location filename="../qml/cover/CoverPage.qml" line="103"/>
+        <location filename="../qml/cover/CoverPage.qml" line="90"/>
         <source>Upload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/cover/CoverPage.qml" line="121"/>
+        <location filename="../qml/cover/CoverPage.qml" line="108"/>
         <source>Download</source>
         <translation type="unfinished"></translation>
     </message>
@@ -273,37 +273,37 @@
 <context>
     <name>EncryptionConfigPage</name>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="36"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="43"/>
         <source>Encryption configurations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="40"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="47"/>
         <source>Encryption key creation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="47"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="54"/>
         <source>Create</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="56"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="63"/>
         <source>New</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="57"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="64"/>
         <source>From file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="58"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="65"/>
         <source>From clip-board</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="63"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="70"/>
         <source>Available encryption keys</source>
         <translation type="unfinished"></translation>
     </message>
@@ -364,32 +364,57 @@
 <context>
     <name>ImportFromClipboardDialog</name>
     <message>
-        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="24"/>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="43"/>
         <source>Key data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="46"/>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="65"/>
         <source>Initialization vector of 16 bytes (in hex)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="47"/>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="66"/>
         <source>Initialization vector</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="23"/>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="96"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="98"/>
+        <source>Key must have name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="107"/>
+        <source>Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="125"/>
+        <source>For more information, see:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="127"/>
+        <source>SailElfCloud encryption</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="42"/>
         <source>Key data of 16, 24 or 32 bytes (in hex)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="17"/>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="36"/>
         <source>Type or copy-paste key and initialization vector in hex string format.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="69"/>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="83"/>
         <source>Key and initialization vector hash</source>
         <translation type="unfinished"></translation>
     </message>
@@ -512,43 +537,43 @@
 <context>
     <name>harbour-sailelfcloud</name>
     <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="19"/>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="28"/>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="20"/>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="29"/>
         <source>File upload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="20"/>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="21"/>
         <source>On progress</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="29"/>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="30"/>
         <source>Compeleted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="36"/>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="37"/>
         <source>File uploaded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="42"/>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="43"/>
         <source>File download</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="50"/>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="51"/>
         <source>File downloaded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="58"/>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="59"/>
         <source>File download failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="74"/>
+        <location filename="../qml/harbour-sailelfcloud.qml" line="75"/>
         <source> uploaded, items left </source>
         <translation type="unfinished"></translation>
     </message>

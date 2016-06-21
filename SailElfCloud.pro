@@ -66,7 +66,8 @@ DISTFILES += \
     qml/harbour-sailelfcloud.qml \
     qml/items/ElfCloudAdapterCb.qml \
     qml/pages/EncryptionConfigPage.qml \
-    qml/dialogs/ImportFromClipboardDialog.qml
+    qml/dialogs/ImportFromClipboardDialog.qml \
+    qml/KeyHandler.qml
 
 unix: PKGCONFIG +=
 

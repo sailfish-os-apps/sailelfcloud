@@ -8,6 +8,7 @@ ApplicationWindow
     id: application
 
     property var elfCloud: ElfCloudAdapter { }
+    property var keyHandler: KeyHandler { }
 
     function setItemNameToCover(name) {
         coverPage.location = name

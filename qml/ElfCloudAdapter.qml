@@ -255,8 +255,7 @@ Python {
             addImportPath(Qt.resolvedUrl("../lib/pyaes-0.1.0-py3.4.egg"));
             addImportPath(Qt.resolvedUrl("../lib/decorator-4.0.9-py3.4.egg"));
             addImportPath(Qt.resolvedUrl("../lib/elfcloud_weasel-1.2.2-py3.4.egg"));
-            importModule('elfCloudAdapter', function() {
-                });
+            importModule('elfCloudAdapter', function() {});
             py._ready = true;
         }
     }

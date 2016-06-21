@@ -4,10 +4,17 @@ import Sailfish.Silica 1.0
 Page {
     id: page
 
+    function _createNewKey(hash) {
+    }
+
+    function _createNewKeyFromFile() {
+    }
+
     function _createKey(index) {
         switch (index) {
         case 2:
             var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/ImportFromClipboardDialog.qml"));
+            dialog.createdKey.connect(_createNewKey);
             break;
         }
     }

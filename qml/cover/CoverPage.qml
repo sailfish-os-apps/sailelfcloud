@@ -48,6 +48,7 @@ CoverBackground {
         id: percentageRefreshTimer
         interval: 3 * 1000
         repeat: true
+        running: false
         onTriggered:
         {
             downloadingLabel.text = _downloadPercentage + "%";
@@ -57,20 +58,6 @@ CoverBackground {
             running = (_downloadPercentage > 0 || _uploadPercentage > 0);
         }
     }
-
-    Timer
-    {
-        id: locationScrollerTimer
-        interval: 200
-        repeat: true
-        running: !!locationLabel.text
-        onTriggered:
-        {
-            if (locationLabel.truncated)
-                locationLabel.anchors.horizontalCenterOffset += 5;
-        }
-    }
-
 
     Column {
         id: uploadColumn
