@@ -72,10 +72,22 @@ void Helpers::setActiveKey(const QString keyHash) const
     return s.setValue("user/activekey", keyHash);
 }
 
+void Helpers::clearActiveKey() const
+{
+    QSettings s;
+    s.remove("user/activekey");
+}
+
 QString Helpers::getActiveKey() const
 {
     QSettings s;
     return s.value("user/activekey").toString();
+}
+
+bool Helpers::isActiveKey() const
+{
+    QSettings s;
+    return s.contains("user/activekey");
 }
 
 void Helpers::clearSettingsUserNamePassword(void) const
@@ -83,7 +95,7 @@ void Helpers::clearSettingsUserNamePassword(void) const
     QSettings s;
     s.remove("user/name");
     s.remove("user/passw");
-    s.remove("user/defaultkey");
+    clearActiveKey();
 }
 
 bool Helpers::isAutoLogin(void) const

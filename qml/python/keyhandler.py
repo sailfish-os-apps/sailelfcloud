@@ -23,16 +23,13 @@ def _addKeyFileToDatabase(file):
     hash = tree.findtext('{https://secure.elfcloud.fi/xml/elfCLOUD}Hash')
 
     if hash not in keyDatabase:
-        print('adding', hash, file)
         keyDatabase[hash] = file
 
 def _findKeyFiles():
     xmlFiles = [p for p in pathlib.Path(keyStoreDir).glob('*.xml') if p.is_file()]
     for f in xmlFiles:
         with f.open() as fd:
-            print("file found", fd.name)
             if (_checkIfXmlFileIsKeyFile(fd)):
-                print("file is key file", fd.name)              
                 _addKeyFileToDatabase(f.resolve().as_posix())
 
 def _createKeyStore(configLocation):

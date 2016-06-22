@@ -23,31 +23,37 @@ Page {
         var keys = keyHandler.getKeys();
 
         for (var i = 0; i < keys.length; i++) {
-            console.log("appending", keys[i]['name'])
-            keyListMode.append({"key": keys[i], "active": false});
+            keyListModel.append({"key": keys[i], "active": false});
         }
     }
 
     function _clearActiveKey() {
-        for(var index = 0; index < keyListMode.count; index++) {
-            var item = keyListMode.get(index);
+        for(var index = 0; index < keyListModel.count; index++) {
+            var item = keyListModel.get(index);
             item['active'] = false;
-            keyListMode.set(index, item); // Setting same item back to model updates the list
+            keyListModel.set(index, item); // Setting same item back to model updates the list
         }
     }
 
     function _chooseActiveKey(index) {
+        var item = keyListModel.get(index);
+        var currentState = item['active'];
         _clearActiveKey();
-        var item = keyListMode.get(index)
-        item['active'] = true;
-        keyListMode.set(index, item); // Setting same item back to model updates the list
-        helpers.setActiveKey(item['key']['hash']);
+
+        if (!currentState) {
+            item['active'] = true;
+            keyListModel.set(index, item); // Setting same item back to model updates the list
+            helpers.setActiveKey(item['key']['hash']);
+        } else {
+            helpers.clearActiveKey();
+        }
+
     }
 
     function _setActiveKeyFromConfig() {
         var hash = helpers.getActiveKey();
-        for(var index = 0; index < keyListMode.count; index++) {
-            var item = keyListMode.get(index);
+        for(var index = 0; index < keyListModel.count; index++) {
+            var item = keyListModel.get(index);
             if (item['key']['hash'] === helpers.getActiveKey())
                 _chooseActiveKey(index);
         }
@@ -118,7 +124,7 @@ Page {
                 clip: true // prevents overlapping keysSectionHeader
 
                 model: ListModel {
-                    id: keyListMode
+                    id: keyListModel
                 }
 
                 delegate: ListItem {

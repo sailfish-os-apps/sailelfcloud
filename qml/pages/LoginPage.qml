@@ -5,6 +5,42 @@ import ".."
 Page {
     id: page
 
+    function _populateKeyList() {
+        var keys = keyHandler.getKeys();
+        var activeIndex = 0;
+        keyListModel.clear();
+        keyListModel.append({"key": {"name": qsTr("disable encryption"), "hash": "0"}});
+
+        for (var i = 0; i < keys.length; i++) {
+
+            if (keys[i]['hash'] === helpers.getActiveKey())
+                activeIndex = i; // increase by one since we have 'disable encryption' as the first one
+
+            keyListModel.append({"key": keys[i]});
+        }
+
+        keyListCompoBox.currentIndex = activeIndex;
+    }
+
+    Component.onCompleted: {
+        if (keyHandler.isReady())
+            _populateKeyList();
+        else
+            keyHandler.initialized.connect(_populateKeyList); // keyhandler may get loaded slowly
+    }
+
+    onStatusChanged: {
+        if (status === PageStatus.Activating && keyHandler.isReady())
+            _populateKeyList();
+    }
+
+    function _chooseActiveKey(key) {
+        if (key["hash"] !== "0")
+            helpers.setActiveKey(key["hash"]);
+        else
+            helpers.clearActiveKey();
+    }
+
     // To enable PullDownMenu, place our content in a SilicaFlickable
     SilicaFlickable {
         anchors.fill: parent
@@ -71,8 +107,9 @@ Page {
 
             Text
             {
+                visible: !helpers.isActiveKey()
                 anchors { left: parent.left; right: parent.right;
-                    leftMargin: Theme.horizontalPageMargin; rightMargin: Theme.horizontalPageMargin }
+                          leftMargin: Theme.horizontalPageMargin; rightMargin: Theme.horizontalPageMargin }
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 horizontalAlignment: Text.AlignJustify
                 color: Theme.secondaryHighlightColor
@@ -85,6 +122,24 @@ Page {
                 {
                     pageStack.push(Qt.resolvedUrl(link));
                 }
+            }
+
+            ComboBox {
+                id: keyListCompoBox
+                visible: helpers.isActiveKey()
+                description: qsTr("Encryption keys")
+                anchors { left: parent.left; right: parent.right }
+
+                menu: ContextMenu {
+                        id: keyListContextMenu
+                        Repeater {
+                            model: ListModel { id: keyListModel }
+                            MenuItem {
+                                text: key["name"]
+                                onClicked: _chooseActiveKey(key);
+                            }
+                        }
+                    }
             }
 
             TextSwitch {

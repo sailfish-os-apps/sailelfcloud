@@ -6,7 +6,13 @@ Python {
 
     id: py
 
+    signal initialized()
+
     property bool _ready: false
+
+    function isReady() {
+        return _ready;
+    }
 
     // Sets up handlers for events and signals from python module
     function __setHandlers() {
@@ -39,8 +45,9 @@ Python {
             addImportPath(Qt.resolvedUrl("python/"));
             importModule('keyhandler', function() {
                     call_sync('keyhandler.init', [StandardPaths.data])
+                    initialized();
+                    py._ready = true;
                 });
-            py._ready = true;
         }
     }
 

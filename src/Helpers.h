@@ -33,7 +33,9 @@ public:
     Q_INVOKABLE bool isAutoLoginAllowed(void) const;
 
     Q_INVOKABLE void setActiveKey(const QString keyHash) const;
+    Q_INVOKABLE void clearActiveKey() const;
     Q_INVOKABLE QString getActiveKey() const;
+    Q_INVOKABLE bool isActiveKey() const;
 
     Q_INVOKABLE void clearLoginInformation(void) const;
 
