@@ -66,13 +66,25 @@ void Helpers::setSettingsUserNamePassword(const QString name, const QString pw) 
     setSettingsPassword(pw);
 }
 
+void Helpers::setActiveKey(const QString keyHash) const
+{
+    QSettings s;
+    return s.setValue("user/activekey", keyHash);
+}
+
+QString Helpers::getActiveKey() const
+{
+    QSettings s;
+    return s.value("user/activekey").toString();
+}
+
 void Helpers::clearSettingsUserNamePassword(void) const
 {
     QSettings s;
     s.remove("user/name");
     s.remove("user/passw");
+    s.remove("user/defaultkey");
 }
-
 
 bool Helpers::isAutoLogin(void) const
 {

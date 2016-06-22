@@ -29,7 +29,8 @@ class Test(unittest.TestCase):
         keyhandler.storeKey(name="name2", description="descr",
                             key="123456ABCDEF", iv="ABCDEF0123456789",
                             hash="123456723232")
-        print(keyhandler._findKeyFiles())
+        print(keyhandler.getKey("123456723232"))
+        print(keyhandler.getKeys())
 
 
 if __name__ == "__main__":

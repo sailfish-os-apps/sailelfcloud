@@ -273,37 +273,37 @@
 <context>
     <name>EncryptionConfigPage</name>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="43"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="79"/>
         <source>Encryption configurations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="47"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="84"/>
         <source>Encryption key creation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="54"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="92"/>
         <source>Create</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="63"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="101"/>
         <source>New</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="64"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="102"/>
         <source>From file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="65"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="103"/>
         <source>From clip-board</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="70"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="109"/>
         <source>Available encryption keys</source>
         <translation type="unfinished"></translation>
     </message>

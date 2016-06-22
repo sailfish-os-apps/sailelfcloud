@@ -13,33 +13,60 @@ from os import SEEK_SET
 keyStoreDir = None
 keyDatabase = {}
 
-def _createKeyStore(configLocation):
-    global keyStoreDir
-    keyStoreDir = os.path.join(configLocation, 'keys')
-    os.makedirs(keyStoreDir, exist_ok=True)
-
 def _checkIfXmlFileIsKeyFile(file):
     tree = et.ElementTree(None, file)
     root = tree.getroot()
-    return root.tag == 'ec:key' and \
-        'xmlns:ec' in root.attrib and \
-        root.attrib['xmlns:ec'] == "https://secure.elfcloud.fi/xml/elfCLOUD" 
+    return root.tag == '{https://secure.elfcloud.fi/xml/elfCLOUD}key' 
 
 def _addKeyFileToDatabase(file):
     tree = et.ElementTree(None, file)
-    nameTag = tree.find('ec:ShortName')
-    print (nameTag)
-    #if nameTag:
-    #    keyDatabase[]
+    hash = tree.findtext('{https://secure.elfcloud.fi/xml/elfCLOUD}Hash')
+
+    if hash not in keyDatabase:
+        print('adding', hash, file)
+        keyDatabase[hash] = file
 
 def _findKeyFiles():
     xmlFiles = [p for p in pathlib.Path(keyStoreDir).glob('*.xml') if p.is_file()]
     for f in xmlFiles:
         with f.open() as fd:
+            print("file found", fd.name)
             if (_checkIfXmlFileIsKeyFile(fd)):
-                fd.seek(0, SEEK_SET)
-                _addKeyFileToDatabase(fd)
+                print("file is key file", fd.name)              
+                _addKeyFileToDatabase(f.resolve().as_posix())
+
+def _createKeyStore(configLocation):
+    global keyStoreDir
+    keyStoreDir = os.path.join(configLocation, 'keys')
+    os.makedirs(keyStoreDir, exist_ok=True)
+    _findKeyFiles()
+
+def _readKeyInfo(file):
+    tree = et.ElementTree(None, file)
     
+    name = tree.findtext('{https://secure.elfcloud.fi/xml/elfCLOUD}ShortName')
+    descr = tree.findtext('{https://secure.elfcloud.fi/xml/elfCLOUD}Description')
+    data = tree.findtext('{https://secure.elfcloud.fi/xml/elfCLOUD}Data')
+    hash = tree.findtext('{https://secure.elfcloud.fi/xml/elfCLOUD}Hash')
+    
+    cipher = tree.find('{https://secure.elfcloud.fi/xml/elfCLOUD}Cipher')
+    iv = cipher.findtext('{https://secure.elfcloud.fi/xml/elfCLOUD}InitializationVector')
+    mode = cipher.findtext('{https://secure.elfcloud.fi/xml/elfCLOUD}Mode')
+    type = cipher.findtext('{https://secure.elfcloud.fi/xml/elfCLOUD}Type')
+    
+    return {'name':name, 'description':descr, 'data':data, 'iv':iv,
+            'hash':hash, 'mode':mode, 'type':type}
+
+def getKey(hash):
+    return _readKeyInfo(keyDatabase[hash])
+
+def getKeys():
+    keys = []
+    
+    for _key, file in keyDatabase.items():
+        keys.append(_readKeyInfo(file))
+    
+    return keys
 
 def init(configLocation):
     _createKeyStore(configLocation)
@@ -63,5 +90,7 @@ def _createKeyFilePath(keyName):
 
 def storeKey(name, description, key, iv, hash, mode='CFB8', type='AES128'):
     tree = _buildKeyXmlTree(name, description, key, iv, hash, mode, type)
-    tree.write(_createKeyFilePath(name), encoding='utf-8', xml_declaration=True,short_empty_elements=False)
+    keyFilePath = _createKeyFilePath(name)
+    tree.write(keyFilePath, encoding='utf-8', xml_declaration=True,short_empty_elements=False)
+    _addKeyFileToDatabase(keyFilePath)
     
