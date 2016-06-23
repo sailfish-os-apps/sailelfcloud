@@ -38,6 +38,9 @@ def _createKeyStore(configLocation):
     os.makedirs(keyStoreDir, exist_ok=True)
     _findKeyFiles()
 
+def init(configLocation):
+    _createKeyStore(configLocation)
+
 def _readKeyInfo(file):
     tree = et.ElementTree(None, file)
     
@@ -64,9 +67,6 @@ def getKeys():
         keys.append(_readKeyInfo(file))
     
     return keys
-
-def init(configLocation):
-    _createKeyStore(configLocation)
 
 def _buildKeyXmlTree(name, description, key, iv, hash, mode, type):
     root = et.Element('ec:key', {'xmlns:ec': 'https://secure.elfcloud.fi/xml/elfCLOUD'})

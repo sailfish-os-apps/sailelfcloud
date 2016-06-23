@@ -14,24 +14,15 @@ Page {
         for (var i = 0; i < keys.length; i++) {
 
             if (keys[i]['hash'] === helpers.getActiveKey())
-                activeIndex = i; // increase by one since we have 'disable encryption' as the first one
+                activeIndex = i+1; // increase by one since we have 'disable encryption' as the first one
 
             keyListModel.append({"key": keys[i]});
         }
 
+        // BUG: Sailfish combobox does not react if only currentIndex is set.
+        //      Also currentItem must be set in ordet to select current item.
         keyListCompoBox.currentIndex = activeIndex;
-    }
-
-    Component.onCompleted: {
-        if (keyHandler.isReady())
-            _populateKeyList();
-        else
-            keyHandler.initialized.connect(_populateKeyList); // keyhandler may get loaded slowly
-    }
-
-    onStatusChanged: {
-        if (status === PageStatus.Activating && keyHandler.isReady())
-            _populateKeyList();
+        keyListCompoBox.currentItem = keyListCompoBox.menu.children[activeIndex]
     }
 
     function _chooseActiveKey(key) {
@@ -39,6 +30,16 @@ Page {
             helpers.setActiveKey(key["hash"]);
         else
             helpers.clearActiveKey();
+    }
+
+    onStatusChanged: {
+        if (status === PageStatus.Activating) {
+            if (keyHandler.isReady())
+                _populateKeyList();
+            else
+                keyHandler.initialized.connect(_populateKeyList); // keyhandler may get loaded slowly
+        }
+
     }
 
     // To enable PullDownMenu, place our content in a SilicaFlickable
@@ -53,7 +54,9 @@ Page {
         PullDownMenu {
             MenuItem {
                 text: qsTr("Configuration")
-                onClicked: pageStack.push(Qt.resolvedUrl("ConfigPage.qml"));
+                onClicked: {
+                    var page = pageStack.push(Qt.resolvedUrl("ConfigPage.qml"));
+                }
             }
         }
 
@@ -107,7 +110,7 @@ Page {
 
             Text
             {
-                visible: !helpers.isActiveKey()
+                visible: !keyListModel.count
                 anchors { left: parent.left; right: parent.right;
                           leftMargin: Theme.horizontalPageMargin; rightMargin: Theme.horizontalPageMargin }
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
@@ -126,18 +129,19 @@ Page {
 
             ComboBox {
                 id: keyListCompoBox
-                visible: helpers.isActiveKey()
-                description: qsTr("Encryption keys")
+                visible: !!keyListModel.count
+                description: qsTr("Active encryption key")
                 anchors { left: parent.left; right: parent.right }
 
                 menu: ContextMenu {
                         id: keyListContextMenu
                         Repeater {
+                            id: keyListRepeater
                             model: ListModel { id: keyListModel }
-                            MenuItem {
-                                text: key["name"]
-                                onClicked: _chooseActiveKey(key);
-                            }
+                            delegate: MenuItem {
+                                    text: key["name"]
+                                    onClicked: _chooseActiveKey(key);
+                                }
                         }
                     }
             }
