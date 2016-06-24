@@ -36,6 +36,10 @@ Python {
         return py.call_sync("keyhandler.getKeys");
     }
 
+    function getKey(hash) {
+        return py.call_sync("keyhandler.getKey", [hash]);
+    }
+
     Component.onCompleted: {
         if (!py._ready) {
             console.log("keyhandler starting up...");

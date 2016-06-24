@@ -7,6 +7,7 @@ Created on Apr 27, 2016
 import os
 import elfcloud
 import worker
+import binascii
 
 try:
     import pyotherside
@@ -73,8 +74,8 @@ def disconnect():
 
 def setEncryption(key, iv):
     client.encryption_mode = elfcloud.utils.ENC_AES256
-    client.set_encryption_key(key)
-    client.set_iv(iv)
+    client.set_encryption_key(binascii.unhexlify(key))
+    client.set_iv(binascii.unhexlify(iv))
     print ("set encryption", client.encryption_mode, client._encryption_mode)
 
 SUBSCRIPTION_FIELD_MAP = {'id':'Id', 'status':'Status', 'start_date':'Start date',

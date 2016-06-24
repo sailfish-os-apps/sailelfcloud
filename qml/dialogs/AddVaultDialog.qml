@@ -13,6 +13,7 @@ Dialog {
 
         TextField {
             id: nameField
+            focus: true
             width: parent.width
             placeholderText: qsTr("Vault name")
             label: "Name"

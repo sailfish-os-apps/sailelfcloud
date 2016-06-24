@@ -13,6 +13,13 @@ Page {
         elfCloud.onConnected.disconnect(_connectionCb);
         busyIndication.running = false;
         if (status) {
+            var activeKeyHash = helpers.getActiveKey();
+
+            if (activeKeyHash) {
+                var key = keyHandler.getKey(activeKeyHash);
+                elfCloud.setEncryptionKey(key["data"], key["iv"]);
+            }
+
             pageStack.replaceAbove(null, Qt.resolvedUrl("ContainerPage.qml"));
         } else {
             connectionProblemLabel.text = qsTr("Failed to connect");

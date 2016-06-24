@@ -1,0 +1,9 @@
+3rd/*.tar.gz
+*/**/__pycache__
+moc_*
+*.qm
+*.o
+.settings/
+.project
+.pydevproject
+

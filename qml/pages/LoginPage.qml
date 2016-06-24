@@ -26,8 +26,9 @@ Page {
     }
 
     function _chooseActiveKey(key) {
-        if (key["hash"] !== "0")
+        if (key["hash"] !== "0") {
             helpers.setActiveKey(key["hash"]);
+        }
         else
             helpers.clearActiveKey();
     }

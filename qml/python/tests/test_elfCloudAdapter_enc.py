@@ -50,11 +50,11 @@ class Test(unittest.TestCase):
         elfCloudAdapter.disconnect()
 
     def testName(self):
-        k = binascii.unhexlify('d8b31e395774b3f22d753ce88cc2490f2c625fac0c9a737a5566215fd29ec7c7')
-        i = binascii.unhexlify('1fa39269dae695ea75d0fc43064ff883')
+        k = 'd8b31e395774b3f22d753ce88cc2490f2c625fac0c9a737a5566215fd29ec7c7'
+        i = '1fa39269dae695ea75d0fc43064ff883'
         elfCloudAdapter.setEncryption(k, i)
         localTempFile1 = open("large_test_file_from_ut_1.bin", "wb")
-        localTempFile1.write(bytes(range(256)) * 4 * 1000 * 1)
+        localTempFile1.write(bytes(range(256)) * 2 * 1000 * 1)
         localTempFile1.close()
         elfCloudAdapter.storeDataItem(None, self.clusterId, localTempFile1.name, "large_test_file_from_ut_1.bin")        
         elfCloudAdapter.fetchDataItem(None, self.clusterId, "large_test_file_from_ut_1.bin", "output_large_test_file_from_ut_1.bin")
