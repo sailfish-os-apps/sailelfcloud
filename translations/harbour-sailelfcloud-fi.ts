@@ -109,17 +109,17 @@
 <context>
     <name>ConnectionPage</name>
     <message>
-        <location filename="../qml/pages/ConnectionPage.qml" line="25"/>
+        <location filename="../qml/pages/ConnectionPage.qml" line="18"/>
         <source>Failed to connect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConnectionPage.qml" line="31"/>
+        <location filename="../qml/pages/ConnectionPage.qml" line="24"/>
         <source>Are you missing account? Create one in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConnectionPage.qml" line="46"/>
+        <location filename="../qml/pages/ConnectionPage.qml" line="39"/>
         <source>Connecting</source>
         <translation type="unfinished"></translation>
     </message>
@@ -127,48 +127,48 @@
 <context>
     <name>ContainerPage</name>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="124"/>
-        <location filename="../qml/pages/ContainerPage.qml" line="172"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="129"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="177"/>
         <source>Vaults</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="66"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="71"/>
         <source>size: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="70"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="75"/>
         <source>owner: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="105"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="110"/>
         <source>Removing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="179"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="184"/>
         <source>Add vault</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="185"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="190"/>
         <source>Remove cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="191"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="196"/>
         <source>Add cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="197"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="202"/>
         <source>Upload file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="203"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="208"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
@@ -189,7 +189,7 @@
 <context>
     <name>DataItemContentPage</name>
     <message>
-        <location filename="../qml/pages/DataItemContentPage.qml" line="14"/>
+        <location filename="../qml/pages/DataItemContentPage.qml" line="16"/>
         <source>File mime type &apos;%1&apos; is not supported by this view. Using external application.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -197,72 +197,77 @@
 <context>
     <name>DataItemDetailsPage</name>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="115"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="136"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="35"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="46"/>
         <source>Deleting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="119"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="140"/>
         <source>Rename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="124"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="145"/>
         <source>Download</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="129"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="150"/>
         <source>View Contents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="187"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="211"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="191"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="215"/>
         <source>Tags</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="195"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="219"/>
         <source>Id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="198"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="222"/>
         <source>ParentId</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="203"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="227"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="207"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="231"/>
         <source>Last access time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="211"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="235"/>
         <source>Hash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="215"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="239"/>
         <source>Key hash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="220"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="243"/>
+        <source>Decryption key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="79"/>
         <source>No decryption key available</source>
         <translation type="unfinished"></translation>
     </message>
@@ -374,37 +379,37 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="65"/>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="64"/>
         <source>Initialization vector of 16 bytes (in hex)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="66"/>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="65"/>
         <source>Initialization vector</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="96"/>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="94"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="98"/>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="96"/>
         <source>Key must have name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="107"/>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="105"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="125"/>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="123"/>
         <source>For more information, see:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="127"/>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="125"/>
         <source>SailElfCloud encryption</source>
         <translation type="unfinished"></translation>
     </message>
@@ -419,7 +424,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="83"/>
+        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="81"/>
         <source>Key and initialization vector hash</source>
         <translation type="unfinished"></translation>
     </message>

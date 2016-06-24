@@ -44,6 +44,16 @@ Python {
         return py.call_sync("keyhandler.isKey", [hash]);
     }
 
+    function getActiveKeyAndIv() {
+        var activeKeyHash = helpers.getActiveKey();
+
+        if (activeKeyHash) {
+            var key = keyHandler.getKey(activeKeyHash);
+            return [key["data"], key["iv"]];
+        }
+        return undefined
+    }
+
     Component.onCompleted: {
         if (!py._ready) {
             console.log("keyhandler starting up...");

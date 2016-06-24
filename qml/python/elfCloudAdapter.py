@@ -76,7 +76,9 @@ def setEncryption(key, iv):
     client.encryption_mode = elfcloud.utils.ENC_AES256
     client.set_encryption_key(binascii.unhexlify(key))
     client.set_iv(binascii.unhexlify(iv))
-    print ("set encryption", client.encryption_mode, client._encryption_mode)
+
+def clearEncryption():
+    client.encryption_mode = elfcloud.utils.ENC_NONE    
 
 SUBSCRIPTION_FIELD_MAP = {'id':'Id', 'status':'Status', 'start_date':'Start date',
                           'end_date':'End date', 'storage_quota': 'Quota',
@@ -144,7 +146,7 @@ def listContent(cbObj, parentId):
                                 'parentId':   dataitem.parent_id,
                                 'type':       'dataitem',
                                 'tags':       dataitem.meta.get('TGS', ""),
-                                'encryption': dataitem.meta.get('ENC', ""),
+                                'encryption': dataitem.meta.get('ENC', "NONE"),
                                 'contentHash':dataitem.meta.get('CHA', ""),
                                 'keyHash':    dataitem.meta.get('KHA', "")})
     except elfcloud.exceptions.ECAuthException as e:
@@ -162,7 +164,7 @@ def getDataItemInfo(cbObj, parentId, name):
             'tags': dataitem.tags if dataitem.tags else [],
             'accessed': dataitem.last_accessed_date if dataitem.last_accessed_date else '',
             'contentHash': dataitem.content_hash if dataitem.content_hash else '',
-            'encryption': dataitem.__dict__.get('ENC', ""),
+            'encryption': dataitem.__dict__.get('meta').get('ENC', "NONE"),
             'keyHash': dataitem.key_hash if dataitem.key_hash else ''}
     _sendCompletedSignal(cbObj, info)
 

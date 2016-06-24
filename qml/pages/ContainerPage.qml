@@ -56,6 +56,11 @@ Page {
         var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/FileChooserDialog.qml"))
         dialog.accepted.connect( function() {
             console.info("Uploading files: " + dialog.selectedPaths);
+            var activeKeyAndIv = keyHandler.getActiveKeyAndIv();
+            if (activeKeyAndIv !== undefined)
+                elfCloud.setEncryptionKey(activeKeyAndIv[0], activeKeyAndIv[1]);
+            else
+                elfCloud.clearEncryption();
             _asyncCallRef = elfCloud.storeDataItems(containerId, dialog.selectedPaths, _refresh);
             console.log("_asyncCallRef", _asyncCallRef)
             });

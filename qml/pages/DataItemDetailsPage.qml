@@ -8,17 +8,28 @@ Page {
     property int parentContainerId
     property string dataItemName
     property var _asycCallRef: undefined
+    property bool _canView: false // true if item is encrypted and key for it exist, otherwise false
+    property string _key: undefined
+    property string _iv: undefined
 
     function _downloadDataItem() {
         var outputPath = helpers.generateLocalPathForRemoteDataItem(parentContainerId, dataItemName);
         console.debug("Downloading", dataItemName, "from", parentContainerId, "to", outputPath);
+
+        if (_key !== undefined && _iv !== undefined)
+            elfCloud.setEncryptionKey(_key, _iv);
+        else
+            elfCloud.clearEncryption();
+
         _asycCallRef = elfCloud.fetchAndMoveDataItem(parentContainerId, dataItemName, outputPath, false);
     }
 
     function _viewDataItemContent() {
         pageStack.push(Qt.resolvedUrl("DataItemContentPage.qml"),
                        {"dataItemName":dataItemName,
-                        "parentContainerId":parentContainerId});
+                        "parentContainerId":parentContainerId,
+                        "key":_key,
+                        "iv":_iv});
     }
 
     function _goBackIfThisDataItemRemoved(parentId, name) {
@@ -57,7 +68,17 @@ Page {
         accessedField.value = itemInfo["accessed"];
         hashField.value = itemInfo["contentHash"];
         keyHashField.value = itemInfo["keyHash"];
-        keyAvailableLabel.visible = (itemInfo['encryption'] !== "NONE" && !keyHandler.isKey(itemInfo["keyHash"]));
+        _canView = itemInfo['encryption'] === "NONE" || (itemInfo['encryption'] !== "NONE" && keyHandler.isKey(itemInfo["keyHash"]))
+
+        var key = keyHandler.getKey(itemInfo["keyHash"])
+        if (key) {
+            _key = key['data'];
+            _iv = key['iv'];
+            keyNameField.value = key['name']
+        } else if (!key && itemInfo['encryption'] !== "NONE") {
+            keyNameField.value = qsTr("No decryption key available")
+        }
+
         _makeVisible();
     }
 
@@ -127,6 +148,7 @@ Page {
 
             MenuItem {
                 text: qsTr("View Contents")
+                enabled: _canView
                 onClicked: _viewDataItemContent()
             }
         }
@@ -151,11 +173,13 @@ Page {
 
                 BackgroundItem {
                     id: openButton
+                    enabled: _canView
                     width: parent.width
                     height: openArea.height
                     onClicked: {
                         openButton.enabled = false; // prevent multiple clicks
-                        _viewDataItemContent(parentContainerId, dataItemName);
+                        if (_canView)
+                            _viewDataItemContent(parentContainerId, dataItemName);
                     }
 
                     Column {
@@ -214,10 +238,9 @@ Page {
                     id: keyHashField
                     label: qsTr("Key hash")
                 }
-                Label {
-                    id: keyAvailableLabel
-                    visible: false
-                    text: qsTr("No decryption key available")
+                DetailItem {
+                    id: keyNameField
+                    label: qsTr("Decryption key")
                 }
 
             }

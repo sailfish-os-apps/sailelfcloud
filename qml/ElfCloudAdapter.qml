@@ -249,6 +249,10 @@ Python {
        return py.call_sync("elfCloudAdapter.setEncryption", [key, initVector]);
     }
 
+    function clearEncryption() {
+        return py.call_sync("elfCloudAdapter.clearEncryption");
+    }
+
     Component.onCompleted: {
         if (!py._ready) {
             console.log("elfCloudAdapter starting up...");

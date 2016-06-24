@@ -45,7 +45,6 @@ Dialog {
                 inputMethodHints: Qt.ImhNoPredictiveTex | Qt.ImhNoAutoUppercase
                 font { capitalization: Font.AllLowercase; pixelSize: Theme.fontSizeTiny; }
                 validator: RegExpValidator { regExp: /([0-9a-fA-F]{32}$)|([0-9a-fA-F]{48}$)|([0-9a-fA-F]{64}$)/ }
-                text: "dcf4c682c503065c134d38339309159f"
 
                 // Only allow Enter key to be pressed when valid text has been entered
                 EnterKey.enabled: acceptableInput
@@ -68,7 +67,6 @@ Dialog {
                 inputMethodHints: Qt.ImhNoPredictiveTex | Qt.ImhNoAutoUppercase
                 font { capitalization: Font.AllLowercase; pixelSize: Theme.fontSizeTiny; }
                 validator: RegExpValidator { regExp: /(0[xX])?[0-9a-fA-F]{32}$/ }
-                text: "4d3aba11ff0300bb4c6210a3b07f8d57"
 
                 // Only allow Enter key to be pressed when valid text has been entered
                 EnterKey.enabled: acceptableInput

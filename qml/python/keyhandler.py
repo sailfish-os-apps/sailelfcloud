@@ -8,7 +8,6 @@ import os
 import pathlib
 import xml.etree.ElementTree as et 
 import worker
-from os import SEEK_SET
 
 keyStoreDir = None
 keyDatabase = {}
