@@ -128,7 +128,7 @@
     <name>ContainerPage</name>
     <message>
         <location filename="../qml/pages/ContainerPage.qml" line="124"/>
-        <location filename="../qml/pages/ContainerPage.qml" line="153"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="164"/>
         <source>Vaults</source>
         <translation type="unfinished"></translation>
     </message>
@@ -148,27 +148,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="160"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="171"/>
         <source>Add vault</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="166"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="177"/>
         <source>Remove cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="172"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="183"/>
         <source>Add cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="178"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="189"/>
         <source>Upload file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="184"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="195"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>

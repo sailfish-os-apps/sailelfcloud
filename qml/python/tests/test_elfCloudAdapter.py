@@ -15,8 +15,8 @@ unittest.mock.patch('worker.run_async', lambda x: x).start()
 import elfCloudAdapter
 
 # Set your own username and password
-USERNAME=""
-PASSWORD=""
+USERNAME="unittestuser"
+PASSWORD="utyghK!9"
 
 def setUpModule():
     elfCloudAdapter.connect(USERNAME, PASSWORD)
@@ -70,6 +70,10 @@ class Test(unittest.TestCase):
         elfCloudAdapter.updateDataItem(self.clusterId, "test_file_for_dataitem_info.txt", "New description", ["tag1", "tag 2"])
         elfCloudAdapter.getDataItemInfo(None, self.clusterId, "test_file_for_dataitem_info.txt")
         dataiteminfo = mock_pyotherside.sentArgs[1]
+        print("content", dataiteminfo)
+        elfCloudAdapter.listContent(None, self.clusterId)
+        content = mock_pyotherside.sentArgs[1]
+        print("content", content)
         self.assertEqual("test_file_for_dataitem_info.txt", dataiteminfo['name'])
         self.assertEqual("New description", dataiteminfo['description'])        
         self.assertListEqual(["tag1", "tag 2"], dataiteminfo['tags'])

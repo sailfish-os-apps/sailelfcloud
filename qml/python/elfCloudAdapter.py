@@ -138,12 +138,15 @@ def listContent(cbObj, parentId):
                                 'type':        'cluster'})
     
         for dataitem in dataitems:
-            contentList.append({'name':     dataitem.name,
-                                'id'  :     0,
-                                'size':     dataitem.size,
-                                'parentId': dataitem.parent_id,
-                                'type':     'dataitem',
-                                'metadata': dataitem.meta})
+            contentList.append({'name':       dataitem.name,
+                                'id'  :       0,
+                                'size':       dataitem.size,
+                                'parentId':   dataitem.parent_id,
+                                'type':       'dataitem',
+                                'tags':       dataitem.meta.get('TGS', ""),
+                                'encryption': dataitem.meta.get('ENC', ""),
+                                'contentHash':dataitem.meta.get('CHA', ""),
+                                'keyHash':    dataitem.meta.get('KHA', "")})
     except elfcloud.exceptions.ECAuthException as e:
         _sendExceptionSignal(e)
         
@@ -155,11 +158,12 @@ def getDataItemInfo(cbObj, parentId, name):
     info = {'id': dataitem.dataitem_id,
             'name': dataitem.name,
             'size': dataitem.size,
-            'description': (dataitem.description if dataitem.description else ''),
-            'tags': (dataitem.tags if dataitem.tags else []),
-            'accessed': (dataitem.last_accessed_date if dataitem.last_accessed_date else ''),
-            'contentHash': (dataitem.content_hash if dataitem.content_hash else ''),
-            'keyHash': (dataitem.key_hash if dataitem.key_hash else '')}
+            'description': dataitem.description if dataitem.description else '',
+            'tags': dataitem.tags if dataitem.tags else [],
+            'accessed': dataitem.last_accessed_date if dataitem.last_accessed_date else '',
+            'contentHash': dataitem.content_hash if dataitem.content_hash else '',
+            'encryption': dataitem.__dict__.get('ENC', ""),
+            'keyHash': dataitem.key_hash if dataitem.key_hash else ''}
     _sendCompletedSignal(cbObj, info)
 
 def updateDataItem(parentId, name, description=None, tags=None):

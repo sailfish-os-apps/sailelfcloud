@@ -136,6 +136,17 @@ Page {
             _asyncCallRef.invalidate();
     }
 
+    function _isEncrypted(item) {
+        return item["type"] === "dataitem" && item['encryption'] !== "NONE"
+    }
+
+    function _getIconForModelItem(item) {
+        if (item["type"] === "dataitem")
+            return "image://theme/icon-m-document";
+        else
+            return "image://theme/icon-m-folder";
+    }
+
     BusyIndicator {
         id: busyIndication
         size: BusyIndicatorSize.Large
@@ -197,8 +208,16 @@ Page {
                 id: listIcon
                 x: Theme.paddingLarge
                 y: Theme.paddingMedium
-                source: model.item["type"] === "dataitem" ? "image://theme/icon-m-document" : "image://theme/icon-m-folder"
+                source: _getIconForModelItem(model.item)
             }
+            Image {
+                visible: _isEncrypted(model.item)
+                anchors { left: listIcon.left; top: listIcon.top; }
+                x: Theme.paddingSmall
+                y: Theme.paddingSmall
+                source: "image://theme/icon-s-secure"
+            }
+
             Label {
                 id: labelContentName
                 anchors.left: listIcon.right
