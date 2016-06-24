@@ -40,6 +40,10 @@ Python {
         return py.call_sync("keyhandler.getKey", [hash]);
     }
 
+    function isKey(hash) {
+        return py.call_sync("keyhandler.isKey", [hash]);
+    }
+
     Component.onCompleted: {
         if (!py._ready) {
             console.log("keyhandler starting up...");

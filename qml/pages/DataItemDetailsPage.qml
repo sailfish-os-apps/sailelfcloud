@@ -57,6 +57,7 @@ Page {
         accessedField.value = itemInfo["accessed"];
         hashField.value = itemInfo["contentHash"];
         keyHashField.value = itemInfo["keyHash"];
+        keyAvailableLabel.visible = (itemInfo['encryption'] !== "NONE" && !keyHandler.isKey(itemInfo["keyHash"]));
         _makeVisible();
     }
 
@@ -213,6 +214,12 @@ Page {
                     id: keyHashField
                     label: qsTr("Key hash")
                 }
+                Label {
+                    id: keyAvailableLabel
+                    visible: false
+                    text: qsTr("No decryption key available")
+                }
+
             }
         }
     }

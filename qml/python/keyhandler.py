@@ -42,6 +42,10 @@ def init(configLocation):
     _createKeyStore(configLocation)
 
 def _readKeyInfo(file):
+    
+    if not file:
+        return None
+    
     tree = et.ElementTree(None, file)
     
     name = tree.findtext('{https://secure.elfcloud.fi/xml/elfCLOUD}ShortName')
@@ -58,7 +62,10 @@ def _readKeyInfo(file):
             'hash':hash, 'mode':mode, 'type':type}
 
 def getKey(hash):
-    return _readKeyInfo(keyDatabase[hash])
+    return _readKeyInfo(keyDatabase.get(hash, None))
+
+def isKey(hash):
+    return keyDatabase.get(hash, None) != None
 
 def getKeys():
     keys = []

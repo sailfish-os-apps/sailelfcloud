@@ -128,7 +128,7 @@
     <name>ContainerPage</name>
     <message>
         <location filename="../qml/pages/ContainerPage.qml" line="124"/>
-        <location filename="../qml/pages/ContainerPage.qml" line="164"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="172"/>
         <source>Vaults</source>
         <translation type="unfinished"></translation>
     </message>
@@ -148,27 +148,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="171"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="179"/>
         <source>Add vault</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="177"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="185"/>
         <source>Remove cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="183"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="191"/>
         <source>Add cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="189"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="197"/>
         <source>Upload file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="195"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="203"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
@@ -197,7 +197,7 @@
 <context>
     <name>DataItemDetailsPage</name>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="114"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="115"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -207,58 +207,63 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="118"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="119"/>
         <source>Rename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="123"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="124"/>
         <source>Download</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="128"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="129"/>
         <source>View Contents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="186"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="187"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="190"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="191"/>
         <source>Tags</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="194"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="195"/>
         <source>Id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="197"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="198"/>
         <source>ParentId</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="202"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="203"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="206"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="207"/>
         <source>Last access time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="210"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="211"/>
         <source>Hash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="214"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="215"/>
         <source>Key hash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="220"/>
+        <source>No decryption key available</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -137,7 +137,15 @@ Page {
     }
 
     function _isEncrypted(item) {
-        return item["type"] === "dataitem" && item['encryption'] !== "NONE"
+        return item["type"] === "dataitem" &&
+                item['encryption'] !== "NONE";
+    }
+
+    function _isKeyAvailable(item) {
+        if (item["type"] !== "dataitem" || item['encryption'] === "NONE")
+            return true;
+        else
+            return keyHandler.isKey(item['keyHash']);
     }
 
     function _getIconForModelItem(item) {
@@ -216,6 +224,13 @@ Page {
                 x: Theme.paddingSmall
                 y: Theme.paddingSmall
                 source: "image://theme/icon-s-secure"
+            }
+            Image {
+                visible: _isKeyAvailable(model.item) === false
+                anchors { right: listIcon.right; bottom: listIcon.bottom; }
+                x: Theme.paddingSmall
+                y: Theme.paddingSmall
+                source: "image://theme/icon-s-clear-opaque-cross"
             }
 
             Label {
