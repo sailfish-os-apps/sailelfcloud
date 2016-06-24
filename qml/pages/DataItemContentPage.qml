@@ -8,8 +8,8 @@ Page {
 
     property string dataItemName
     property int parentContainerId
-    property string key: undefined
-    property string iv: undefined
+    property var key: undefined
+    property var iv: undefined
 
     function _displayUnknownFile(path, mime) {
         busyIndication.running = false;
@@ -48,10 +48,8 @@ Page {
         var outputPath = helpers.generateLocalPathForRemoteDataItem(parentContainerId, dataItemName);
         console.debug("Fetching", dataItemName, "from", parentContainerId, "to", outputPath);
 
-        if (key !== undefined && iv !== undefined) {
+        if (key !== undefined && iv !== undefined)
             elfCloud.setEncryptionKey(key, iv);
-            console.log("using key", key, iv)
-        }
         else
             elfCloud.clearEncryption();
 

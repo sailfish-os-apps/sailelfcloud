@@ -54,6 +54,18 @@ Python {
         return undefined
     }
 
+    function isActiveKey(hash) {
+        var activeKeyHash = helpers.getActiveKey();
+        return hash === activeKeyHash
+    }
+
+    function removeKey(hash) {
+        if (isActiveKey(hash))
+            helpers.clearActiveKey();
+
+        return py.call_sync("keyhandler.removeKey", [hash]);
+    }
+
     Component.onCompleted: {
         if (!py._ready) {
             console.log("keyhandler starting up...");

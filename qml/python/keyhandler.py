@@ -97,3 +97,12 @@ def storeKey(name, description, key, iv, hash, mode='CFB8', type='AES128'):
     tree.write(keyFilePath, encoding='utf-8', xml_declaration=True,short_empty_elements=False)
     _addKeyFileToDatabase(keyFilePath)
     
+def removeKey(hash):
+    keyFile = keyDatabase.get(hash, None)
+    
+    if keyFile:
+        os.remove(keyFile)
+        keyDatabase.pop(hash)
+        return True
+    
+    return False

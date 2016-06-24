@@ -9,12 +9,14 @@ Page {
     property string dataItemName
     property var _asycCallRef: undefined
     property bool _canView: false // true if item is encrypted and key for it exist, otherwise false
-    property string _key: undefined
-    property string _iv: undefined
+    property var _key: undefined
+    property var _iv: undefined
 
     function _downloadDataItem() {
         var outputPath = helpers.generateLocalPathForRemoteDataItem(parentContainerId, dataItemName);
         console.debug("Downloading", dataItemName, "from", parentContainerId, "to", outputPath);
+
+        console.log("aaaaaaaaaaa", _key, _iv)
 
         if (_key !== undefined && _iv !== undefined)
             elfCloud.setEncryptionKey(_key, _iv);
@@ -68,7 +70,8 @@ Page {
         accessedField.value = itemInfo["accessed"];
         hashField.value = itemInfo["contentHash"];
         keyHashField.value = itemInfo["keyHash"];
-        _canView = itemInfo['encryption'] === "NONE" || (itemInfo['encryption'] !== "NONE" && keyHandler.isKey(itemInfo["keyHash"]))
+        _canView = itemInfo['encryption'] === "NONE" ||
+                (itemInfo['encryption'] !== "NONE" && keyHandler.isKey(itemInfo["keyHash"]))
 
         var key = keyHandler.getKey(itemInfo["keyHash"])
         if (key) {

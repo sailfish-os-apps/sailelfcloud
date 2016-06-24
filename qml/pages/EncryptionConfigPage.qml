@@ -4,23 +4,9 @@ import Sailfish.Silica 1.0
 Page {
     id: page
 
-    function _createNewKey(hash) {
-    }
-
-    function _createNewKeyFromFile() {
-    }
-
-    function _createKey(index) {
-        switch (index) {
-        case 2:
-            var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/ImportFromClipboardDialog.qml"));
-            dialog.createdKey.connect(_createNewKey);
-            break;
-        }
-    }
-
     function _addKeysToList() {
         var keys = keyHandler.getKeys();
+        keyListModel.clear()
 
         for (var i = 0; i < keys.length; i++) {
             keyListModel.append({"key": keys[i], "active": false});
@@ -59,9 +45,35 @@ Page {
         }
     }
 
-    Component.onCompleted: {
+    function _populateKeyListAndSelectActive() {
         _addKeysToList();
         _setActiveKeyFromConfig();
+    }
+
+    Component.onCompleted: {
+        _populateKeyListAndSelectActive();
+    }
+
+    function _createdNewKey() {
+        _populateKeyListAndSelectActive()
+    }
+
+    function _createKey(index) {
+        switch (index) {
+        case 2:
+            var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/ImportFromClipboardDialog.qml"));
+            dialog.createdKey.connect(_createdNewKey);
+            break;
+        }
+    }
+
+    function _editKey(hash) {
+        console.log("editing key", hash)
+    }
+
+    function _removeKey(hash) {
+        keyHandler.removeKey(hash);
+        _populateKeyListAndSelectActive();
     }
 
 
@@ -121,7 +133,7 @@ Page {
                 height: flickable.height - pageHeader.height -
                         keyCreationSectionHeader.height -
                         keyCreationRow.height - keysSectionHeader.height - Theme.itemSizeSmall
-                clip: true // prevents overlapping keysSectionHeader
+                clip: true // prevents overlapping keysSectionHeader                
 
                 model: ListModel {
                     id: keyListModel
@@ -129,7 +141,6 @@ Page {
 
                 delegate: ListItem {
                     width: ListView.view.width
-                    height: name.height + description.height + hash.height
                     contentHeight: name.height + description.height + hash.height
 
                     IconButton {
@@ -158,6 +169,27 @@ Page {
                         text: model.key["hash"]
                         font { weight: Font.Light; pixelSize: Theme.fontSizeTiny }
                     }
+
+                    function _remove() {
+                        remorseAction(qsTr("Deleting"), function() { _removeKey(model.key["hash"]); })
+                    }
+                    ListView.onRemove: animateRemoval()
+
+
+                    menu: Component {
+                            ContextMenu {
+                                MenuItem {
+                                    text: qsTr("Delete key")
+                                    onClicked: _remove()
+                                }
+                                MenuItem {
+                                    enabled: false // Not yet implemented
+                                    text: qsTr("Edit key")
+                                    onClicked: _editKey(model.key["hash"])
+                                }
+                            }
+                    }
+
                 }
 
                 VerticalScrollDecorator {}
