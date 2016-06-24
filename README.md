@@ -13,7 +13,7 @@ Download following dependencies to 3rd/ directory:
  * elfcloud-weasel
     https://secure.elfcloud.fi/download/client/elfcloud-weasel-1.2.2.tar.gz
  * pyaes
-    https://pypi.python.org/packages/59/af/cb8be1aa6e39d08888c68a9f256d482786adde98b6cbbe70c3b90056f38e/pyaes-0.1.0.tar.gz#md5=7b0bae8a913e7580a1ab080e845e2cf3
+    https://pypi.python.org/packages/63/31/6768a72cdca5dbd299ae798b690801e6c9c2f018332eec3c5fca79370dba/pyaes-1.6.0.tar.gz#md5=516d3869e62e661031635270348193fe
  * decorator
     https://pypi.python.org/packages/68/04/621a0f896544814ce6c6a0e6bc01d19fc41d245d4515a2e4cf9e07a45a12/decorator-4.0.9.tar.gz#md5=f12c5651ccd707e12a0abaa4f76cd69a
 

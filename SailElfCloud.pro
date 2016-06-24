@@ -72,8 +72,8 @@ DISTFILES += \
 unix: PKGCONFIG +=
 
 pyaes.target = pyaes
-pyaes.commands = tar xzf $$PWD/3rd/pyaes-0.1.0.tar.gz && cd pyaes-0.1.0 && patch -p0 -i $$PWD/3rd/pyaes.patch && python3 setup.py bdist_egg
-pyaes_install.commands = cp pyaes-0.1.0/dist/pyaes-0.1.0-py3.4.egg $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib
+pyaes.commands = tar xzf $$PWD/3rd/pyaes-1.6.0.tar.gz && cd pyaes-1.6.0 && patch -p0 -i $$PWD/3rd/pyaes.patch && python3 setup.py bdist_egg
+pyaes_install.commands = cp pyaes-1.6.0/dist/pyaes-1.6.0-py3.4.egg $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib
 pyaes_install.path = /usr/share/harbour-sailelfcloud/lib
 
 decorator.target = decorator

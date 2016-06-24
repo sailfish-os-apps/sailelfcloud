@@ -245,6 +245,10 @@ Python {
                      clusterId)
     }
 
+    function setEncryptionKey(key, initVector) {
+       return py.call_sync("elfCloudAdapter.setEncryption", [key, initVector]);
+    }
+
     Component.onCompleted: {
         if (!py._ready) {
             console.log("elfCloudAdapter starting up...");
@@ -252,11 +256,10 @@ Python {
             console.log("PyOtherSide version: " + pluginVersion());
             __setHandlers();
             addImportPath(Qt.resolvedUrl("python/"));
-            addImportPath(Qt.resolvedUrl("../lib/pyaes-0.1.0-py3.4.egg"));
+            addImportPath(Qt.resolvedUrl("../lib/pyaes-1.6.0-py3.4.egg"));
             addImportPath(Qt.resolvedUrl("../lib/decorator-4.0.9-py3.4.egg"));
             addImportPath(Qt.resolvedUrl("../lib/elfcloud_weasel-1.2.2-py3.4.egg"));
-            importModule('elfCloudAdapter', function() {});
-            py._ready = true;
+            importModule('elfCloudAdapter', function() {  py._ready = true; });
         }
     }
 
