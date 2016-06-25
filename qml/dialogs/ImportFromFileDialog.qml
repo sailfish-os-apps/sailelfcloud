@@ -81,7 +81,7 @@ Dialog {
         anchors { top: keyExistsText.bottom; left: parent.left;
             right: parent.right; bottom: parent.bottom; }
         width: parent.width
-        height: parent.height
+        height: parent.height - keyExistsText.height - header.height
         spacing: Theme.paddingMedium
         clip: true
 
@@ -137,10 +137,11 @@ Dialog {
         section.criteria: ViewSection.FullString
         section.delegate: Component {
             Rectangle {
-                width: childrenRect.width
+                width: keyFileListView.width
                 height: childrenRect.height
                 anchors.bottomMargin: Theme.paddingLarge
-                color: "transparent"
+                color: Theme.rgba(Theme.highlightDimmerColor,
+                                  Theme.highlightBackgroundOpacity)
                 Image {
                     id: sectionIcon
                     anchors.margins: Theme.paddingMedium                    

@@ -457,26 +457,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/ImportFromFileDialog.qml" line="154"/>
+        <location filename="../qml/dialogs/ImportFromFileDialog.qml" line="155"/>
         <source>Documents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/ImportFromFileDialog.qml" line="154"/>
+        <location filename="../qml/dialogs/ImportFromFileDialog.qml" line="155"/>
         <source>Downloads</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>KeyExistsDialog</name>
-    <message>
-        <location filename="../qml/dialogs/KeyExistsDialog.qml" line="14"/>
-        <source>Failed to add key %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/dialogs/KeyExistsDialog.qml" line="23"/>
-        <source>Key file %1 has hash which is already in use. Cannot add key.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
