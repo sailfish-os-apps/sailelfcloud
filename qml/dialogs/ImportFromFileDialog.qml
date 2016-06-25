@@ -13,6 +13,7 @@ Dialog {
         for (var i = 0; i < keyFilesInDocuments.length; i++) {
             var keyInfo = keyHandler.readKeyInfoFromFile(keyFilesInDocuments[i]);
             keyListModel.append({'filename':helpers.getFilenameFromPath(keyFilesInDocuments[i]),
+                                    'path':keyFilesInDocuments[i],
                                     'name':keyInfo['name'],
                                     'description':keyInfo['description'],
                                     'hash':keyInfo['hash'],
@@ -22,6 +23,7 @@ Dialog {
         for (var i = 0; i < keyFilesInDownloads.length; i++) {
             var keyInfo = keyHandler.readKeyInfoFromFile(keyFilesInDownloads[i]);
             keyListModel.append({'filename':helpers.getFilenameFromPath(keyFilesInDownloads[i]),
+                                    'path':keyFilesInDownloads[i],
                                     'name':keyInfo['name'],
                                     'description':keyInfo['description'],
                                     'hash':keyInfo['hash'],
@@ -33,14 +35,50 @@ Dialog {
         addKeyFilesToList();
     }
 
+    function _canAcceptSelection(index) {
+
+        if (index !== -1) {
+            var hash = keyListModel.get(index).hash;
+
+            if (keyHandler.isKey(hash)) {
+                keyExistsText.visible = true;
+                canAccept = false;
+            } else {
+                keyExistsText.visible = false;
+                canAccept = true;
+            }
+
+        } else {
+            canAccept = false;
+        }
+    }
+
+    function _create(path) {
+        var keyInfo = keyHandler.readKeyInfoFromFile(path);
+        keyHandler.storeKey(keyInfo['name'], keyInfo['description'],
+                            keyInfo['key'], keyInfo['iv'], keyInfo['hash']);
+        createdKey(keyInfo['hash']);
+    }
+
     DialogHeader {
         id: header
         title: qsTr("Import key from file")
     }
 
+    Label {
+        id: keyExistsText
+        anchors { top: header.bottom; leftMargin: Theme.paddingMedium; rightMargin: Theme.paddingMedium }
+        visible: false
+        width: parent.width
+        wrapMode: Text.Wrap
+        font.pixelSize: Theme.fontSizeMedium
+        color: Theme.secondaryColor
+        text: qsTr("Selected key exists already. Cannot add key.")
+    }
+
     SilicaListView {
         id: keyFileListView
-        anchors { top: header.bottom; left: parent.left;
+        anchors { top: keyExistsText.bottom; left: parent.left;
             right: parent.right; bottom: parent.bottom; }
         width: parent.width
         height: parent.height
@@ -52,12 +90,15 @@ Dialog {
         }
 
         delegate: ListItem {
+            id: item
             width: ListView.view.width
             contentHeight: Theme.itemSizeExtraLarge
             Image {
                 id: fileIcon
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.margins: Theme.paddingMedium
+                width: Theme.iconSizeMedium
+                height: Theme.iconSizeMedium
                 source: "image://theme/icon-s-secure"
             }
             Label {
@@ -81,8 +122,12 @@ Dialog {
                 text: model.hash
             }
 
+            ListView.onCurrentItemChanged: {
+                highlighted = ListView.isCurrentItem;
+                _canAcceptSelection(index);
+            }
+
             onClicked: {
-                highlighted = !highlighted;
                 keyFileListView.currentIndex = index;
             }
 
@@ -94,10 +139,11 @@ Dialog {
             Rectangle {
                 width: childrenRect.width
                 height: childrenRect.height
+                anchors.bottomMargin: Theme.paddingLarge
                 color: "transparent"
                 Image {
                     id: sectionIcon
-                    anchors.margins: Theme.paddingMedium
+                    anchors.margins: Theme.paddingMedium                    
                     source: "image://theme/" + (section === "documents" ? "icon-m-document" : "icon-m-device-download")
                 }
                 Label {
@@ -112,4 +158,6 @@ Dialog {
 
         VerticalScrollDecorator {}
     }
+
+    onAccepted: _create(keyListModel.get(keyFileListView.currentIndex).path)
 }

@@ -16,8 +16,6 @@ Page {
         var outputPath = helpers.generateLocalPathForRemoteDataItem(parentContainerId, dataItemName);
         console.debug("Downloading", dataItemName, "from", parentContainerId, "to", outputPath);
 
-        console.log("aaaaaaaaaaa", _key, _iv)
-
         if (_key !== undefined && _iv !== undefined)
             elfCloud.setEncryptionKey(_key, _iv);
         else
@@ -75,7 +73,7 @@ Page {
 
         var key = keyHandler.getKey(itemInfo["keyHash"])
         if (key) {
-            _key = key['data'];
+            _key = key['key'];
             _iv = key['iv'];
             keyNameField.value = key['name']
         } else if (!key && itemInfo['encryption'] !== "NONE") {

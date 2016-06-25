@@ -56,7 +56,7 @@ Python {
 
         if (activeKeyHash) {
             var key = keyHandler.getKey(activeKeyHash);
-            return [key["data"], key["iv"]];
+            return [key["key"], key["iv"]];
         }
         return undefined
     }
