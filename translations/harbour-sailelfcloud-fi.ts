@@ -134,7 +134,7 @@
     </message>
     <message>
         <location filename="../qml/pages/ContainerPage.qml" line="71"/>
-        <source>size: </source>
+        <source>tags: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>

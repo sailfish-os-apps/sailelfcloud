@@ -123,15 +123,14 @@ def listVaults(cbObj):
 @worker.run_async
 def listContent(cbObj, parentId):
     contentList = []
-    _info("Getting content of %s" % parentId)
+    _debug("Getting content of %s" % parentId)
     
     try:
         clusters, dataitems = client.list_contents(int(parentId))
-               
+
         for cluster in clusters:
             contentList.append({'name':        cluster.name,
                                 'id'  :        cluster.id,
-                                'dataItems':   cluster.dataitems,
                                 'descendants': cluster.descendants,
                                 'parentId':    cluster.parent_id,
                                 'modified':    cluster.modified_date,
@@ -142,7 +141,6 @@ def listContent(cbObj, parentId):
         for dataitem in dataitems:
             contentList.append({'name':       dataitem.name,
                                 'id'  :       0,
-                                'size':       dataitem.size,
                                 'parentId':   dataitem.parent_id,
                                 'type':       'dataitem',
                                 'tags':       dataitem.meta.get('TGS', ""),
@@ -193,7 +191,7 @@ def _sendDataItemChunkStoredSignal(parentId, remotename, localName, totalSize, s
 
 @worker.run_async
 def storeDataItem(cbObj, parentId, remotename, filename):
-    _info("Storing: " + filename + " as " + remotename)
+    _debug("Storing: " + filename + " as " + remotename)
     fileSize = os.path.getsize(filename)
     
     class _FileObj(object):
@@ -214,13 +212,13 @@ def storeDataItem(cbObj, parentId, remotename, filename):
 
 @worker.run_async
 def removeDataItem(cbObj, parentId, name):
-    _info("Removing " + name) 
+    _debug("Removing " + name) 
     client.remove_dataitem(parentId, name)
     _sendCompletedSignal(cbObj, parentId, name)
 
 @worker.run_async
 def renameDataItem(cbObj, parentId, oldName, newName):
-    _info("Renaming ", oldName, "to", newName)
+    _debug("Renaming ", oldName, "to", newName)
     client.rename_dataitem(int(parentId), oldName, newName)
     _sendCompletedSignal(cbObj, parentId, oldName, newName)
 

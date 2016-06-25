@@ -68,7 +68,7 @@ Page {
 
     function _createContentInfoString(modelItem) {
         if (modelItem["type"] === "dataitem")
-            return qsTr("size: ") + modelItem["size"];
+            return (modelItem["tags"]) ? qsTr("tags: ") + modelItem["tags"] : "";
         else if (modelItem["type"] === "cluster")
             return "";
         else if (modelItem["type"] === "vault")
