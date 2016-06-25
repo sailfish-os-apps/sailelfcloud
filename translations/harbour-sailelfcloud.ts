@@ -187,6 +187,59 @@
     </message>
 </context>
 <context>
+    <name>CreateNewKeyDialog</name>
+    <message>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="35"/>
+        <source>Move your finger around the box below to generate random numbers for the key.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="41"/>
+        <source>Algorithm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="44"/>
+        <source>AES128</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="84"/>
+        <source>Generation completed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="91"/>
+        <source>Generation progress</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="101"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="103"/>
+        <source>Key must have name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="112"/>
+        <source>Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="45"/>
+        <source>AES192</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="46"/>
+        <source>AES256</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>DataItemContentPage</name>
     <message>
         <location filename="../qml/pages/DataItemContentPage.qml" line="16"/>
@@ -283,53 +336,58 @@
 <context>
     <name>EncryptionConfigPage</name>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="101"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="109"/>
         <source>Encryption configurations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="106"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="114"/>
         <source>Encryption key creation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="114"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="122"/>
         <source>Create</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="123"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="131"/>
         <source>New</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="124"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="132"/>
         <source>From file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="125"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="133"/>
         <source>From clip-board</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="131"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="139"/>
         <source>Available encryption keys</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="178"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="186"/>
         <source>Deleting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="186"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="194"/>
         <source>Delete key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="191"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="199"/>
         <source>Edit key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="204"/>
+        <source>Export key</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

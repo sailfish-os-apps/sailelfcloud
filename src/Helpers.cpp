@@ -336,6 +336,14 @@ QString Helpers::hashDataBeaverMd5Hex(const QString dataInHexString)
     return result.toHex();
 }
 
+QString Helpers::generateKey(const QString currentKeyInHexString, const int dataAdditionAsInt)
+{
+    const QByteArray data = QByteArray::number(dataAdditionAsInt);
+    QByteArray currentKey = QByteArray::fromHex(currentKeyInHexString.toLocal8Bit()).append(data);
+    QByteArray result = QCryptographicHash::hash(currentKey, QCryptographicHash::Sha512);
+    return result.toHex();
+}
+
 void Helpers::prepareCache(void)
 {
     QDir dir;

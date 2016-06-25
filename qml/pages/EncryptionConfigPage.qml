@@ -60,6 +60,10 @@ Page {
 
     function _createKey(index) {
         switch (index) {
+        case 0:
+            var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/CreateNewKeyDialog.qml"));
+            dialog.createdKey.connect(_createdNewKey);
+            break;
         case 1:
             var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/ImportFromFileDialog.qml"));
             dialog.createdKey.connect(_createdNewKey);
@@ -69,6 +73,10 @@ Page {
             dialog.createdKey.connect(_createdNewKey);
             break;
         }
+    }
+
+    function _exportKey(hash) {
+        console.log("exporting key", hash)
     }
 
     function _editKey(hash) {
@@ -190,6 +198,11 @@ Page {
                                     enabled: false // Not yet implemented
                                     text: qsTr("Edit key")
                                     onClicked: _editKey(model.key["hash"])
+                                }
+                                MenuItem {
+                                    enabled: false // Not yet implemented
+                                    text: qsTr("Export key")
+                                    onClicked: _exportKey(model.key["hash"])
                                 }
                             }
                     }
