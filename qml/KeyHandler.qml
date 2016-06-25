@@ -27,6 +27,13 @@ Python {
                 });
     }
 
+    function findKeyFiles(path) {
+        return py.call_sync("keyhandler.findKeyFiles", [path]);
+    }
+
+    function readKeyInfoFromFile(path) {
+        return py.call_sync("keyhandler.readKeyInfoFromFile", [path]);
+    }
 
     function storeKey(name, description, key, iv, hash) {
         py.call_sync("keyhandler.storeKey", [name, description, key, iv, hash]);

@@ -1,0 +1,115 @@
+import QtQuick 2.2
+import Sailfish.Silica 1.0
+
+Dialog {
+    property string name
+
+    signal createdKey(string hash)
+
+    function addKeyFilesToList() {
+        var keyFilesInDocuments = keyHandler.findKeyFiles(helpers.getStandardLocationDocuments());
+        var keyFilesInDownloads = keyHandler.findKeyFiles(helpers.getStandardLocationDownloads());
+
+        for (var i = 0; i < keyFilesInDocuments.length; i++) {
+            var keyInfo = keyHandler.readKeyInfoFromFile(keyFilesInDocuments[i]);
+            keyListModel.append({'filename':helpers.getFilenameFromPath(keyFilesInDocuments[i]),
+                                    'name':keyInfo['name'],
+                                    'description':keyInfo['description'],
+                                    'hash':keyInfo['hash'],
+                                    'location':'documents'});
+        }
+
+        for (var i = 0; i < keyFilesInDownloads.length; i++) {
+            var keyInfo = keyHandler.readKeyInfoFromFile(keyFilesInDownloads[i]);
+            keyListModel.append({'filename':helpers.getFilenameFromPath(keyFilesInDownloads[i]),
+                                    'name':keyInfo['name'],
+                                    'description':keyInfo['description'],
+                                    'hash':keyInfo['hash'],
+                                    'location':'downloads'});
+        }
+    }
+
+    Component.onCompleted: {
+        addKeyFilesToList();
+    }
+
+    DialogHeader {
+        id: header
+        title: qsTr("Import key from file")
+    }
+
+    SilicaListView {
+        id: keyFileListView
+        anchors { top: header.bottom; left: parent.left;
+            right: parent.right; bottom: parent.bottom; }
+        width: parent.width
+        height: parent.height
+        spacing: Theme.paddingMedium
+        clip: true
+
+        model: ListModel {
+            id: keyListModel
+        }
+
+        delegate: ListItem {
+            width: ListView.view.width
+            contentHeight: Theme.itemSizeExtraLarge
+            Image {
+                id: fileIcon
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.margins: Theme.paddingMedium
+                source: "image://theme/icon-s-secure"
+            }
+            Label {
+                id: filenameLabel
+                anchors.left: fileIcon.right
+                text: model.filename
+            }
+            Text {
+                id: descriptionText
+                anchors { left: fileIcon.right; top: filenameLabel.bottom; }
+                font.pixelSize: Theme.fontSizeExtraSmall
+                color: Theme.secondaryColor
+                wrapMode: Text.Wrap
+                text: model.description
+            }
+            Label {
+                id: hashLabel
+                anchors { left: fileIcon.right; top: descriptionText.bottom; }
+                font.pixelSize: Theme.fontSizeExtraSmall
+                color: Theme.secondaryColor
+                text: model.hash
+            }
+
+            onClicked: {
+                highlighted = !highlighted;
+                keyFileListView.currentIndex = index;
+            }
+
+        }
+
+        section.property: "location"
+        section.criteria: ViewSection.FullString
+        section.delegate: Component {
+            Rectangle {
+                width: childrenRect.width
+                height: childrenRect.height
+                color: "transparent"
+                Image {
+                    id: sectionIcon
+                    anchors.margins: Theme.paddingMedium
+                    source: "image://theme/" + (section === "documents" ? "icon-m-document" : "icon-m-device-download")
+                }
+                Label {
+                    anchors.left: sectionIcon.right
+                    anchors.verticalCenter: sectionIcon.verticalCenter
+                    font.family: Theme.fontFamilyHeading
+                    color: Theme.highlightColor
+                    text: section === "documents" ? qsTr("Documents") : qsTr("Downloads")
+                }
+            }
+        }
+
+        VerticalScrollDecorator {}
+    }
+}

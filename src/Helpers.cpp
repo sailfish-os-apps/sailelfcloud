@@ -223,12 +223,12 @@ QString Helpers::getStandardLocationCamera(void)
     return QStandardPaths::standardLocations(QStandardPaths::PicturesLocation)[0] + "/Camera";
 }
 
-QString Helpers::getStandardLocationDocuments(void)
+QString Helpers::getStandardLocationDocuments(void) const
 {
     return QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)[0];
 }
 
-QString Helpers::getStandardLocationDownloads(void)
+QString Helpers::getStandardLocationDownloads(void) const
 {
     return QStandardPaths::standardLocations(QStandardPaths::DownloadLocation)[0];
 }

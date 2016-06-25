@@ -60,6 +60,10 @@ Page {
 
     function _createKey(index) {
         switch (index) {
+        case 1:
+            var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/ImportFromFileDialog.qml"));
+            dialog.createdKey.connect(_createdNewKey);
+            break;
         case 2:
             var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/ImportFromClipboardDialog.qml"));
             dialog.createdKey.connect(_createdNewKey);
@@ -141,7 +145,7 @@ Page {
 
                 delegate: ListItem {
                     width: ListView.view.width
-                    contentHeight: name.height + description.height + hash.height
+                    contentHeight: Theme.itemSizeExtraLarge
 
                     IconButton {
                         id: favoriteImage

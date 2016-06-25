@@ -13,6 +13,10 @@ public:
     void init(void);
     void uninit(void);
 
+    Q_INVOKABLE QString getStandardLocationDocuments(void) const;
+    Q_INVOKABLE QString getStandardLocationDownloads(void) const;
+
+
     Q_INVOKABLE bool isRememberLogin(void) const;
     Q_INVOKABLE void setRememberLogin(void) const;
     Q_INVOKABLE void clearRememberLogin(void) const;
@@ -70,8 +74,6 @@ private:
 
     static QString getStandardLocationPictures(void);
     static QString getStandardLocationCamera(void);
-    static QString getStandardLocationDocuments(void);
-    static QString getStandardLocationDownloads(void);
     static QString getStandardLocationVideo(void);
     static QString getStandardLocationAudio(void);
     static QString getDataDir(void);

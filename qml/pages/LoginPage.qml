@@ -111,7 +111,7 @@ Page {
 
             Text
             {
-                visible: !keyListModel.count
+                visible: keyListModel.count < 2 // There is always default item (encryption disabled) in the list so at least 2 items needed
                 anchors { left: parent.left; right: parent.right;
                           leftMargin: Theme.horizontalPageMargin; rightMargin: Theme.horizontalPageMargin }
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
@@ -130,7 +130,7 @@ Page {
 
             ComboBox {
                 id: keyListCompoBox
-                visible: !!keyListModel.count
+                visible: keyListModel.count > 1 // at least two items in list before we activate this
                 description: qsTr("Active encryption key")
                 anchors { left: parent.left; right: parent.right }
 

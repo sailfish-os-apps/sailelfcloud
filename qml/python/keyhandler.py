@@ -24,23 +24,31 @@ def _addKeyFileToDatabase(file):
     if hash not in keyDatabase:
         keyDatabase[hash] = file
 
-def _findKeyFiles():
-    xmlFiles = [p for p in pathlib.Path(keyStoreDir).glob('*.xml') if p.is_file()]
+def findKeyFiles(path):
+    keyFiles = []
+    xmlFiles = [p for p in pathlib.Path(path).glob('*.xml') if p.is_file()]
     for f in xmlFiles:
         with f.open() as fd:
             if (_checkIfXmlFileIsKeyFile(fd)):
-                _addKeyFileToDatabase(f.resolve().as_posix())
+                keyFiles.append(f.resolve().as_posix())
+    
+    return keyFiles
+
+def _findAndAddKeyFiles(path):
+    keyFiles = findKeyFiles(path)
+    for k in keyFiles:
+        _addKeyFileToDatabase(k)
 
 def _createKeyStore(configLocation):
     global keyStoreDir
     keyStoreDir = os.path.join(configLocation, 'keys')
     os.makedirs(keyStoreDir, exist_ok=True)
-    _findKeyFiles()
+    _findAndAddKeyFiles(keyStoreDir)
 
 def init(configLocation):
     _createKeyStore(configLocation)
 
-def _readKeyInfo(file):
+def readKeyInfoFromFile(file):
     
     if not file:
         return None
@@ -61,7 +69,7 @@ def _readKeyInfo(file):
             'hash':hash, 'mode':mode, 'type':type}
 
 def getKey(hash):
-    return _readKeyInfo(keyDatabase.get(hash, None))
+    return readKeyInfoFromFile(keyDatabase.get(hash, None))
 
 def isKey(hash):
     return keyDatabase.get(hash, None) != None
@@ -70,7 +78,7 @@ def getKeys():
     keys = []
     
     for _key, file in keyDatabase.items():
-        keys.append(_readKeyInfo(file))
+        keys.append(readKeyInfoFromFile(file))
     
     return keys
 

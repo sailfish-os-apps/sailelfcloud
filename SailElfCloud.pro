@@ -67,7 +67,8 @@ DISTFILES += \
     qml/items/ElfCloudAdapterCb.qml \
     qml/pages/EncryptionConfigPage.qml \
     qml/dialogs/ImportFromClipboardDialog.qml \
-    qml/KeyHandler.qml
+    qml/KeyHandler.qml \
+    qml/dialogs/ImportFromFileDialog.qml
 
 unix: PKGCONFIG +=
 
