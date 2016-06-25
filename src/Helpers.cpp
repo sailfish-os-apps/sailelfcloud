@@ -324,6 +324,7 @@ bool Helpers::viewFileWithApplication(const QString path)
 }
 
 // elfCloud Beaver compatible MD5 hasher for initialization vector and key
+// see KHA definition in https://secure.elfcloud.fi/en/developers/api-doc/?json#http-headers
 QString Helpers::hashDataBeaverMd5Hex(const QString dataInHexString)
 {
     QByteArray result = QByteArray::fromHex(dataInHexString.toLocal8Bit());

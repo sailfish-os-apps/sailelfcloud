@@ -189,52 +189,52 @@
 <context>
     <name>CreateNewKeyDialog</name>
     <message>
-        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="35"/>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="39"/>
         <source>Move your finger around the box below to generate random numbers for the key.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="41"/>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="45"/>
         <source>Algorithm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="44"/>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="48"/>
         <source>AES128</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="84"/>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="88"/>
         <source>Generation completed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="91"/>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="95"/>
         <source>Generation progress</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="101"/>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="105"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="103"/>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="107"/>
         <source>Key must have name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="112"/>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="116"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="45"/>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="49"/>
         <source>AES192</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="46"/>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="50"/>
         <source>AES256</source>
         <translation type="unfinished"></translation>
     </message>

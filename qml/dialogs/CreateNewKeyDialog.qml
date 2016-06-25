@@ -9,10 +9,14 @@ Dialog {
     signal createdKey(string hash)
 
     function _create() {
-        var keyHexString = _key.substring(0, (keyTypeComboBox.currentIndex == 0) ? 31 :
-                                             (keyTypeComboBox.currentIndex == 1) ? 47 : 63);
-
-        console.log("key hex string", keyHexString)
+        var keyLength = (keyTypeComboBox.currentIndex == 0) ? 32 :
+                        (keyTypeComboBox.currentIndex == 1) ? 48 : 64;
+        var keyHexString = _key.substring(0, keyLength-1);
+        var ivHexString = _key.substring(keyLength, keyLength+32);
+        var hash = helpers.hashDataBeaverMd5Hex(ivHexString+keyHexString);
+        keyHandler.storeKey(keyNameField.text, keyDescriptionArea.text,
+                            keyHexString, ivHexString, hash);
+        createdKey(hash);
     }
 
     SilicaFlickable {
