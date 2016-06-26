@@ -56,7 +56,12 @@ class Test(unittest.TestCase):
         localTempFile1 = open("large_test_file_from_ut_1.bin", "wb")
         localTempFile1.write(bytes(range(256)) * 2 * 1000 * 1)
         localTempFile1.close()
-        elfCloudAdapter.storeDataItem(None, self.clusterId, localTempFile1.name, "large_test_file_from_ut_1.bin")        
+        elfCloudAdapter.storeDataItem(None, self.clusterId, localTempFile1.name, "large_test_file_from_ut_1.bin")
+        
+        elfCloudAdapter.getDataItemInfo(None, self.clusterId, "large_test_file_from_ut_1.bin")
+        dataiteminfo = mock_pyotherside.sentArgs[1]
+        print("info", dataiteminfo)
+                
         elfCloudAdapter.fetchDataItem(None, self.clusterId, "large_test_file_from_ut_1.bin", "output_large_test_file_from_ut_1.bin")
         self.assertTrue(filecmp.cmp(localTempFile1.name, "output_large_test_file_from_ut_1.bin", shallow=False))
         os.remove(localTempFile1.name)
