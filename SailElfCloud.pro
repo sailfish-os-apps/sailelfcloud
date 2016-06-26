@@ -69,7 +69,8 @@ DISTFILES += \
     qml/dialogs/ImportFromClipboardDialog.qml \
     qml/KeyHandler.qml \
     qml/dialogs/ImportFromFileDialog.qml \
-    qml/dialogs/CreateNewKeyDialog.qml
+    qml/dialogs/CreateNewKeyDialog.qml \
+    qml/pages/KeyInfoPage.qml
 
 unix: PKGCONFIG +=
 

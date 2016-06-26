@@ -88,6 +88,11 @@ Page {
         _populateKeyListAndSelectActive();
     }
 
+    function _showKeyInfo(hash) {
+        console.log("getting info for", hash)
+        pageStack.push(Qt.resolvedUrl("KeyInfoPage.qml"), {"hash":hash});
+    }
+
 
     // To enable PullDownMenu, place our content in a SilicaFlickable
     SilicaFlickable {
@@ -155,6 +160,8 @@ Page {
                     width: ListView.view.width
                     contentHeight: Theme.itemSizeExtraLarge
 
+                    onClicked: _showKeyInfo(model.key["hash"])
+
                     IconButton {
                         id: favoriteImage
                         icon.source: model.active ? "image://theme/icon-m-favorite-selected" : "image://theme/icon-m-favorite"
@@ -188,12 +195,10 @@ Page {
                     ListView.onRemove: animateRemoval()
 
 
+
+
                     menu: Component {
                             ContextMenu {
-                                MenuItem {
-                                    text: qsTr("Delete key")
-                                    onClicked: _remove()
-                                }
                                 MenuItem {
                                     enabled: false // Not yet implemented
                                     text: qsTr("Edit key")
@@ -203,6 +208,10 @@ Page {
                                     enabled: false // Not yet implemented
                                     text: qsTr("Export key")
                                     onClicked: _exportKey(model.key["hash"])
+                                }
+                                MenuItem {
+                                    text: qsTr("Delete key")
+                                    onClicked: _remove()
                                 }
                             }
                     }
