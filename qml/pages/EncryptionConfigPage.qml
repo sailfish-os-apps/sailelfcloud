@@ -16,8 +16,7 @@ Page {
     function _clearActiveKey() {
         for(var index = 0; index < keyListModel.count; index++) {
             var item = keyListModel.get(index);
-            item['active'] = false;
-            keyListModel.set(index, item); // Setting same item back to model updates the list
+            keyListModel.setProperty(index, 'active', false);
         }
     }
 
@@ -27,8 +26,7 @@ Page {
         _clearActiveKey();
 
         if (!currentState) {
-            item['active'] = true;
-            keyListModel.set(index, item); // Setting same item back to model updates the list
+            keyListModel.setProperty(index, 'active', true);
             helpers.setActiveKey(item['key']['hash']);
         } else {
             helpers.clearActiveKey();
@@ -89,7 +87,6 @@ Page {
     }
 
     function _showKeyInfo(hash) {
-        console.log("getting info for", hash)
         pageStack.push(Qt.resolvedUrl("KeyInfoPage.qml"), {"hash":hash});
     }
 
@@ -165,7 +162,7 @@ Page {
                     IconButton {
                         id: favoriteImage
                         icon.source: model.active ? "image://theme/icon-m-favorite-selected" : "image://theme/icon-m-favorite"
-                        onClicked: { _chooseActiveKey(index); }
+                        onClicked: _chooseActiveKey(index)
                     }
 
                     Label {
