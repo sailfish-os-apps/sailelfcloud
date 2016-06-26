@@ -260,7 +260,7 @@ Python {
             console.log("PyOtherSide version: " + pluginVersion());
             __setHandlers();
             addImportPath(Qt.resolvedUrl("python/"));
-            addImportPath(Qt.resolvedUrl("../lib/pycrypto-2.6.1-py3.4-linux-i486.egg"));
+            addImportPath(Qt.resolvedUrl("../lib/pycrypto-2.6.1-py3.4.egg"));
             addImportPath(Qt.resolvedUrl("../lib/decorator-4.0.9-py3.4.egg"));
             addImportPath(Qt.resolvedUrl("../lib/elfcloud_weasel-1.2.2-py3.4.egg"));
             importModule('elfCloudAdapter', function() {  py._ready = true; });
