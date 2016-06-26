@@ -42,7 +42,7 @@ Dialog {
                 placeholderText: qsTr("Key data of 16, 24 or 32 bytes (in hex)")
                 label: qsTr("Key data")
                 labelVisible: true
-                inputMethodHints: Qt.ImhNoPredictiveTex | Qt.ImhNoAutoUppercase
+                inputMethodHints: Qt.ImhNoPredictiveText
                 font { capitalization: Font.AllLowercase; pixelSize: Theme.fontSizeTiny; }
                 validator: RegExpValidator { regExp: /([0-9a-fA-F]{32}$)|([0-9a-fA-F]{48}$)|([0-9a-fA-F]{64}$)/ }
 
@@ -64,7 +64,7 @@ Dialog {
                 placeholderText: qsTr("Initialization vector of 16 bytes (in hex)")
                 label: qsTr("Initialization vector")
                 labelVisible: true
-                inputMethodHints: Qt.ImhNoPredictiveTex | Qt.ImhNoAutoUppercase
+                inputMethodHints: Qt.ImhNoPredictiveText
                 font { capitalization: Font.AllLowercase; pixelSize: Theme.fontSizeTiny; }
                 validator: RegExpValidator { regExp: /(0[xX])?[0-9a-fA-F]{32}$/ }
 
