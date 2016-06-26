@@ -1,0 +1,12 @@
+diff --git setup.py setup.py
+index 8099299..8976704 100644
+--- setup.py
++++ setup.py
+@@ -36,6 +36,7 @@
+ 
+ __revision__ = "$Id$"
+ 
++import setuptools
+ from distutils import core
+ from distutils.ccompiler import new_compiler
+ from distutils.core import Extension, Command
