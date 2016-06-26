@@ -73,6 +73,11 @@ DISTFILES += \
 
 unix: PKGCONFIG +=
 
+pycrypto.target = pycrypto
+pycrypto.commands = CFLAGS="" ; CXXFLAGS="" FFLAGS="" ; export && tar xzf $$PWD/3rd/pycrypto-2.6.1.tar.gz && cd pycrypto-2.6.1 && python3 setup.py bdist
+pycrypto_install.commands = tar xzf pycrypto-2.6.1/dist/*.tar.gz -C $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib
+pycrypto_install.path = /usr/share/harbour-sailelfcloud/lib
+
 pyaes.target = pyaes
 pyaes.commands = tar xzf $$PWD/3rd/pyaes-1.6.0.tar.gz && cd pyaes-1.6.0 && patch -p0 -i $$PWD/3rd/pyaes.patch && python3 setup.py bdist_egg
 pyaes_install.commands = cp pyaes-1.6.0/dist/pyaes-1.6.0-py3.4.egg $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib
@@ -88,9 +93,9 @@ elfcloud.commands = rm -Rf elfcloud-weasel-1.2.2 && tar xzf $$PWD/3rd/elfcloud-w
 elfcloud_install.commands = cp elfcloud-weasel-1.2.2/dist/elfcloud_weasel-1.2.2-py3.4.egg $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib
 elfcloud_install.path = /usr/share/harbour-sailelfcloud/lib
 
-QMAKE_EXTRA_TARGETS += pyaes decorator elfcloud
-POST_TARGETDEPS += pyaes decorator elfcloud
-INSTALLS += pyaes_install decorator_install elfcloud_install
+QMAKE_EXTRA_TARGETS += pycrypto pyaes decorator elfcloud
+POST_TARGETDEPS += pycrypto pyaes decorator elfcloud
+INSTALLS += pycrypto_install pyaes_install decorator_install elfcloud_install
 
 HEADERS += \
     src/Helpers.h

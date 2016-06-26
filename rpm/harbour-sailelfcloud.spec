@@ -7,6 +7,7 @@ Name:       harbour-sailelfcloud
 
 # >> macros
 %define __provides_exclude_from ^%{_datadir}/.*$
+%define __requires_exclude ^libpython|libutil.*$
 # << macros
 
 %{!?qtc_qmake:%define qtc_qmake %qmake}

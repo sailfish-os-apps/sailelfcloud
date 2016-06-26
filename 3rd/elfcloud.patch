@@ -270,7 +270,7 @@ index 593d5c1..06a52cb 100644
              md5.update(data_chunk)
              headers['X-ELFCLOUD-HASH'] = md5.hexdigest()
 diff --git elfcloud/elfcloud-weasel-1.2.2/elfcloud/filecrypt.py elfcloud/elfcloud-weasel-1.2.2/elfcloud/filecrypt.py
-index 597da0b..aac333c 100644
+index 597da0b..3c2414b 100644
 --- elfcloud/elfcloud-weasel-1.2.2/elfcloud/filecrypt.py
 +++ elfcloud/elfcloud-weasel-1.2.2/elfcloud/filecrypt.py
 @@ -1,139 +1,139 @@
@@ -431,7 +431,7 @@ index 597da0b..aac333c 100644
 +"""
 +from .utils import KeyFile
 +import hashlib
-+import pyaes
++from Crypto.Cipher import AES
 +
 +from elfcloud.exceptions import ECCryptException
 +
@@ -472,7 +472,7 @@ index 597da0b..aac333c 100644
 +        Returns CryptIterator that decrypts data in chunks
 +        """
 +        self._validate_key_and_iv()
-+        decryptor = pyaes.AESModeOfOperationCFB(self._crypt_key, iv=self._crypt_iv).decrypt
++        decryptor = AES.new(self._crypt_key, AES.MODE_CFB, self._crypt_iv).decrypt
 +        return CryptIterator(data, decryptor, chunksize)
 +
 +    def encrypt(self, data, chunksize=4194304):
@@ -484,7 +484,7 @@ index 597da0b..aac333c 100644
 +        Returns a CryptIterator that encrypts data in chunks
 +        """
 +        self._validate_key_and_iv()
-+        encryptor = pyaes.AESModeOfOperationCFB(self._crypt_key, iv=self._crypt_iv).encrypt
++        encryptor = AES.new(self._crypt_key, AES.MODE_CFB, self._crypt_iv).encrypt
 +        return CryptIterator(data, encryptor, chunksize)
 +
 +

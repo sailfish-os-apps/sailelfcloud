@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import io.thp.pyotherside 1.4
+import io.thp.pyotherside 1.3
 
 Python {
 
@@ -263,6 +263,7 @@ Python {
             addImportPath(Qt.resolvedUrl("../lib/pyaes-1.6.0-py3.4.egg"));
             addImportPath(Qt.resolvedUrl("../lib/decorator-4.0.9-py3.4.egg"));
             addImportPath(Qt.resolvedUrl("../lib/elfcloud_weasel-1.2.2-py3.4.egg"));
+            addImportPath(Qt.resolvedUrl("../lib/usr/lib/python3.4/site-packages/"));
             importModule('elfCloudAdapter', function() {  py._ready = true; });
         }
     }
