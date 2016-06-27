@@ -66,7 +66,7 @@ def readKeyInfoFromFile(file):
     type = cipher.findtext('{https://secure.elfcloud.fi/xml/elfCLOUD}Type')
     
     return {'name':name, 'description':descr, 'key':data, 'iv':iv,
-            'hash':hash, 'mode':mode, 'type':type}
+            'hash':hash, 'mode':mode, 'type':type, 'file': file}
 
 def getKey(hash):
     return readKeyInfoFromFile(keyDatabase.get(hash, None))

@@ -16,8 +16,7 @@ Page {
     function _clearActiveKey() {
         for(var index = 0; index < keyListModel.count; index++) {
             var item = keyListModel.get(index);
-            item['active'] = false;
-            keyListModel.set(index, item); // Setting same item back to model updates the list
+            keyListModel.setProperty(index, 'active', false);
         }
     }
 
@@ -27,8 +26,7 @@ Page {
         _clearActiveKey();
 
         if (!currentState) {
-            item['active'] = true;
-            keyListModel.set(index, item); // Setting same item back to model updates the list
+            keyListModel.setProperty(index, 'active', true);
             helpers.setActiveKey(item['key']['hash']);
         } else {
             helpers.clearActiveKey();
@@ -86,6 +84,10 @@ Page {
     function _removeKey(hash) {
         keyHandler.removeKey(hash);
         _populateKeyListAndSelectActive();
+    }
+
+    function _showKeyInfo(hash) {
+        pageStack.push(Qt.resolvedUrl("KeyInfoPage.qml"), {"hash":hash});
     }
 
 
@@ -155,10 +157,12 @@ Page {
                     width: ListView.view.width
                     contentHeight: Theme.itemSizeExtraLarge
 
+                    onClicked: _showKeyInfo(model.key["hash"])
+
                     IconButton {
                         id: favoriteImage
                         icon.source: model.active ? "image://theme/icon-m-favorite-selected" : "image://theme/icon-m-favorite"
-                        onClicked: { _chooseActiveKey(index); }
+                        onClicked: _chooseActiveKey(index)
                     }
 
                     Label {
@@ -188,12 +192,10 @@ Page {
                     ListView.onRemove: animateRemoval()
 
 
+
+
                     menu: Component {
                             ContextMenu {
-                                MenuItem {
-                                    text: qsTr("Delete key")
-                                    onClicked: _remove()
-                                }
                                 MenuItem {
                                     enabled: false // Not yet implemented
                                     text: qsTr("Edit key")
@@ -203,6 +205,10 @@ Page {
                                     enabled: false // Not yet implemented
                                     text: qsTr("Export key")
                                     onClicked: _exportKey(model.key["hash"])
+                                }
+                                MenuItem {
+                                    text: qsTr("Delete key")
+                                    onClicked: _remove()
                                 }
                             }
                     }

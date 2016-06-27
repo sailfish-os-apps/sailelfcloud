@@ -95,14 +95,15 @@ Page {
 
             }
 
-            TextField {
+            PasswordField {
                 id: passwordField
                 width: parent.width
                 placeholderText: qsTr("Enter Password")
                 label: qsTr("Password")
                 text: helpers.getSettingsPassword()
-                inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText
-                echoMode: TextInput.PasswordEchoOnEdit
+                //inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText
+                //echoMode: TextInput.PasswordEchoOnEdit
+                showEchoModeToggle: true
 
                 // Close the on-screen keyboard when enter is clicked
                 EnterKey.iconSource: "image://theme/icon-m-enter-close"
