@@ -24,6 +24,8 @@ Dialog {
             selectedPaths = musicView.getSelectedPaths();
         } else if (videosView.visible === true) {
             selectedPaths = videosView.getSelectedPaths();
+        } else if (downloadsView.visible === true) {
+            selectedPaths = downloadsView.getSelectedPaths();
         }
     }
 
@@ -42,7 +44,7 @@ Dialog {
                     title.title = qsTr("Choose images");
                     imageView.populate()
                     imageView.visible = true;
-                    documentView.visible = musicView.visible = videosView.visible = false;
+                    documentView.visible = musicView.visible = videosView.visible = downloadsView.visible = false;
                 }
             }
             MenuItem {
@@ -51,7 +53,7 @@ Dialog {
                     title.title = qsTr("Choose documents");
                     documentView.populate()
                     documentView.visible = true;
-                    imageView.visible = musicView.visible = videosView.visible = false;
+                    imageView.visible = musicView.visible = videosView.visible = downloadsView.visible = false;
                 }
             }
             MenuItem {
@@ -60,7 +62,7 @@ Dialog {
                     title.title = qsTr("Choose music");
                     musicView.populate()
                     musicView.visible = true;
-                    imageView.visible = documentView.visible = videosView.visible = false;
+                    imageView.visible = documentView.visible = videosView.visible = downloadsView.visible = false;
                 }
             }
             MenuItem {
@@ -69,14 +71,23 @@ Dialog {
                     title.title = qsTr("Choose videos");
                     videosView.populate()
                     videosView.visible = true;
-                    musicView.visible = imageView.visible = documentView.visible = false;
+                    musicView.visible = imageView.visible = documentView.visible = downloadsView.visible = false;
+                }
+            }
+            MenuItem {
+                text: qsTr("Downloads")
+                onClicked: {
+                    title.title = qsTr("Choose files");
+                    downloadsView.populate()
+                    downloadsView.visible = true;
+                    musicView.visible = imageView.visible = documentView.visible = videosView.visible = false;
                 }
             }
         }
 
         ViewPlaceholder {
             id: noSourceSelected
-            enabled: !imageView.visible && !documentView.visible && !musicView.visible && !videosView.visible
+            enabled: !imageView.visible && !documentView.visible && !musicView.visible && !videosView.visible && !downloadsView.visible
             text: qsTr("Pull down to choose source")
         }
 
@@ -109,6 +120,15 @@ Dialog {
         FileSelectorView {
             id: videosView
             rootPath: StandardPaths.videos
+            anchors.fill: parent
+            visible: false
+            onSelected: { page.canAccept = true; }
+            onDeselected: { page.canAccept = false; }
+        }
+
+        FileSelectorView {
+            id: downloadsView
+            rootPath: helpers.getStandardLocationDownloads()
             anchors.fill: parent
             visible: false
             onSelected: { page.canAccept = true; }

@@ -399,47 +399,57 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="40"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="42"/>
         <source>Images</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="42"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="44"/>
         <source>Choose images</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="49"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="51"/>
         <source>Documents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="51"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="53"/>
         <source>Choose documents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="58"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="60"/>
         <source>Music</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="60"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="62"/>
         <source>Choose music</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="67"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="69"/>
         <source>Videos</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="69"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="71"/>
         <source>Choose videos</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="78"/>
+        <source>Downloads</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../qml/dialogs/FileChooserDialog.qml" line="80"/>
+        <source>Choose files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="91"/>
         <source>Pull down to choose source</source>
         <translation type="unfinished"></translation>
     </message>
