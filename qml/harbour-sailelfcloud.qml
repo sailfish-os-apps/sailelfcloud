@@ -55,7 +55,7 @@ ApplicationWindow
 
     Notification {
         id: downloadFileFailedNotif
-        category: "x-nemo.transfer.complete"
+        category: "x-nemo.transfer.error.conf"
         summary: qsTr("File download failed")
         previewSummary: summary
         previewBody: body
