@@ -11,7 +11,7 @@ Dialog {
     function _create() {
         var keyLength = (keyTypeComboBox.currentIndex == 0) ? 32 :
                         (keyTypeComboBox.currentIndex == 1) ? 48 : 64;
-        var keyHexString = _key.substring(0, keyLength-1);
+        var keyHexString = _key.substring(0, keyLength);
         var ivHexString = _key.substring(keyLength, keyLength+32);
         var hash = helpers.hashDataBeaverMd5Hex(ivHexString+keyHexString);
         keyHandler.storeKey(keyNameField.text, keyDescriptionArea.text,
