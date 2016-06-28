@@ -8,8 +8,7 @@ SilicaFlickable {
 
     property var    _selectedItems: []
 
-    signal selected()
-    signal deselected()
+    signal selected(var paths)
 
     function populate() {
         console.info("Image location:", StandardPaths.pictures);
@@ -75,13 +74,13 @@ SilicaFlickable {
                 if (isItemSelected(model.index)) {
                     deselectItem(model.index);
                     selected(false);
-                    viewer.deselected();
                 }
                 else {
                     selectItem(model.index);
                     selected(true);
-                    viewer.selected();
                 }
+
+                viewer.selected(getSelectedPaths());
             }
         }
         VerticalScrollDecorator { flickable: imageView }

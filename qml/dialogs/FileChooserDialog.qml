@@ -4,29 +4,43 @@ import "../views"
 
 Dialog {
 
-    property var     selectedPaths: []
+    property var selectedPaths: []
 
     id: page
     objectName: "selectPicture"
-    canAccept: false
+    canAccept: selectedPaths.length > 0
 
     DialogHeader {
         id: title
         title: qsTr("Choose source")
     }
 
-    onAccepted: {
-        if (imageView.visible === true) {
-            selectedPaths = imageView.getSelectedPaths();
-        } else if (documentView.visible === true) {
-            selectedPaths = documentView.getSelectedPaths();
-        } else if (musicView.visible === true) {
-            selectedPaths = musicView.getSelectedPaths();
-        } else if (videosView.visible === true) {
-            selectedPaths = videosView.getSelectedPaths();
-        } else if (downloadsView.visible === true) {
-            selectedPaths = downloadsView.getSelectedPaths();
+    ListModel {
+        id: fileSelectorModel
+    }
+
+    Component.onCompleted: {
+        fileSelectorModel.append({"path":StandardPaths.documents,
+                                     "text":qsTr("Documents"),
+                                     "title":qsTr("Choose documents")});
+        fileSelectorModel.append({"path":StandardPaths.music,
+                                     "text":qsTr("Music"),
+                                     "title":qsTr("Choose music")});
+        fileSelectorModel.append({"path":StandardPaths.videos,
+                                     "text":qsTr("Videos"),
+                                     "title":qsTr("Choose videos")});
+        fileSelectorModel.append({"path":helpers.getStandardLocationDownloads(),
+                                     "text":qsTr("Downloads"),
+                                     "title":qsTr("Choose files")});
+
+    }
+
+    function _hideAllSelectors() {
+        for (var index = 0; index < fileSelectorRepeater.count; index++) {
+            var fileSelector = fileSelectorRepeater.itemAt(index);
+            fileSelector.visible = false;
         }
+        imageView.visible = false;
     }
 
     SilicaFlickable {
@@ -41,53 +55,35 @@ Dialog {
             MenuItem {
                 text: qsTr("Images")
                 onClicked: {
+                    _hideAllSelectors();
                     title.title = qsTr("Choose images");
                     imageView.populate()
                     imageView.visible = true;
-                    documentView.visible = musicView.visible = videosView.visible = downloadsView.visible = false;
+                    noSourceSelected.visible = false;
                 }
             }
-            MenuItem {
-                text: qsTr("Documents")
-                onClicked: {
-                    title.title = qsTr("Choose documents");
-                    documentView.populate()
-                    documentView.visible = true;
-                    imageView.visible = musicView.visible = videosView.visible = downloadsView.visible = false;
+
+            Repeater {
+                model: fileSelectorModel
+
+                delegate: MenuItem {
+                    text: model.text
+                    onClicked: {
+                        _hideAllSelectors();
+                        title.title = model.title;
+                        var fileSelector = fileSelectorRepeater.itemAt(index);
+                        fileSelector.populate();
+                        fileSelector.visible = true;
+                        noSourceSelected.visible = false;
+                    }
                 }
             }
-            MenuItem {
-                text: qsTr("Music")
-                onClicked: {
-                    title.title = qsTr("Choose music");
-                    musicView.populate()
-                    musicView.visible = true;
-                    imageView.visible = documentView.visible = videosView.visible = downloadsView.visible = false;
-                }
-            }
-            MenuItem {
-                text: qsTr("Videos")
-                onClicked: {
-                    title.title = qsTr("Choose videos");
-                    videosView.populate()
-                    videosView.visible = true;
-                    musicView.visible = imageView.visible = documentView.visible = downloadsView.visible = false;
-                }
-            }
-            MenuItem {
-                text: qsTr("Downloads")
-                onClicked: {
-                    title.title = qsTr("Choose files");
-                    downloadsView.populate()
-                    downloadsView.visible = true;
-                    musicView.visible = imageView.visible = documentView.visible = videosView.visible = false;
-                }
-            }
+
         }
 
         ViewPlaceholder {
             id: noSourceSelected
-            enabled: !imageView.visible && !documentView.visible && !musicView.visible && !videosView.visible && !downloadsView.visible
+            enabled: false
             text: qsTr("Pull down to choose source")
         }
 
@@ -95,45 +91,18 @@ Dialog {
             id: imageView
             anchors.fill: parent
             visible: false
-            onSelected: { page.canAccept = true; }
-            onDeselected: { page.canAccept = false; }
+            onSelected: { selectedPaths = paths; }
         }
 
-        FileSelectorView {
-            id: documentView
-            rootPath: StandardPaths.documents
-            anchors.fill: parent
-            visible: false
-            onSelected: { page.canAccept = true; }
-            onDeselected: { page.canAccept = false; }
+        Repeater {
+            id: fileSelectorRepeater
+            model: fileSelectorModel
+            delegate: FileSelectorView {
+                rootPath: model.path
+                anchors.fill: parent
+                visible: false
+                onSelected: { selectedPaths = paths; }
+            }
         }
-
-        FileSelectorView {
-            id: musicView
-            rootPath: StandardPaths.music
-            anchors.fill: parent
-            visible: false
-            onSelected: { page.canAccept = true; }
-            onDeselected: { page.canAccept = false; }
-        }
-
-        FileSelectorView {
-            id: videosView
-            rootPath: StandardPaths.videos
-            anchors.fill: parent
-            visible: false
-            onSelected: { page.canAccept = true; }
-            onDeselected: { page.canAccept = false; }
-        }
-
-        FileSelectorView {
-            id: downloadsView
-            rootPath: helpers.getStandardLocationDownloads()
-            anchors.fill: parent
-            visible: false
-            onSelected: { page.canAccept = true; }
-            onDeselected: { page.canAccept = false; }
-        }
-
     }
 }

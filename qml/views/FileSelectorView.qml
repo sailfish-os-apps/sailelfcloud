@@ -8,11 +8,9 @@ SilicaFlickable {
     property var rootPath: null
     property var _selectedItems: []
 
-    signal selected()
-    signal deselected()
+    signal selected(var paths)
 
     function populate() {
-        console.info("Root location:", rootPath);
         fileModel.clear();
         var files = helpers.getListOfFilesRecursively(rootPath);
         for(var fileIdx = 0; fileIdx < files.length; fileIdx++) {
@@ -26,7 +24,6 @@ SilicaFlickable {
         var selectedPaths = [];
         for (var i = 0; i < _selectedItems.length; i++) {
             var m = fileModel.get(_selectedItems[i]);
-            console.info("File for upload:", m.path)
             selectedPaths.push(m.path);
         }
 
@@ -60,7 +57,6 @@ SilicaFlickable {
 
     function getIconForFileMimeType(path) {
         var mime = helpers.getFileMimeType(path);
-        console.debug(path + ";" + mime);
 
         if (mime === "text/plain") {
             return "image://theme/icon-m-document";
@@ -109,7 +105,7 @@ SilicaFlickable {
                 anchors.leftMargin: Theme.paddingMedium
                 font.pixelSize: Theme.fontSizeSmall
                 color: Theme.secondaryColor
-                text: "Size: " + helpers.getFileSize(model.path)
+                text: qsTr("Size: ") + helpers.getFileSize(model.path)
             }
 
             onClicked: {
@@ -122,12 +118,7 @@ SilicaFlickable {
                     highlighted = true;
                 }
 
-                if (viewer.isSelectedItems()) {
-                    viewer.selected();
-                }
-                else {
-                    viewer.deselected();
-                }
+                viewer.selected(getSelectedPaths());
             }
         }
         VerticalScrollDecorator { flickable: fileView }
