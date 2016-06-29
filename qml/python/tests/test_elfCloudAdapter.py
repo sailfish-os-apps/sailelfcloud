@@ -81,11 +81,11 @@ class Test(unittest.TestCase):
         
     def test_storeAndFetchLargeDataItem(self):
         localTempFile1 = open("large_test_file_from_ut_1.bin", "wb")
-        localTempFile1.write(bytes(range(256)) * 4 * 1000 * 3)
+        localTempFile1.write(bytes(range(256)) * 4 * 1000 * 2)
         localTempFile1.close()
         elfCloudAdapter.storeDataItem(None, self.clusterId, localTempFile1.name, "large_test_file_from_ut_1.bin")        
         elfCloudAdapter.fetchDataItem(None, self.clusterId, "large_test_file_from_ut_1.bin", "output_large_test_file_from_ut_1.bin")
-        elfCloudAdapter.removeDataItem(None, self.clusterId, "large_test_file_from_ut_1.bin")
+        elfCloudAdapter.removeDataItem(None, self.clusterId, "large_test_file_from_ut_1.bin")        
         self.assertTrue(filecmp.cmp(localTempFile1.name, "output_large_test_file_from_ut_1.bin", shallow=False))
         os.remove(localTempFile1.name)
         os.remove("output_large_test_file_from_ut_1.bin")

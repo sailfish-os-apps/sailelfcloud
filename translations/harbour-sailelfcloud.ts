@@ -318,7 +318,7 @@
 <context>
     <name>ElfCloudAdapter</name>
     <message>
-        <location filename="../qml/ElfCloudAdapter.qml" line="173"/>
+        <location filename="../qml/ElfCloudAdapter.qml" line="169"/>
         <source>Destination file exists</source>
         <translation type="unfinished"></translation>
     </message>

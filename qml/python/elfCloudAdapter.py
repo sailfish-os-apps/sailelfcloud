@@ -39,13 +39,32 @@ def _error(*text):
 def _sendCompletedSignal(cbObj, *args):
     pyotherside.send('completed', cbObj, *args)
 
-def _sendExceptionSignal(exception):
-    pyotherside.send('exception', exception.id, exception.message)
+def _sendExceptionSignal(id_, message):
+    pyotherside.send('exception', id_, message)
+
+def handle_exception(func):
+    from functools import wraps
+    @wraps(func)
+    def exception_handler(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except elfcloud.exceptions.ECException as e:
+            _error("elfCloud exception occurred", str(e))
+            _sendExceptionSignal(e.id, e.message)
+        except elfcloud.exceptions.ClientException as e:
+            _error("Client exception occurred", str(e))
+            _sendExceptionSignal(0, e.message)
+        except Exception as e:
+            _error("Undefined exception occurred", str(e))
+            _sendExceptionSignal(0, str(e))
+            
+    return exception_handler
 
 def _sendConnectedSignal(status, reason=None):
     pyotherside.send('connected', status, reason)
 
 @worker.run_async
+@handle_exception
 def connect(cbObj, username, password):
     global client
     try:
@@ -60,7 +79,7 @@ def connect(cbObj, username, password):
         _error(str(e))
         client = None
         _sendCompletedSignal(cbObj, False)
-        _sendExceptionSignal(e)
+        raise # let default handler do rest
 
 def isConnected():
     return client != None
@@ -98,6 +117,7 @@ def setRequestSize(sizeInBytes):
     client.set_request_size(sizeInBytes)
 
 @worker.run_async
+@handle_exception
 def listVaults(cbObj):
     vaultList = []
     try:
@@ -120,38 +140,37 @@ def listVaults(cbObj):
     _sendCompletedSignal(cbObj, vaultList)
 
 @worker.run_async
+@handle_exception
 def listContent(cbObj, parentId):
     contentList = []
     _debug("Getting content of %s" % parentId)
     
-    try:
-        clusters, dataitems = client.list_contents(int(parentId))
+    clusters, dataitems = client.list_contents(int(parentId))
 
-        for cluster in clusters:
-            contentList.append({'name':        cluster.name,
-                                'id'  :        cluster.id,
-                                'descendants': cluster.descendants,
-                                'parentId':    cluster.parent_id,
-                                'modified':    cluster.modified_date,
-                                'accessed':    cluster.last_accessed_date, 
-                                'permissions': cluster.permissions,                            
-                                'type':        'cluster'})
-    
-        for dataitem in dataitems:
-            contentList.append({'name':       dataitem.name,
-                                'id'  :       0,
-                                'parentId':   dataitem.parent_id,
-                                'type':       'dataitem',
-                                'tags':       dataitem.meta.get('TGS', ""),
-                                'encryption': dataitem.meta.get('ENC', "NONE"),
-                                'contentHash':dataitem.meta.get('CHA', ""),
-                                'keyHash':    dataitem.meta.get('KHA', "")})
-    except elfcloud.exceptions.ECAuthException as e:
-        _sendExceptionSignal(e)
+    for cluster in clusters:
+        contentList.append({'name':        cluster.name,
+                            'id'  :        cluster.id,
+                            'descendants': cluster.descendants,
+                            'parentId':    cluster.parent_id,
+                            'modified':    cluster.modified_date,
+                            'accessed':    cluster.last_accessed_date, 
+                            'permissions': cluster.permissions,                            
+                            'type':        'cluster'})
+
+    for dataitem in dataitems:
+        contentList.append({'name':       dataitem.name,
+                            'id'  :       0,
+                            'parentId':   dataitem.parent_id,
+                            'type':       'dataitem',
+                            'tags':       dataitem.meta.get('TGS', ""),
+                            'encryption': dataitem.meta.get('ENC', "NONE"),
+                            'contentHash':dataitem.meta.get('CHA', ""),
+                            'keyHash':    dataitem.meta.get('KHA', "")})
         
     _sendCompletedSignal(cbObj, contentList)
 
 @worker.run_async
+@handle_exception
 def getDataItemInfo(cbObj, parentId, name):
     dataitem = client.get_dataitem(parentId, name)
     info = {'id': dataitem.dataitem_id,
@@ -172,6 +191,7 @@ def _sendDataItemChunkFetchedSignal(parentId, name, totalSize, sizeFetched):
     pyotherside.send('fetch-dataitem-chunk', parentId, name, totalSize, sizeFetched)
     
 @worker.run_async
+@handle_exception
 def fetchDataItem(cbObj, parentId, name, outputPath, key=None):
     data = client.fetch_data(int(parentId), name)['data'] 
     dataLength = data.fileobj.getheader('Content-Length') # Nasty way to get total size since what if Content-Length does not exist.
@@ -189,6 +209,7 @@ def _sendDataItemChunkStoredSignal(parentId, remotename, localName, totalSize, s
     pyotherside.send('store-dataitem-chunk', parentId, remotename, localName, totalSize, storedSize)
 
 @worker.run_async
+@handle_exception
 def storeDataItem(cbObj, parentId, remotename, filename):
     _debug("Storing: " + filename + " as " + remotename)
     fileSize = os.path.getsize(filename)
@@ -210,12 +231,14 @@ def storeDataItem(cbObj, parentId, remotename, filename):
     _sendCompletedSignal(cbObj, parentId, remotename, filename)
 
 @worker.run_async
+@handle_exception
 def removeDataItem(cbObj, parentId, name):
     _debug("Removing " + name) 
     client.remove_dataitem(parentId, name)
     _sendCompletedSignal(cbObj, parentId, name)
 
 @worker.run_async
+@handle_exception
 def renameDataItem(cbObj, parentId, oldName, newName):
     _debug("Renaming ", oldName, "to", newName)
     client.rename_dataitem(int(parentId), oldName, newName)

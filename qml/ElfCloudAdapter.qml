@@ -57,7 +57,6 @@ Python {
 
     function _handleCompleted(cbObj) {
         var varArgs = _getVarArgs(_handleCompleted, arguments);
-        console.debug("_handleCompleted", varArgs, cbObj, cbObj.completedCb);
 
         if (cbObj.wrapperCb !== undefined)
             cbObj.wrapperCb.apply(null, [cbObj].concat(varArgs));
@@ -81,7 +80,6 @@ Python {
         var callName = "elfCloudAdapter." + func;
         var args = [cbObj].concat(_getVarArgs(_callInCb, arguments));
         cbObj.wrapperCb = wrapper;
-        console.debug("_callInCb", callName, args, cbObj.completedCb, cbObj.wrapperCb);
         if (py.call_sync(callName, args))
             return cbObj;
         else
@@ -92,7 +90,6 @@ Python {
         var callName = "elfCloudAdapter." + func;
         var cbObj = _createCbObj(callback);
         var args = [cbObj].concat(_getVarArgs(_call, arguments));
-        console.debug("_call", callName, args, cbObj.completedCb);
         if (py.call_sync(callName, args))
             return cbObj;
         else
@@ -103,7 +100,6 @@ Python {
         var callName = "elfCloudAdapter." + func;
         var cbObj = _createCbObj(callback, wrapper);
         var args = [cbObj].concat(_getVarArgs(_callWrap, arguments));
-        console.debug("_callWrap", callName, args, cbObj.completedCb, cbObj.wrapperCb);
         if (py.call_sync(callName, args))
             return cbObj;
         else
