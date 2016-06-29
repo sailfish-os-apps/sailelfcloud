@@ -38,7 +38,7 @@ class Test(unittest.TestCase):
 
 
     def setUp(self):
-        elfCloudAdapter.connect(USERNAME, PASSWORD)
+        elfCloudAdapter.connect(None, USERNAME, PASSWORD)
         self.assertTrue(elfCloudAdapter.isConnected(), "Client connection has failed")
         elfCloudAdapter.addVault(None, "ut_test_vault")
         self.vaultId = mock_pyotherside.sentArgs[1]
@@ -47,7 +47,7 @@ class Test(unittest.TestCase):
         
     def tearDown(self):        
         elfCloudAdapter.removeVault(None, self.vaultId)
-        elfCloudAdapter.disconnect()
+        elfCloudAdapter.disconnect(None)
 
     def testName(self):
         k = 'd8b31e395774b3f22d753ce88cc2490f2c625fac0c9a737a5566215fd29ec7c7'

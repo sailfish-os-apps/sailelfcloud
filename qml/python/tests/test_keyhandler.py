@@ -13,24 +13,28 @@ class Test(unittest.TestCase):
 
 
     def setUp(self):
-        self.configLocation = "./" #tempfile.mkdtemp()
+        self.configLocation = tempfile.mkdtemp()
         keyhandler.init(self.configLocation)
 
 
     def tearDown(self):
-        #shutil.rmtree(self.configLocation, ignore_errors=True)
+        shutil.rmtree(self.configLocation, ignore_errors=True)
         pass
 
 
-    def test_storeKey(self):
-        keyhandler.storeKey(name="name", description="descr",
-                            key="123456ABCDEF", iv="ABCDEF0123456789",
-                            hash="1234567")
-        keyhandler.storeKey(name="name2", description="descr",
-                            key="123456ABCDEF", iv="ABCDEF0123456789",
-                            hash="123456723232")
-        print(keyhandler.getKey("123456723232"))
-        print(keyhandler.getKeys())
+    def test_storeKeyAndExportAndReadFromFile_ShouldReturnSameKey(self):
+        key = {"name":"name", "description":"descr",
+               "key":"123456ABCDEF", "iv":"ABCDEF0123456789",
+               "hash":"1234567", "mode":"CFB8", "type":"AES128"}
+        keyhandler.storeKey(key["name"], key["description"],
+                            key["key"], key["iv"],
+                            key["hash"], key["mode"], key["type"])
+        
+        pathToKey = keyhandler.exportKeyToDir("1234567", self.configLocation)
+        pathToKey = keyhandler.exportKeyToDir("1234567", self.configLocation)
+        keyFromFile = keyhandler.readKeyInfoFromFile(pathToKey)
+        self.assertDictContainsSubset(key, keyFromFile)
+        
 
 
 if __name__ == "__main__":

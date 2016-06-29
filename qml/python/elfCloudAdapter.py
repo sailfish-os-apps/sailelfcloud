@@ -45,32 +45,31 @@ def _sendExceptionSignal(exception):
 def _sendConnectedSignal(status, reason=None):
     pyotherside.send('connected', status, reason)
 
-def connect(username, password):
+@worker.run_async
+def connect(cbObj, username, password):
     global client
     try:
         client = elfcloud.Client(username=username, auth_data=password,
                                  apikey=APIKEY,
                                  server_url=elfcloud.utils.SERVER_DEFAULT)    
         client.auth()
+        _info("elfCloud client connected")
         setRequestSize(DEFAULT_REQUEST_SIZE_BYTES)
+        _sendCompletedSignal(cbObj, True)
     except Exception as e:
         _error(str(e))
         client = None
-        _sendConnectedSignal(False, str(e))
-        return False
-
-    _info("elfCloud client connected")
-    _sendConnectedSignal(True)
-    return True
+        _sendCompletedSignal(cbObj, False)
+        _sendExceptionSignal(e)
 
 def isConnected():
     return client != None
 
-def disconnect():
+def disconnect(cbObj):
     global client
     client = None
     _info("elfCloud client disconnected")    
-    return True
+    _sendCompletedSignal(cbObj)
 
 def setEncryption(key, iv):
     client.encryption_mode = elfcloud.utils.ENC_AES256

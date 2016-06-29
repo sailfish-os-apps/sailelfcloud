@@ -3,8 +3,6 @@ import io.thp.pyotherside 1.3
 
 Python {
 
-    signal connected(bool status, string reason)
-
     signal fetchDataItemChunkCompleted(int parentId, string name, int totalSize, int fetchedSize)
 
     signal fetchAndMoveDataItemStarted(int parentId, string name, string localName)
@@ -38,7 +36,6 @@ Python {
                     console.error(text);
                 });
 
-        setHandler('connected', connected);
         setHandler('exception', exceptionOccurred);
         setHandler('fetch-dataitem-chunk', _fetchDataItemChunkCb);
         setHandler('store-dataitem-chunk', _storeDataItemChunkCb);
@@ -118,12 +115,12 @@ Python {
     }
 
 
-    function connect(username, password, onSuccess) {
-        py.call("elfCloudAdapter.connect", [username, password], onSuccess);
+    function connect(username, password, callback) {
+         return _call("connect", callback, username, password);
     }
 
-    function disconnect(onSuccess) {
-        py.call("elfCloudAdapter.disconnect", [], onSuccess);
+    function disconnect(callback) {
+        return _call("disconnect", callback);
     }
 
     function isConnected() {

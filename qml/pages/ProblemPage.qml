@@ -8,10 +8,16 @@ Page
 
     id: page
 
+    property string _linkHtmlStyle: "<style>a:link { color: " + Theme.highlightColor + "; }</style><br/>"
+
     function _getGuidelineTranslationForId(id) {
         switch(id) {
+        case 201:
+            return _linkHtmlStyle +
+                   "<br/>" + qsTr("Are you missing account? Create one in") +
+                   "<br/> <a href=\"https://secure.elfcloud.fi/en_US/\"> https://secure.elfcloud.fi/en_US/</a>";
         case 204:
-            return "<style>a:link { color: " + Theme.highlightColor + "; }</style><br/>" +
+            return _linkHtmlStyle +
                    qsTr("You must logon to the My elfCLOUD web application and accept EULA in order to use this service.") +
                    "<br/><br/>" +
                    "<a href=\"https://secure.elfcloud.fi/en_US/\">" + qsTr("https://secure.elfcloud.fi/en_US/") + "</a>";

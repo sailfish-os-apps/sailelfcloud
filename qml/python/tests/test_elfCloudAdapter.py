@@ -19,10 +19,10 @@ USERNAME=""
 PASSWORD=""
 
 def setUpModule():
-    elfCloudAdapter.connect(USERNAME, PASSWORD)
+    elfCloudAdapter.connect(None, USERNAME, PASSWORD)
 
 def tearDownModule():
-    elfCloudAdapter.disconnect()
+    elfCloudAdapter.disconnect(None)
 
 class mock_pyotherside:
     

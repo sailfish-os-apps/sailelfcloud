@@ -7,7 +7,7 @@ Created on Jun 21, 2016
 import os
 import pathlib
 import xml.etree.ElementTree as et 
-import worker
+import fileHelpers
 
 keyStoreDir = None
 keyDatabase = {}
@@ -114,3 +114,11 @@ def removeKey(hash):
         return True
     
     return False
+
+def exportKeyToDir(hash, outputDir):
+    key = getKey(hash)
+    path = outputDir + "/" + key['name'] + ".xml"
+    path = fileHelpers.uniqueFile(path)
+    tree = _buildKeyXmlTree(key['name'], key['description'], key['key'], key['iv'], key['hash'], key['mode'], key['type'])
+    tree.write(path, encoding='utf-8', xml_declaration=True,short_empty_elements=False)
+    return path

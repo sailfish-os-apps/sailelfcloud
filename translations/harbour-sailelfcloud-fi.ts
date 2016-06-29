@@ -109,17 +109,7 @@
 <context>
     <name>ConnectionPage</name>
     <message>
-        <location filename="../qml/pages/ConnectionPage.qml" line="18"/>
-        <source>Failed to connect</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/pages/ConnectionPage.qml" line="24"/>
-        <source>Are you missing account? Create one in</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/pages/ConnectionPage.qml" line="39"/>
+        <location filename="../qml/pages/ConnectionPage.qml" line="33"/>
         <source>Connecting</source>
         <translation type="unfinished"></translation>
     </message>
@@ -328,7 +318,7 @@
 <context>
     <name>ElfCloudAdapter</name>
     <message>
-        <location filename="../qml/ElfCloudAdapter.qml" line="176"/>
+        <location filename="../qml/ElfCloudAdapter.qml" line="173"/>
         <source>Destination file exists</source>
         <translation type="unfinished"></translation>
     </message>
@@ -336,57 +326,67 @@
 <context>
     <name>EncryptionConfigPage</name>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="111"/>
-        <source>Encryption configurations</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="116"/>
-        <source>Encryption key creation</source>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="80"/>
+        <source>Key exported to documents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/pages/EncryptionConfigPage.qml" line="124"/>
+        <source>Encryption configurations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="129"/>
+        <source>Encryption key creation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="137"/>
         <source>Create</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="133"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="146"/>
         <source>New</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="134"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="147"/>
         <source>From file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="135"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="148"/>
         <source>From clip-board</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="141"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="154"/>
         <source>Available encryption keys</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="190"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="203"/>
         <source>Deleting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="210"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="222"/>
         <source>Delete key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="201"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="214"/>
         <source>Edit key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="206"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="89"/>
+        <source>Key %1 exported to %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="218"/>
         <source>Export key</source>
         <translation type="unfinished"></translation>
     </message>
@@ -662,17 +662,22 @@
 <context>
     <name>ProblemPage</name>
     <message>
-        <location filename="../qml/pages/ProblemPage.qml" line="15"/>
+        <location filename="../qml/pages/ProblemPage.qml" line="17"/>
+        <source>Are you missing account? Create one in</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/ProblemPage.qml" line="21"/>
         <source>You must logon to the My elfCLOUD web application and accept EULA in order to use this service.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ProblemPage.qml" line="17"/>
+        <location filename="../qml/pages/ProblemPage.qml" line="23"/>
         <source>https://secure.elfcloud.fi/en_US/</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ProblemPage.qml" line="40"/>
+        <location filename="../qml/pages/ProblemPage.qml" line="46"/>
         <source>Problem occurred</source>
         <translation type="unfinished"></translation>
     </message>

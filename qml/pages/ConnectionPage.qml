@@ -9,29 +9,23 @@ Page {
 
     id: page
 
-    function _connectionCb(status, reason) {
-        elfCloud.onConnected.disconnect(_connectionCb);
+    property bool _triedConnect: false
+
+    function _connectionCb(status) {
         busyIndication.running = false;
+        _triedConnect = true;
         if (status) {
             pageStack.replaceAbove(null, Qt.resolvedUrl("ContainerPage.qml"));
         } else {
-            connectionProblemLabel.text = qsTr("Failed to connect");
-            connectionProblemLabel.visible = true;
-            connectionProblemReasonArea.text = reason;
-            connectionProblemReasonArea.visible = true;            
-            connectionProblemSolutionArea.text =
-                "<style>a:link { color: " + Theme.highlightColor + "; }</style><br/>" +
-                "<br/>" + qsTr("Are you missing account? Create one in") +
-                "<br/> <a href=\"https://secure.elfcloud.fi/en_US/\"> https://secure.elfcloud.fi/en_US/</a>";
-
             helpers.clearAutoLogin();
         }
     }
 
     onStatusChanged: {
-        if (status === PageStatus.Active) {
-            elfCloud.onConnected.connect(_connectionCb);
-            elfCloud.connect(username, password);
+        if (status === PageStatus.Active && !_triedConnect) {
+            elfCloud.connect(username, password, _connectionCb);
+        } else if (status === PageStatus.Active && _triedConnect) {
+            pageStack.pop();
         }
     }
 
