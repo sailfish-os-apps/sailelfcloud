@@ -109,7 +109,7 @@
 <context>
     <name>ConnectionPage</name>
     <message>
-        <location filename="../qml/pages/ConnectionPage.qml" line="33"/>
+        <location filename="../qml/pages/ConnectionPage.qml" line="35"/>
         <source>Connecting</source>
         <translation type="unfinished"></translation>
     </message>
@@ -318,7 +318,7 @@
 <context>
     <name>ElfCloudAdapter</name>
     <message>
-        <location filename="../qml/ElfCloudAdapter.qml" line="169"/>
+        <location filename="../qml/ElfCloudAdapter.qml" line="206"/>
         <source>Destination file exists</source>
         <translation type="unfinished"></translation>
     </message>
@@ -663,7 +663,7 @@
     <name>ProblemPage</name>
     <message>
         <location filename="../qml/pages/ProblemPage.qml" line="17"/>
-        <source>Are you missing account? Create one in</source>
+        <source>Are you missing an account? Create one in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
