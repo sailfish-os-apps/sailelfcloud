@@ -40,6 +40,7 @@ Python {
         setHandler('fetch-dataitem-chunk', _fetchDataItemChunkCb);
         setHandler('store-dataitem-chunk', _storeDataItemChunkCb);
         setHandler('completed', _handleCompleted);
+        setHandler('failed', _handleFailed);
     }
 
     function _callCbWithArgs(cb, args) {
@@ -62,6 +63,15 @@ Python {
             cbObj.wrapperCb.apply(null, [cbObj].concat(varArgs));
         else if (cbObj.completedCb !== undefined)
             cbObj.completedCb.apply(null, varArgs);
+    }
+
+    function _handleFailed(cbObj) {
+        var varArgs = _getVarArgs(_handleFailed, arguments);
+
+        if (cbObj.wrapperFailedCb !== undefined)
+            cbObj.wrapperFailedCb.apply(null, [cbObj].concat(varArgs));
+        else if (cbObj.failedCb !== undefined)
+            cbObj.failedCb.apply(null, varArgs);
     }
 
     function _createCbObj(callback, wrapper) {
@@ -106,13 +116,39 @@ Python {
             return undefined;
     }
 
+    function _createCbObj2(successCb, failureCb, wrapperSuccess, wrapperFailure) {
+        var c = Qt.createComponent("items/ElfCloudAdapterCb.qml");
+        var cbObj = c.createObject(elfCloud);
+
+        if (successCb !== undefined)
+            cbObj.completedCb = successCb;
+
+        if (failureCb !== undefined)
+            cbObj.failedCb = failureCb;
+
+        cbObj.wrapperCb = wrapperSuccess;
+        cbObj.wrapperFailedCb = wrapperFailure;
+
+        return cbObj;
+    }
+
+    function _call2(func, successCb, failureCb) {
+        var callName = "elfCloudAdapter." + func;
+        var cbObj = _createCbObj2(successCb, failureCb);
+        var args = [cbObj].concat(_getVarArgs(_call2, arguments));
+        if (py.call_sync(callName, args))
+            return cbObj;
+        else
+            return undefined;
+    }
+
     function getSubscriptionInfo(callback) {
         return _call("getSubscriptionInfo", callback)
     }
 
 
-    function connect(username, password, callback) {
-         return _call("connect", callback, username, password);
+    function connect(username, password, successCb, failureCb) {
+         return _call2("connect", successCb, failureCb, username, password);
     }
 
     function disconnect(callback) {
@@ -127,18 +163,18 @@ Python {
     function _createContentDetailsList(content) {
         var list = []
         for (var i = 0; i < content.length; i++) {
-            console.log("adding:", content[i].name, content[i].id, content[i].ownerFirstName, content[i].ownerLastName);
             list.push(content[i]);
         }
 
         return list
     }
 
-    function listVaults(callback) {
-        return _call("listVaults", function(vaults) {
-                if (callback !== undefined)
-                    callback(_createContentDetailsList(vaults));
-            });
+    function listVaults(successCb, failureCb) {
+        return _call2("listVaults",
+                     function(vaults) {
+                        if (successCb !== undefined)
+                            successCb(_createContentDetailsList(vaults));
+                     }, failureCb);
     }
 
     function listContent(parentId, callback) {
@@ -248,9 +284,9 @@ Python {
 
     Component.onCompleted: {
         if (!py._ready) {
-            console.log("elfCloudAdapter starting up...");
-            console.log("Python version: " + pythonVersion());
-            console.log("PyOtherSide version: " + pluginVersion());
+            console.info("elfCloudAdapter starting up...");
+            console.info("Python version: " + pythonVersion());
+            console.info("PyOtherSide version: " + pluginVersion());
             __setHandlers();
             addImportPath(Qt.resolvedUrl("python/"));
             addImportPath(Qt.resolvedUrl("../lib/pycrypto-2.6.1-py3.4-linux-armv7l.egg"));

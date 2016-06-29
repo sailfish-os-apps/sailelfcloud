@@ -29,7 +29,7 @@ Page {
 
     function _updateContent() {
         if (containerType === "top")
-            elfCloud.listVaults(_updateContentListAndShowPage);
+            elfCloud.listVaults(_updateContentListAndShowPage, _makeVisible);
         else
             elfCloud.listContent(containerId, _updateContentListAndShowPage);
     }

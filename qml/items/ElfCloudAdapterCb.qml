@@ -11,12 +11,17 @@ QtObject {
     property var completedCb: _noop    // Callback from user
     property var wrapperCb: undefined  // Wrapping callback from ElfCloudAdapter.qml
 
+    property var failedCb: _noop    // Callback from user for failure
+    property var wrapperFailedCb: undefined  // Wrapping failure callback from ElfCloudAdapter.qml
+
     function invalidate() {
         completedCb = _noop;
+        failedCb = _noop;
     }
 
     function unsetWrapper() {
         wrapperCb = undefined;
+        wrapperFailedCb = undefined;
     }
 
     Component.onDestruction: {

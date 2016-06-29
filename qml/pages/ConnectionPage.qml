@@ -11,19 +11,21 @@ Page {
 
     property bool _triedConnect: false
 
-    function _connectionCb(status) {
+    function _connectionSucceededCb() {
         busyIndication.running = false;
         _triedConnect = true;
-        if (status) {
-            pageStack.replaceAbove(null, Qt.resolvedUrl("ContainerPage.qml"));
-        } else {
-            helpers.clearAutoLogin();
-        }
+        pageStack.replaceAbove(null, Qt.resolvedUrl("ContainerPage.qml"));
+    }
+
+    function _connectionFailedCb() {
+        busyIndication.running = false;
+        _triedConnect = true;
+        helpers.clearAutoLogin();
     }
 
     onStatusChanged: {
         if (status === PageStatus.Active && !_triedConnect) {
-            elfCloud.connect(username, password, _connectionCb);
+            elfCloud.connect(username, password, _connectionSucceededCb, _connectionFailedCb);
         } else if (status === PageStatus.Active && _triedConnect) {
             pageStack.pop();
         }

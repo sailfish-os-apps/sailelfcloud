@@ -39,6 +39,9 @@ def _error(*text):
 def _sendCompletedSignal(cbObj, *args):
     pyotherside.send('completed', cbObj, *args)
 
+def _sendFailedSignal(cbObj, *args):
+    pyotherside.send('failed', cbObj, *args)
+
 def _sendExceptionSignal(id_, message):
     pyotherside.send('exception', id_, message)
 
@@ -74,11 +77,11 @@ def connect(cbObj, username, password):
         client.auth()
         _info("elfCloud client connected")
         setRequestSize(DEFAULT_REQUEST_SIZE_BYTES)
-        _sendCompletedSignal(cbObj, True)
-    except Exception as e:
+        _sendCompletedSignal(cbObj)
+    except elfcloud.exceptions.ECAuthException as e:
         _error(str(e))
         client = None
-        _sendCompletedSignal(cbObj, False)
+        _sendFailedSignal(cbObj)
         raise # let default handler do rest
 
 def isConnected():
@@ -103,15 +106,13 @@ SUBSCRIPTION_FIELD_MAP = {'id':'Id', 'status':'Status', 'start_date':'Start date
                           'subscription_type':'Subscription type'}
 
 @worker.run_async
+@handle_exception
 def getSubscriptionInfo(cbObj):
-    try:
-        info = client.get_subscription_info()
-        subscr = info['current_subscription']
-        # Create list of dict for easier handling in QML
-        info = [{'fieldName':toName, 'fieldValue':str(subscr[fromName])} for fromName,toName in SUBSCRIPTION_FIELD_MAP.items()]
-        _sendCompletedSignal(cbObj, info)
-    except elfcloud.exceptions.ECAuthException as e:
-        _sendExceptionSignal(e)
+    info = client.get_subscription_info()
+    subscr = info['current_subscription']
+    # Create list of dict for easier handling in QML
+    info = [{'fieldName':toName, 'fieldValue':str(subscr[fromName])} for fromName,toName in SUBSCRIPTION_FIELD_MAP.items()]
+    _sendCompletedSignal(cbObj, info)
 
 def setRequestSize(sizeInBytes):
     client.set_request_size(sizeInBytes)
@@ -122,7 +123,7 @@ def listVaults(cbObj):
     vaultList = []
     try:
         vaults = client.list_vaults()   
-               
+           
         for vault in vaults:
             vaultList.append({'name': vault.name,
                               'id': vault.id,
@@ -134,10 +135,10 @@ def listVaults(cbObj):
                               'accessed': vault.last_accessed_date,
                               'ownerFirstName': vault.owner['firstname'],
                               'ownerLastName': vault.owner['lastname']})
-    except elfcloud.exceptions.ECAuthException as e:
-        _sendExceptionSignal(e)
-
-    _sendCompletedSignal(cbObj, vaultList)
+        _sendCompletedSignal(cbObj, vaultList)
+    except:
+        _sendFailedSignal(cbObj)
+        raise # let default handler do rest
 
 @worker.run_async
 @handle_exception
@@ -245,12 +246,10 @@ def renameDataItem(cbObj, parentId, oldName, newName):
     _sendCompletedSignal(cbObj, parentId, oldName, newName)
 
 @worker.run_async
+@handle_exception
 def addVault(cbObj, name):
-    try:
-        vaultId = client.add_vault(name, VALULT_TYPES[0]).id
-        _sendCompletedSignal(cbObj, vaultId, name)
-    except elfcloud.exceptions.ECAuthException as e:
-        _sendExceptionSignal(e)
+    vaultId = client.add_vault(name, VALULT_TYPES[0]).id
+    _sendCompletedSignal(cbObj, vaultId, name)
 
 def _addVault(name):
     return client.add_vault(name, VALULT_TYPES[0])

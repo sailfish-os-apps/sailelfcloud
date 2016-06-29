@@ -79,9 +79,9 @@ Python {
 
     Component.onCompleted: {
         if (!py._ready) {
-            console.log("keyhandler starting up...");
-            console.log("Python version: " + pythonVersion());
-            console.log("PyOtherSide version: " + pluginVersion());
+            console.info("keyhandler starting up...");
+            console.info("Python version: " + pythonVersion());
+            console.info("PyOtherSide version: " + pluginVersion());
             __setHandlers();
             addImportPath(Qt.resolvedUrl("python/"));
             importModule('keyhandler', function() {
