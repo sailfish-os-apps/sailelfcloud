@@ -14,7 +14,7 @@ Page
         switch(id) {
         case 201:
             return _linkHtmlStyle +
-                   "<br/>" + qsTr("Are you missing account? Create one in") +
+                   "<br/>" + qsTr("Are you missing an account? Create one in") +
                    "<br/> <a href=\"https://secure.elfcloud.fi/en_US/\"> https://secure.elfcloud.fi/en_US/</a>";
         case 204:
             return _linkHtmlStyle +
