@@ -112,6 +112,14 @@ Page {
         // Tell SilicaFlickable the height of its content.
         contentHeight: column.height
 
+        PullDownMenu {
+
+            MenuItem {
+                text: qsTr("Encryption help")
+                onClicked: Qt.openUrlExternally("https://github.com/TeemuAhola/sailelfcloud/wiki/SailElfCloud-encryption")
+            }
+        }
+
         // Place our content in a Column.  The PageHeader is always placed at the top
         // of the page, followed by our content.
         Column {

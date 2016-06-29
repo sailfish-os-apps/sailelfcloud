@@ -107,28 +107,6 @@ Dialog {
                 placeholderText: label
                 wrapMode: TextEdit.Wrap
             }
-
-            Text
-            {
-                width: parent.width
-                anchors { left: parent.left; right: parent.right;
-                          leftMargin: Theme.horizontalPageMargin;
-                          rightMargin: Theme.horizontalPageMargin }
-                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                horizontalAlignment: Text.AlignLeft
-                textFormat: Text.RichText
-                font { family: Theme.fontFamily; pixelSize: Theme.fontSizeSmall }
-                color: Theme.secondaryColor
-                text: "<style>a:link { color: " + Theme.highlightColor + "; }</style>" +
-                    qsTr("For more information, see:") +
-                    "<br/> <a href=\"https://github.com/TeemuAhola/sailelfcloud/wiki/SailElfCloud-encryption\">" +
-                    qsTr("SailElfCloud encryption") + "</a>";
-                onLinkActivated:
-                {
-                    Qt.openUrlExternally(link);
-                }
-            }
-
         }
 
         Connections {
