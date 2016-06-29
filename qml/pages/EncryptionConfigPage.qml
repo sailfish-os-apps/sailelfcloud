@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import org.nemomobile.notifications 1.0
 
 Page {
     id: page
@@ -73,8 +74,20 @@ Page {
         }
     }
 
+
+    Notification {
+            id: exportedNotification
+            summary: qsTr("Key exported to documents")
+            previewSummary: summary
+            previewBody: body
+    }
+
     function _exportKey(hash) {
-        console.log("exporting key", hash)
+        var key = keyHandler.getKey(hash);
+        var path = keyHandler.exportKey(hash, StandardPaths.documents);
+        console.debug("Exported key", hash, "to", path);
+        exportedNotification.body = qsTr("Key %1 exported to %2").arg(key['name']).arg(path);
+        exportedNotification.publish()
     }
 
     function _editKey(hash) {
@@ -202,7 +215,6 @@ Page {
                                     onClicked: _editKey(model.key["hash"])
                                 }
                                 MenuItem {
-                                    enabled: false // Not yet implemented
                                     text: qsTr("Export key")
                                     onClicked: _exportKey(model.key["hash"])
                                 }

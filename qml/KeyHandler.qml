@@ -73,6 +73,10 @@ Python {
         return py.call_sync("keyhandler.removeKey", [hash]);
     }
 
+    function exportKey(hash, dir) {
+        return py.call_sync("keyhandler.exportKeyToDir", [hash, dir]);
+    }
+
     Component.onCompleted: {
         if (!py._ready) {
             console.log("keyhandler starting up...");
