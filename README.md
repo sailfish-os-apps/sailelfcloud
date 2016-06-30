@@ -1,7 +1,7 @@
 # sailelfcloud
-ElfCloud port for Sailfish
+elfCLOUD client for Sailfish
 
-elfCloud is a product of elfGROUP. See https://secure.elfcloud.fi/en_US/.
+elfCLOUD is a product of elfGROUP. See https://secure.elfcloud.fi/en_US/.
 
 BUILD
 =====
