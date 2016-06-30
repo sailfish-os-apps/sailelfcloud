@@ -316,6 +316,24 @@
     </message>
 </context>
 <context>
+    <name>DeleteKeyConfirmationDialog</name>
+    <message>
+        <location filename="../qml/dialogs/DeleteKeyConfirmationDialog.qml" line="15"/>
+        <source>Remove %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/DeleteKeyConfirmationDialog.qml" line="24"/>
+        <source>Key &apos;%1&apos; hash &apos;%2&apos; will be removed PERMANENTLY!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/DeleteKeyConfirmationDialog.qml" line="25"/>
+        <source>If you loose a key and there is files encrypted with it, you cannot access to those files EVER AGAIN! Are you sure?</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ElfCloudAdapter</name>
     <message>
         <location filename="../qml/ElfCloudAdapter.qml" line="205"/>
@@ -331,57 +349,47 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="118"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="114"/>
         <source>Encryption help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="132"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="128"/>
         <source>Encryption configurations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="137"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="133"/>
         <source>Encryption key creation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="145"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="141"/>
         <source>Create</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="154"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="150"/>
         <source>New</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="155"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="151"/>
         <source>From file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="156"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="152"/>
         <source>From clip-board</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="162"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="158"/>
         <source>Available encryption keys</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/pages/EncryptionConfigPage.qml" line="211"/>
-        <source>Deleting</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="230"/>
-        <source>Delete key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="222"/>
         <source>Edit key</source>
         <translation type="unfinished"></translation>
     </message>
@@ -391,7 +399,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="226"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="215"/>
         <source>Export key</source>
         <translation type="unfinished"></translation>
     </message>
@@ -541,47 +549,57 @@
 <context>
     <name>KeyInfoPage</name>
     <message>
-        <location filename="../qml/pages/KeyInfoPage.qml" line="28"/>
-        <source>Key information</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/pages/KeyInfoPage.qml" line="32"/>
-        <source>Name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/pages/KeyInfoPage.qml" line="36"/>
-        <source>Description</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/pages/KeyInfoPage.qml" line="40"/>
-        <source>Key data</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/pages/KeyInfoPage.qml" line="44"/>
-        <source>Initialization vector</source>
+        <location filename="../qml/pages/KeyInfoPage.qml" line="31"/>
+        <source>Removing key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/pages/KeyInfoPage.qml" line="48"/>
+        <source>Delete key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/KeyInfoPage.qml" line="62"/>
+        <source>Key information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/KeyInfoPage.qml" line="66"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/KeyInfoPage.qml" line="70"/>
+        <source>Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/KeyInfoPage.qml" line="74"/>
+        <source>Key data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/KeyInfoPage.qml" line="78"/>
+        <source>Initialization vector</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/KeyInfoPage.qml" line="82"/>
         <source>Hash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/KeyInfoPage.qml" line="52"/>
+        <location filename="../qml/pages/KeyInfoPage.qml" line="86"/>
         <source>Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/KeyInfoPage.qml" line="56"/>
+        <location filename="../qml/pages/KeyInfoPage.qml" line="90"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/KeyInfoPage.qml" line="60"/>
+        <location filename="../qml/pages/KeyInfoPage.qml" line="94"/>
         <source>Filename</source>
         <translation type="unfinished"></translation>
     </message>

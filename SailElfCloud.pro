@@ -70,7 +70,8 @@ DISTFILES += \
     qml/KeyHandler.qml \
     qml/dialogs/ImportFromFileDialog.qml \
     qml/dialogs/CreateNewKeyDialog.qml \
-    qml/pages/KeyInfoPage.qml
+    qml/pages/KeyInfoPage.qml \
+    qml/dialogs/DeleteKeyConfirmationDialog.qml
 
 unix: PKGCONFIG +=
 

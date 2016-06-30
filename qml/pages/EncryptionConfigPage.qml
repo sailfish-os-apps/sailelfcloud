@@ -94,13 +94,9 @@ Page {
         console.log("editing key", hash)
     }
 
-    function _removeKey(hash) {
-        keyHandler.removeKey(hash);
-        _populateKeyListAndSelectActive();
-    }
-
     function _showKeyInfo(hash) {
-        pageStack.push(Qt.resolvedUrl("KeyInfoPage.qml"), {"hash":hash});
+        var p = pageStack.push(Qt.resolvedUrl("KeyInfoPage.qml"), {"hash":hash});
+        p.keyDeleted.connect(_populateKeyListAndSelectActive);
     }
 
 
@@ -207,13 +203,6 @@ Page {
                         font { weight: Font.Light; pixelSize: Theme.fontSizeTiny }
                     }
 
-                    function _remove() {
-                        remorseAction(qsTr("Deleting"), function() { _removeKey(model.key["hash"]); })
-                    }
-                    ListView.onRemove: animateRemoval()
-
-
-
 
                     menu: Component {
                             ContextMenu {
@@ -225,10 +214,6 @@ Page {
                                 MenuItem {
                                     text: qsTr("Export key")
                                     onClicked: _exportKey(model.key["hash"])
-                                }
-                                MenuItem {
-                                    text: qsTr("Delete key")
-                                    onClicked: _remove()
                                 }
                             }
                     }
