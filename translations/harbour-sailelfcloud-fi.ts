@@ -500,16 +500,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="123"/>
-        <source>For more information, see:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="125"/>
-        <source>SailElfCloud encryption</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="42"/>
         <source>Key data of 16, 24 or 32 bytes (in hex)</source>
         <translation type="unfinished"></translation>
