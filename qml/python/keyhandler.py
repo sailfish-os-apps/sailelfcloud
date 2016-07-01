@@ -18,17 +18,17 @@ def _checkIfXmlFileIsKeyFile(file):
     return root.tag == '{https://secure.elfcloud.fi/xml/elfCLOUD}key' 
 
 def _addKeyFileToDatabase(file):
-    tree = et.ElementTree(None, file)
-    hash = tree.findtext('{https://secure.elfcloud.fi/xml/elfCLOUD}Hash')
+    tree = et.ElementTree(None, open(file, encoding='utf-8'))
+    hash_ = tree.findtext('{https://secure.elfcloud.fi/xml/elfCLOUD}Hash')
 
     if hash not in keyDatabase:
-        keyDatabase[hash] = file
+        keyDatabase[hash_] = file
 
 def findKeyFiles(path):
     keyFiles = []
     xmlFiles = [p for p in pathlib.Path(path).glob('*.xml') if p.is_file()]
     for f in xmlFiles:
-        with f.open() as fd:
+        with f.open(encoding='utf-8') as fd:
             if (_checkIfXmlFileIsKeyFile(fd)):
                 keyFiles.append(f.resolve().as_posix())
     
@@ -82,6 +82,15 @@ def getKeys():
     
     return keys
 
+def isKeyWithName(name):
+    keys = getKeys()
+    
+    for k in keys:
+        if k['name'] == name:
+            return True
+        
+    return False
+
 def _buildKeyXmlTree(name, description, key, iv, hash, mode, type):
     root = et.Element('ec:key', {'xmlns:ec': 'https://secure.elfcloud.fi/xml/elfCLOUD'})
     et.SubElement(root, 'ec:ShortName').text=name
@@ -96,29 +105,48 @@ def _buildKeyXmlTree(name, description, key, iv, hash, mode, type):
     
     return et.ElementTree(root)
     
-def _createKeyFilePath(keyName):
-    return keyStoreDir + os.sep + keyName + os.extsep + "xml"   
+def _createKeyFilePath():
+    path = fileHelpers.uniqueFile(keyStoreDir + os.sep + "key.xml")
+    fileHelpers.setFileAccessRights(path)
+    return path   
 
 def storeKey(name, description, key, iv, hash, mode='CFB8', type='AES128'):
     tree = _buildKeyXmlTree(name, description, key, iv, hash, mode, type)
-    keyFilePath = _createKeyFilePath(name)
+    keyFilePath = _createKeyFilePath()    
     tree.write(keyFilePath, encoding='utf-8', xml_declaration=True,short_empty_elements=False)
     _addKeyFileToDatabase(keyFilePath)
+    return True
     
-def removeKey(hash):
-    keyFile = keyDatabase.get(hash, None)
+def removeKey(hash_):
+    keyFile = keyDatabase.get(hash_, None)
     
     if keyFile:
         os.remove(keyFile)
-        keyDatabase.pop(hash)
+        keyDatabase.pop(hash_)
         return True
     
     return False
 
 def exportKeyToDir(hash, outputDir):
     key = getKey(hash)
-    path = outputDir + "/" + key['name'] + ".xml"
-    path = fileHelpers.uniqueFile(path)
+    path = fileHelpers.uniqueFile(outputDir + os.sep + "exported_key.xml")
+    fileHelpers.setFileAccessRights(path)
     tree = _buildKeyXmlTree(key['name'], key['description'], key['key'], key['iv'], key['hash'], key['mode'], key['type'])
     tree.write(path, encoding='utf-8', xml_declaration=True,short_empty_elements=False)
     return path
+
+def modifyKey(hash_, name, description):
+    key = getKey(hash_)
+    key['name'] = name
+    key['description'] = description
+    originalPath = key['file']
+    backupPath = fileHelpers.makeBackupFromFile(originalPath)
+    try:
+        removeKey(hash_)
+        storeKey(key['name'], key['description'], key['key'], key['iv'], key['hash'], key['mode'], key['type'])
+        return True
+    except: # Whatever goes wrong, always restore original key
+        os.replace(backupPath, originalPath)        
+        return False
+    finally:
+        os.remove(backupPath)

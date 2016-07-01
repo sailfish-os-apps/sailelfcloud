@@ -93,7 +93,7 @@ Dialog {
                 width: parent.width
                 label: qsTr("Name")
                 labelVisible: true
-                placeholderText: qsTr("Key must have name")
+                placeholderText: qsTr("Key must have unique name")
 
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
                 EnterKey.onClicked: keyDescriptionArea.focus = true
@@ -129,6 +129,6 @@ Dialog {
             }
         }
     }
-    canAccept: keyDataField.acceptableInput && keyInitVectorField.acceptableInput && keyNameField.text
+    canAccept: keyDataField.acceptableInput && keyInitVectorField.acceptableInput && keyNameField.text.length > 0 && !keyHandler.isKeyWithName(keyNameField.text)
     onAccepted: _create(keyNameField.text, keyDescriptionArea.text, keyDataField.text, keyInitVectorField.text, keyHashField.text)
 }

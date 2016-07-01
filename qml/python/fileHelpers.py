@@ -5,6 +5,8 @@ Created on Jun 28, 2016
 '''
 
 import os
+import stat
+import shutil
  
 # from http://stackoverflow.com/questions/183480/is-this-the-best-way-to-get-unique-version-of-filename-w-python
 def uniqueFile(fileName):
@@ -20,3 +22,10 @@ def uniqueFile(fileName):
         fileName = file_name_parts[0] + '_' + str(counter) + file_name_parts[1]
         counter += 1
         
+def makeBackupFromFile(path):
+    backupName = uniqueFile(path)
+    shutil.copyfile(path, backupName, follow_symlinks=False)
+    return backupName
+
+def setFileAccessRights(path):
+    os.chmod(path, stat.S_IRUSR | stat.S_IWUSR)

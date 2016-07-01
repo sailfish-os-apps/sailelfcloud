@@ -189,42 +189,42 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="48"/>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="49"/>
         <source>AES128</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="88"/>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="89"/>
         <source>Generation completed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="95"/>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="96"/>
         <source>Generation progress</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="105"/>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="106"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="107"/>
-        <source>Key must have name</source>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="108"/>
+        <source>Key must have unique name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="116"/>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="117"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="49"/>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="50"/>
         <source>AES192</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="50"/>
+        <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="51"/>
         <source>AES256</source>
         <translation type="unfinished"></translation>
     </message>
@@ -334,6 +334,29 @@
     </message>
 </context>
 <context>
+    <name>EditKeyDialog</name>
+    <message>
+        <location filename="../qml/dialogs/EditKeyDialog.qml" line="26"/>
+        <source>Edit key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/EditKeyDialog.qml" line="31"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/EditKeyDialog.qml" line="40"/>
+        <source>Description</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/EditKeyDialog.qml" line="49"/>
+        <source>Hash</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ElfCloudAdapter</name>
     <message>
         <location filename="../qml/ElfCloudAdapter.qml" line="205"/>
@@ -349,42 +372,42 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="114"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="115"/>
         <source>Encryption help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="128"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="129"/>
         <source>Encryption configurations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="133"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="134"/>
         <source>Encryption key creation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="141"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="142"/>
         <source>Create</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="150"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="151"/>
         <source>New</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="151"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="152"/>
         <source>From file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="152"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="153"/>
         <source>From clip-board</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="158"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="159"/>
         <source>Available encryption keys</source>
         <translation type="unfinished"></translation>
     </message>
@@ -499,7 +522,7 @@
     </message>
     <message>
         <location filename="../qml/dialogs/ImportFromClipboardDialog.qml" line="96"/>
-        <source>Key must have name</source>
+        <source>Key must have unique name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -526,22 +549,22 @@
 <context>
     <name>ImportFromFileDialog</name>
     <message>
-        <location filename="../qml/dialogs/ImportFromFileDialog.qml" line="65"/>
+        <location filename="../qml/dialogs/ImportFromFileDialog.qml" line="66"/>
         <source>Import key from file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/ImportFromFileDialog.qml" line="76"/>
+        <location filename="../qml/dialogs/ImportFromFileDialog.qml" line="77"/>
         <source>Selected key exists already. Cannot add key.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/ImportFromFileDialog.qml" line="155"/>
+        <location filename="../qml/dialogs/ImportFromFileDialog.qml" line="156"/>
         <source>Documents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/ImportFromFileDialog.qml" line="155"/>
+        <location filename="../qml/dialogs/ImportFromFileDialog.qml" line="156"/>
         <source>Downloads</source>
         <translation type="unfinished"></translation>
     </message>

@@ -39,8 +39,9 @@ Dialog {
 
         if (index !== -1) {
             var hash = keyListModel.get(index).hash;
+            var name = keyListModel.get(index).name;
 
-            if (keyHandler.isKey(hash)) {
+            if (keyHandler.isKey(hash) || keyHandler.isKeyWithName(name)) {
                 keyExistsText.visible = true;
                 canAccept = false;
             } else {

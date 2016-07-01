@@ -91,7 +91,8 @@ Page {
     }
 
     function _editKey(hash) {
-        console.log("editing key", hash)
+        var p = pageStack.push(Qt.resolvedUrl("../dialogs/EditKeyDialog.qml"), {"hash":hash});
+        p.keyModified.connect(_populateKeyListAndSelectActive);
     }
 
     function _showKeyInfo(hash) {
@@ -207,7 +208,6 @@ Page {
                     menu: Component {
                             ContextMenu {
                                 MenuItem {
-                                    enabled: false // Not yet implemented
                                     text: qsTr("Edit key")
                                     onClicked: _editKey(model.key["hash"])
                                 }

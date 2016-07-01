@@ -44,6 +44,7 @@ Dialog {
                 currentIndex: 2
                 label: qsTr("Algorithm")
 
+
                 menu: ContextMenu {
                     MenuItem { id: aes128; text: qsTr("AES128") }
                     MenuItem { id: aes192; text: qsTr("AES192") }
@@ -104,7 +105,7 @@ Dialog {
                 width: parent.width
                 label: qsTr("Name")
                 labelVisible: true
-                placeholderText: qsTr("Key must have name")
+                placeholderText: qsTr("Key must have unique name")
 
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
                 EnterKey.onClicked: keyDescriptionArea.focus = true
@@ -123,6 +124,6 @@ Dialog {
         VerticalScrollDecorator { }
     }
 
-    canAccept: keyGenProgressBar.value === keyGenProgressBar.maximumValue && keyNameField.text
+    canAccept: keyGenProgressBar.value >= keyGenProgressBar.maximumValue && !keyHandler.isKeyWithName(keyNameField.text) && keyNameField.text.length > 0
     onAccepted: _create()
 }

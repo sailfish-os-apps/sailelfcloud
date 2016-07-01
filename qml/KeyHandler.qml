@@ -51,6 +51,10 @@ Python {
         return py.call_sync("keyhandler.isKey", [hash]);
     }
 
+    function isKeyWithName(name) {
+        return py.call_sync("keyhandler.isKeyWithName", [name]);
+    }
+
     function getActiveKeyAndIv() {
         var activeKeyHash = helpers.getActiveKey();
 
@@ -75,6 +79,10 @@ Python {
 
     function exportKey(hash, dir) {
         return py.call_sync("keyhandler.exportKeyToDir", [hash, dir]);
+    }
+
+    function modifyKey(hash, name, description) {
+        return py.call_sync("keyhandler.modifyKey", [hash, name, description]);
     }
 
     Component.onCompleted: {
