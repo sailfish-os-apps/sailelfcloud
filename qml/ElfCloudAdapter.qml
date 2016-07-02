@@ -3,6 +3,8 @@ import io.thp.pyotherside 1.3
 
 Python {
 
+    signal readyForUse()
+
     signal fetchDataItemChunkCompleted(int parentId, string name, int totalSize, int fetchedSize)
 
     signal fetchAndMoveDataItemStarted(int parentId, string name, string localName)
@@ -20,7 +22,7 @@ Python {
     signal contentChanged(int containerId)
     signal exceptionOccurred(int id, string message)
 
-    property bool _ready: false // True if init done succesfully
+    property bool ready: false // True if init done succesfully
 
     id: py
 
@@ -283,7 +285,7 @@ Python {
     }
 
     Component.onCompleted: {
-        if (!py._ready) {
+        if (!py.ready) {
             console.info("elfCloudAdapter starting up...");
             console.info("Python version: " + pythonVersion());
             console.info("PyOtherSide version: " + pluginVersion());
@@ -293,7 +295,7 @@ Python {
             addImportPath(Qt.resolvedUrl("../lib/pycrypto-2.6.1-py3.4-linux-i486.egg"));
             addImportPath(Qt.resolvedUrl("../lib/decorator-4.0.9-py3.4.egg"));
             addImportPath(Qt.resolvedUrl("../lib/elfcloud_weasel-1.2.2-py3.4.egg"));
-            importModule('elfCloudAdapter', function() {  py._ready = true; });
+            importModule('elfCloudAdapter', function() {  py.ready = true; readyForUse(); });
         }
     }
 
