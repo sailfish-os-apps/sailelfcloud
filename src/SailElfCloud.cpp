@@ -23,6 +23,9 @@ int main(int argc, char *argv[])
                      helpers.data(), SLOT(handleAboutToQuit()));
     helpers->init();
 
+    v->rootContext()->setContextProperty("appVersion", APP_VERSION);
+    v->rootContext()->setContextProperty("appBuildNum", APP_BUILDNUM);
+
     // Start the application.
     v->setSource(SailfishApp::pathTo("qml/harbour-sailelfcloud.qml"));
     v->show();

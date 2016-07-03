@@ -30,12 +30,18 @@ DISTFILES += \
     3rd/*.egg \
     translations/*.ts \
     harbour-sailelfcloud.desktop \
-    qml/*
+    qml/* \
+    qml/pages/* \
+    qml/views/* \
+    qml/covers/* \
+    qml/dialogs/* \
+    qml/items/* \
+    qml/pyton/*
 
 OTHER_FILES = \
     ../rpm/harbour-sailelfcloud.yaml \
     ../rpm/harbour-sailelfcloud.spec \
-    ../rpm/harbour-sailelfcloud.changes
+    ../rpm/harbour-sailelfcloud.changes \
 
 INCLUDEPATH += $$PWD
 

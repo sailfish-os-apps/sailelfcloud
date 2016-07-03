@@ -5,6 +5,9 @@ Page
 {
     id: page
 
+    readonly property string _APP_VERSION: appVersion
+    readonly property string _APP_BUILD_NUMBER: appBuildNum
+
     Column
     {
         id: column
@@ -32,7 +35,7 @@ Page
         }
         Label
         {
-            text: qsTr("Version %1").arg("2.0.0")
+            text: qsTr("Version %1").arg(_APP_VERSION)
             anchors { horizontalCenter: titleLabel.horizontalCenter }
             color: Theme.secondaryHighlightColor
             font { family: Theme.fontFamily; pixelSize: Theme.fontSizeExtraLarge }
