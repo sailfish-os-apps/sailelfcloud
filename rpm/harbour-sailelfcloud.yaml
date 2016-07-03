@@ -1,5 +1,5 @@
 Name: harbour-sailelfcloud
-Summary: Sailfish elfCloud client
+Summary: Sailfish elfCLOUD client
 Version: 2.0
 Release: 0
 # The contents of the Group field should be one of the groups listed here:
@@ -12,11 +12,14 @@ License: LICENSE
 Sources:
 - '%{name}-%{version}.tar.bz2'
 Description: |
-  Sailfish client for elfCloud cloud storage access. See https://secure.elfcloud.fi/fi_FI/.
+  Sailfish client for elfCLOUD cloud storage access. See https://secure.elfcloud.fi/fi_FI/.
 Configure: none
 # The qtc5 builder inserts macros to allow QtCreator to have fine
 # control over qmake/make execution
 Builder: qtc5
+QMakeOptions:
+- VERSION=%{version}
+- RELEASE=%{release}
 
 # This section specifies build dependencies that are resolved using pkgconfig.
 # This is the preferred way of specifying build dependencies for your package.
@@ -37,10 +40,32 @@ Requires:
 
 # All installed files
 Files:
+# Do not include whole %{_datadir}/applications as that would include tests too
   - '%{_bindir}'
-  - '%{_datadir}/%{name}'
+  - '%{_datadir}/%{name}/qml'
+  - '%{_datadir}/%{name}/lib/*.egg'
+  - '%{_datadir}/%{name}/translations/*.qm'
   - '%{_datadir}/applications/%{name}.desktop'
   - '%{_datadir}/icons/hicolor/*/apps/%{name}.png'
+
+PkgBR: []
+
+SubPackages:
+    - Name: test
+      Summary: Tests for Sailfish client for elfCLOUD
+      Group: Qt/Qt
+      Description: |-
+        Tests package for Sailfish client for elfCLOUD
+      AutoDepend: true
+      PkgConfigBR:
+      - Qt5QuickTest
+      Requires:
+      - qt5-qtdeclarative-import-qttest
+      Files:
+        - '%{_bindir}/tst-%{name}'
+        - '%{_datadir}/tst-%{name}/*.qml'
+        # Script for starting tests on emulator and device
+        - '%{_datadir}/tst-%{name}/*.sh'
 
 # For more information about yaml and what's supported in Sailfish OS
 # build system, please see https://wiki.merproject.org/wiki/Spectacle

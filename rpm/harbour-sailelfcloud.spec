@@ -14,7 +14,7 @@ Name:       harbour-sailelfcloud
 %{!?qtc_qmake5:%define qtc_qmake5 %qmake5}
 %{!?qtc_make:%define qtc_make make}
 %{?qtc_builddir:%define _builddir %qtc_builddir}
-Summary:    Sailfish elfCloud client
+Summary:    Sailfish elfCLOUD client
 Version:    2.0
 Release:    0
 Group:      Qt/Qt
@@ -31,8 +31,18 @@ BuildRequires:  pkgconfig(Qt5Quick)
 BuildRequires:  desktop-file-utils
 
 %description
-Sailfish client for elfCloud cloud storage access. See https://secure.elfcloud.fi/fi_FI/.
+Sailfish client for elfCLOUD cloud storage access. See https://secure.elfcloud.fi/fi_FI/.
 
+
+%package test
+Summary:    Tests for Sailfish client for elfCLOUD
+Group:      Qt/Qt
+Requires:   %{name} = %{version}-%{release}
+Requires:   qt5-qtdeclarative-import-qttest
+BuildRequires:  pkgconfig(Qt5QuickTest)
+
+%description test
+Tests package for Sailfish client for elfCLOUD
 
 %prep
 %setup -q -n %{name}-%{version}
@@ -44,7 +54,9 @@ Sailfish client for elfCloud cloud storage access. See https://secure.elfcloud.f
 # >> build pre
 # << build pre
 
-%qtc_qmake5 
+%qtc_qmake5  \
+    VERSION=%{version} \
+    RELEASE=%{release}
 
 %qtc_make %{?_smp_mflags}
 
@@ -67,8 +79,18 @@ desktop-file-install --delete-original       \
 %files
 %defattr(-,root,root,-)
 %{_bindir}
-%{_datadir}/%{name}
+%{_datadir}/%{name}/qml
+%{_datadir}/%{name}/lib/*.egg
+%{_datadir}/%{name}/translations/*.qm
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/*/apps/%{name}.png
 # >> files
 # << files
+
+%files test
+%defattr(-,root,root,-)
+%{_bindir}/tst-%{name}
+%{_datadir}/tst-%{name}/*.qml
+%{_datadir}/tst-%{name}/*.sh
+# >> files test
+# << files test

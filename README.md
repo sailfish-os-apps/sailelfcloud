@@ -28,6 +28,12 @@ https://sailfishos.org/develop/tutorials/building-sailfish-os-packages-manually/
 
 or use Sailfish QT Creator to build&deploy the application.
 
+Project layout is based on https://github.com/amarchen/helloworld-pro-sailfish
+
+RUN TESTS
+=========
+
+TBD
 
 TODO
 ====
