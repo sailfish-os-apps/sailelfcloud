@@ -6,4 +6,4 @@ moc_*
 .settings/
 .project
 .pydevproject
-
+**/Makefile

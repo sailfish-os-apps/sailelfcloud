@@ -24,10 +24,10 @@ QMakeOptions:
 # This section specifies build dependencies that are resolved using pkgconfig.
 # This is the preferred way of specifying build dependencies for your package.
 PkgConfigBR:
-  - sailfishapp >= 1.0.2
   - Qt5Core
   - Qt5Qml
   - Qt5Quick
+  - sailfishapp >= 1.0.2
 
 # Build dependencies without a pkgconfig setup can be listed here
 # PkgBR:
@@ -40,13 +40,13 @@ Requires:
 
 # All installed files
 Files:
-# Do not include whole %{_datadir}/applications as that would include tests too
-  - '%{_bindir}'
-  - '%{_datadir}/%{name}/qml'
-  - '%{_datadir}/%{name}/lib/*.egg'
-  - '%{_datadir}/%{name}/translations/*.qm'
+  - '%{_datadir}/applications'
   - '%{_datadir}/applications/%{name}.desktop'
   - '%{_datadir}/icons/hicolor/*/apps/%{name}.png'
+  - '%{_datadir}/%{name}/qml'
+  - '%{_datadir}/%{name}/translations/*.qm'
+  - '%{_datadir}/%{name}/lib/*.egg'
+  - '%{_bindir}/%{name}'
 
 PkgBR: []
 
@@ -58,13 +58,12 @@ SubPackages:
         Tests package for Sailfish client for elfCLOUD
       AutoDepend: true
       PkgConfigBR:
-      - Qt5QuickTest
+        - Qt5QuickTest
       Requires:
-      - qt5-qtdeclarative-import-qttest
+        - qt5-qtdeclarative-import-qttest
       Files:
         - '%{_bindir}/tst-%{name}'
         - '%{_datadir}/tst-%{name}/*.qml'
-        # Script for starting tests on emulator and device
         - '%{_datadir}/tst-%{name}/*.sh'
 
 # For more information about yaml and what's supported in Sailfish OS

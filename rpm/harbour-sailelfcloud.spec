@@ -6,8 +6,6 @@
 Name:       harbour-sailelfcloud
 
 # >> macros
-%define __provides_exclude_from ^%{_datadir}/.*$
-%define __requires_exclude ^libpython|libutil.*$
 # << macros
 
 %{!?qtc_qmake:%define qtc_qmake %qmake}
@@ -22,17 +20,16 @@ License:    LICENSE
 URL:        https://github.com/TeemuAhola/sailelfcloud
 Source0:    %{name}-%{version}.tar.bz2
 Source100:  harbour-sailelfcloud.yaml
-Requires:   sailfishsilica-qt5 >= 0.10.9
+Requires:   libsailfishapp
 Requires:   pyotherside-qml-plugin-python3-qt5 >= 1.3
-BuildRequires:  pkgconfig(sailfishapp) >= 1.0.2
 BuildRequires:  pkgconfig(Qt5Core)
 BuildRequires:  pkgconfig(Qt5Qml)
 BuildRequires:  pkgconfig(Qt5Quick)
+BuildRequires:  pkgconfig(sailfishapp) >= 1.0.2
 BuildRequires:  desktop-file-utils
 
 %description
 Sailfish client for elfCLOUD cloud storage access. See https://secure.elfcloud.fi/fi_FI/.
-
 
 %package test
 Summary:    Tests for Sailfish client for elfCLOUD
@@ -78,12 +75,13 @@ desktop-file-install --delete-original       \
 
 %files
 %defattr(-,root,root,-)
-%{_bindir}
-%{_datadir}/%{name}/qml
-%{_datadir}/%{name}/lib/*.egg
-%{_datadir}/%{name}/translations/*.qm
+%{_datadir}/applications
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/*/apps/%{name}.png
+%{_datadir}/%{name}/qml
+%{_datadir}/%{name}/translations/*.qm
+%{_datadir}/%{name}/lib/*.egg
+%{_bindir}/%{name}
 # >> files
 # << files
 
