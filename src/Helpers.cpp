@@ -107,6 +107,7 @@ bool Helpers::isAutoLogin(void) const
 void Helpers::setAutoLogin(void) const
 {
     QSettings s;
+    setRememberLogin();
     s.setValue("config/autologin", true);
 }
 
