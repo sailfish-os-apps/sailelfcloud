@@ -32,7 +32,7 @@ Page
         }
         Label
         {
-            text: qsTr("Version %1").arg("2.0.0")
+            text: qsTr("Version %1").arg("2.0")
             anchors { horizontalCenter: titleLabel.horizontalCenter }
             color: Theme.secondaryHighlightColor
             font { family: Theme.fontFamily; pixelSize: Theme.fontSizeExtraLarge }

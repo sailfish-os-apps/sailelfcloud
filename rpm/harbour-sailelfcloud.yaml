@@ -1,5 +1,5 @@
 Name: harbour-sailelfcloud
-Summary: Sailfish elfCloud client
+Summary: Sailfish elfCLOUD client
 Version: 2.0
 Release: 0
 # The contents of the Group field should be one of the groups listed here:
@@ -12,7 +12,7 @@ License: LICENSE
 Sources:
 - '%{name}-%{version}.tar.bz2'
 Description: |
-  Sailfish client for elfCloud cloud storage access. See https://secure.elfcloud.fi/fi_FI/.
+  Sailfish client for elfCLOUD cloud storage access. See https://secure.elfcloud.fi/fi_FI/.
 Configure: none
 # The qtc5 builder inserts macros to allow QtCreator to have fine
 # control over qmake/make execution
