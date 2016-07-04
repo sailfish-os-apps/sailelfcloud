@@ -6,18 +6,32 @@ import QtTest 1.0
 import Sailfish.Silica 1.0
 
 //import "../src/qml/pages"
-import "../harbour-helloworld-pro-sailfish/qml/pages"
+import "../harbour-sailelfcloud/qml/pages"
 
 
 // Putting TestCase into the full app structure to test UI interactions and probably page transitions too
 ApplicationWindow {
     id: wholeApp
-    initialPage: SailCalc {
-        id: bigCalc
+
+    property var elfCloud: ElfCloudAdapterMock { }
+    property var helpers: HelpersMock { }
+
+    property var pageStack: Item {
+        function push() {
+            console.log("pushMock")
+        }
+
+        function replace() {
+            console.log("replaceMock")
+        }
+    }
+
+    initialPage: MainPage {
+        id: mainPage
     }
 
     TestCase {
-        name: "test on the very UI level"
+        name: "test "
 
         // You want see anything yet at this moment, but UI is actually constructed already and e.g. mouseClick will work
         // Painting happens later, you can set up timer to wait for it (painting happens some 50-100ms after ApplicationWindow's
@@ -26,15 +40,6 @@ ApplicationWindow {
         when: windowShown
 
         function test_menuAction() {
-            bigCalc._subtrText = ""
-            bigCalc._aText = "19"
-            bigCalc._bText = "9"
-
-            // You will still see no UI except for a short moment when test is about to exit
-            // UI is actually created - that's why mouseClick works, but for some reason isn't rendered until after the test case methods
-
-            bigCalc._subtractMenuAction.clicked(null)
-            compare(bigCalc._subtrText, "A-B = 10", "expected 19 - 9 to equal 10")
         }
     }
 

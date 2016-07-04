@@ -33,5 +33,9 @@ OTHER_FILES += \
     tst_RealUiTest.qml \
     tst_NonUiTests.qml
 
+DISTFILES += \
+    ElfCloudAdapterMock.qml \
+    HelpersMock.qml
+
 
 
