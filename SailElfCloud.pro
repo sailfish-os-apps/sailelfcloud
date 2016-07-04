@@ -77,7 +77,7 @@ DISTFILES += \
 unix: PKGCONFIG +=
 
 pycrypto.target = pycrypto
-pycrypto.commands = tar xzf $$PWD/3rd/pycrypto-2.6.1.tar.gz  && cd pycrypto-2.6.1 && patch -p0 -i $$PWD/3rd/pycrypto.patch && python3 setup.py bdist_egg
+pycrypto.commands = CFLAGS="" ; CXXFLAGS="" FFLAGS="" ; tar xzf $$PWD/3rd/pycrypto-2.6.1.tar.gz  && cd pycrypto-2.6.1 && patch -p0 -i $$PWD/3rd/pycrypto.patch && python3 setup.py bdist_egg
 pycrypto_install.commands = cp pycrypto-2.6.1/dist/pycrypto-2.6.1-*.egg $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib/
 pycrypto_install.path = /usr/share/harbour-sailelfcloud/lib
 
