@@ -29,3 +29,6 @@ def makeBackupFromFile(path):
 
 def setFileAccessRights(path):
     os.chmod(path, stat.S_IRUSR | stat.S_IWUSR)
+    
+def setDirAccessRights(path):
+    os.chmod(path, stat.S_IRWXU)

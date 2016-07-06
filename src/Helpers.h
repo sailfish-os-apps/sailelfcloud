@@ -85,6 +85,7 @@ private:
 
     static void prepareCache(void);
     static void dropCache(void);
+    static void initPython();
     void initConfig(void);
 };
 
