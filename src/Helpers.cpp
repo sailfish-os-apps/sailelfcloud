@@ -351,12 +351,16 @@ void Helpers::prepareCache(void)
 {
     QDir dir;
     dir.mkpath(getCacheDir());
+    QFile::setPermissions(getCacheDir(), QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner);
 }
 
 void Helpers::initConfig(void)
 {
     if (!containsRememberLogin())
         setRememberLogin();
+    // Ensure permissions
+    QSettings s;
+    QFile::setPermissions(s.fileName(), QFileDevice::ReadOwner | QFileDevice::WriteOwner);
 }
 
 void Helpers::initPython()

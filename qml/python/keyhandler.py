@@ -43,6 +43,7 @@ def _createKeyStore(configLocation):
     global keyStoreDir
     keyStoreDir = os.path.join(configLocation, 'keys')
     os.makedirs(keyStoreDir, exist_ok=True)
+    fileHelpers.setDirAccessRights(keyStoreDir)
     _findAndAddKeyFiles(keyStoreDir)
 
 def init(configLocation):
