@@ -8,10 +8,10 @@
 # * date Author's Name <author's email> version-release
 # - Summary of changes
 
-* Mon Jun 13 2016 Teemu Ahola <teemuahola7@gmail.com> 2.0.1-0
+* Mon Jul 06 2016 Teemu Ahola <teemuahola7@gmail.com> 2.0.1-0
 - Fixed issue #3.
 
-* Mon Jun 13 2016 Teemu Ahola <teemuahola7@gmail.com> 2.0.0-0
+* Mon Jul 04 2016 Teemu Ahola <teemuahola7@gmail.com> 2.0.0-0
 - Encryption support added.
 - Fixed issue #1 and #2.
 
