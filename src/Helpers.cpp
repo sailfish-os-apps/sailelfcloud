@@ -9,6 +9,7 @@
 #include <QTextStream>
 #include <QCryptographicHash>
 #include <QDebug>
+#include <stdlib.h>
 
 #include "Helpers.h"
 
@@ -358,10 +359,21 @@ void Helpers::initConfig(void)
         setRememberLogin();
 }
 
+void Helpers::initPython()
+{
+    const QString pythonEggCachePath = getDataDir() + "/python-eggs";
+    qDebug() << "Setting egg cache to" << pythonEggCachePath;
+    QDir dir;
+    dir.mkpath(pythonEggCachePath);
+    QFile::setPermissions(pythonEggCachePath, QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner);
+    setenv("PYTHON_EGG_CACHE", pythonEggCachePath.toStdString().c_str(), 1); // need to use standard lib since QProcessEnvironment does not work
+}
+
 void Helpers::init(void)
 {
     initConfig();
     prepareCache();
+    initPython();
 }
 
 void Helpers::dropCache(void)
