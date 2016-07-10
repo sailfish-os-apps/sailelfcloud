@@ -82,6 +82,7 @@ desktop-file-install --delete-original       \
 %{_datadir}/%{name}/translations/*.qm
 %{_datadir}/%{name}/lib/*.egg
 %{_bindir}/%{name}
+%exclude %{_datadir}/%{name}/qml/python/tests
 # >> files
 # << files
 
