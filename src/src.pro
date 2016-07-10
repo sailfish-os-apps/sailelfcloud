@@ -41,25 +41,25 @@ DISTFILES += \
 OTHER_FILES = \
     ../rpm/harbour-sailelfcloud.yaml \
     ../rpm/harbour-sailelfcloud.spec \
-    ../rpm/harbour-sailelfcloud.changes \
+    ../rpm/harbour-sailelfcloud.changes
 
 INCLUDEPATH += $$PWD
 
 pycrypto.target = pycrypto
-pycrypto.commands = CFLAGS="" ; CXXFLAGS="" FFLAGS="" ; tar xzf $$PWD/3rd/pycrypto-2.6.1.tar.gz  && cd pycrypto-2.6.1 && patch -p0 -i $$PWD/3rd/pycrypto.patch && python3 setup.py bdist_egg
-pycrypto_install.commands = cp pycrypto-2.6.1/dist/pycrypto-2.6.1-*.egg $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib/
-pycrypto_install.path = $$DEPLOYMENT_PATH/lib
+pycrypto.commands = CFLAGS="" ; CXXFLAGS="" FFLAGS="" ; tar xzf $$PWD/3rd/pycrypto-2.6.1.tar.gz  && cd pycrypto-2.6.1 && patch setup.py $$PWD/3rd/pycrypto.patch && python3 setup.py bdist_egg
+pycrypto.extra = cp pycrypto-2.6.1/dist/pycrypto-2.6.1-*.egg $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib/
+pycrypto.path = $$DEPLOYMENT_PATH/lib
 
 decorator.target = decorator
 decorator.commands = tar xzf $$PWD/3rd/decorator-4.0.9.tar.gz && cd decorator-4.0.9 && python3 setup.py bdist_egg
-decorator_install.commands = cp decorator-4.0.9/dist/decorator-4.0.9-*.egg $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib
-decorator_install.path = $$DEPLOYMENT_PATH/lib
+decorator.extra = cp $$OUT_PWD/decorator-4.0.9/dist/decorator-4.0.9-*.egg $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib
+decorator.path = $$DEPLOYMENT_PATH/lib
 
 elfcloud.target = elfcloud
 elfcloud.commands = rm -Rf elfcloud-weasel-1.2.2 && tar xzf $$PWD/3rd/elfcloud-weasel-1.2.2.tar.gz && patch -p1 -i $$PWD/3rd/elfcloud.patch && cd elfcloud-weasel-1.2.2 && python3 setup.py bdist_egg
-elfcloud_install.commands = cp elfcloud-weasel-1.2.2/dist/elfcloud_weasel-1.2.2-*.egg $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib
-elfcloud_install.path = $$DEPLOYMENT_PATH/lib
+elfcloud.extra = cp $$OUT_PWD/elfcloud-weasel-1.2.2/dist/elfcloud_weasel-1.2.2-*.egg $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib
+elfcloud.path = $$DEPLOYMENT_PATH/lib
 
 QMAKE_EXTRA_TARGETS += pycrypto decorator elfcloud
-POST_TARGETDEPS += pycrypto decorator elfcloud
-INSTALLS += pycrypto_install decorator_install elfcloud_install
+PRE_TARGETDEPS += pycrypto decorator elfcloud
+INSTALLS += pycrypto decorator elfcloud
