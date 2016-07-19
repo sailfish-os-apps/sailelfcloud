@@ -76,18 +76,22 @@ Page {
 
 
     Notification {
-            id: exportedNotification
-            summary: qsTr("Key exported to documents")
-            previewSummary: summary
-            previewBody: body
+        id: exportedNotification
+        summary: qsTr("Key exported to documents")
+        previewSummary: summary
+        previewBody: body
+
+        function publishWithBody(bodyText) {
+            replacesId = 0;
+            body = bodyText;
+            publish();
+        }
     }
 
     function _exportKey(hash) {
         var key = keyHandler.getKey(hash);
         var path = keyHandler.exportKey(hash, StandardPaths.documents);
-        console.debug("Exported key", hash, "to", path);
-        exportedNotification.body = qsTr("Key %1 exported to %2").arg(key['name']).arg(path);
-        exportedNotification.publish()
+        exportedNotification.publishWithBody(qsTr("Key %1 exported to %2").arg(key['name']).arg(path));
     }
 
     function _editKey(hash) {
