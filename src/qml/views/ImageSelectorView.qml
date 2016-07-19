@@ -6,54 +6,50 @@ SilicaFlickable {
     id: viewer
     clip: true
 
-    property var    _selectedItems: []
-
     signal selected(var paths)
 
     function populate() {
-        console.info("Image location:", StandardPaths.pictures);
         imageModel.clear();
         var files = helpers.getListOfFilesRecursively(StandardPaths.pictures);
         for(var fileIdx = 0; fileIdx < files.length; fileIdx++) {
-            console.info("File", files[fileIdx]);
-            imageModel.append({"path":files[fileIdx]});
+            imageModel.append({"path":files[fileIdx], "selected":false});
         }
     }
 
-    function getSelectedPaths() {
+    function _getSelectedPaths() {
         var selectedPaths = [];
-        for (var i = 0; i < _selectedItems.length; i++) {
-            var m = imageModel.get(_selectedItems[i]);
-            console.info("File for upload:", m.path)
-            selectedPaths.push(m.path);
+        for (var i = 0; i < imageModel.count; i++) {
+            var m = imageModel.get(i);
+            if (m.selected)
+                selectedPaths.push(m.path);
         }
-
         return selectedPaths;
     }
 
-    function isItemSelected(itemIndex) {
-        for (var i = 0; i < _selectedItems.length; i++) {
-            if (_selectedItems[i] === itemIndex)
-                return true;
+    function _isItemSelected(itemIndex) {
+        return imageModel.get(itemIndex).selected;
+    }
+
+    function _selectItem(itemIndex) {
+        imageModel.setProperty(itemIndex, "selected", true);
+    }
+
+    function _deselectItem(itemIndex) {
+        imageModel.setProperty(itemIndex, "selected", false);
+    }
+
+    function selectAll() {
+        for (var i = 0; i < imageModel.count; i++) {
+            imageModel.setProperty(i, "selected", true);
         }
-        return false;
+        selected(_getSelectedPaths());
     }
 
-    function selectItem(itemIndex) {
-        _selectedItems.push(itemIndex);
-    }
-
-    function deselectItem(itemIndex) {
-        for (var i = 0; i < _selectedItems.length; i++) {
-            if (_selectedItems[i] === itemIndex) {
-                _selectedItems.splice(i, 1);
-                return;
-            }
+    function clearSelection() {
+        for (var i = 0; i < imageModel.count; i++) {
+            imageModel.setProperty(i, "selected", false);
         }
-    }
-
-    function isSelectedItems() {
-        return _selectedItems.length > 0;
+        selected([]);
     }
 
     SilicaGridView {
@@ -69,18 +65,15 @@ SilicaFlickable {
             width: imageView.cellWidth - 1
             height: imageView.cellHeight - 1
             path: model.path
+            selected: model.selected
 
             onClicked: {
-                if (isItemSelected(model.index)) {
-                    deselectItem(model.index);
-                    selected(false);
-                }
-                else {
-                    selectItem(model.index);
-                    selected(true);
-                }
+                if (_isItemSelected(model.index))
+                    _deselectItem(model.index);
+                else
+                    _selectItem(model.index);
 
-                viewer.selected(getSelectedPaths());
+                viewer.selected(_getSelectedPaths());
             }
         }
         VerticalScrollDecorator { flickable: imageView }

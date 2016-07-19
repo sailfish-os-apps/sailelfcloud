@@ -5,10 +5,10 @@ BackgroundItem {
     id: item
 
     property string path
-    signal selected(bool state)
+    property var selected
 
-    onSelected: {
-        selectedMarker.visible = state;
+    onSelectedChanged: {
+        selectedMarker.visible = selected;
     }
 
     Image {

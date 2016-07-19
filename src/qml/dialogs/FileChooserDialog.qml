@@ -5,13 +5,14 @@ import "../views"
 Dialog {
 
     property var selectedPaths: []
+    property var _activeFileSelector: undefined
 
     id: page
     objectName: "selectPicture"
     canAccept: selectedPaths.length > 0
 
     DialogHeader {
-        id: title
+        id: dialogHeader
         title: qsTr("Choose source")
     }
 
@@ -36,16 +37,26 @@ Dialog {
     }
 
     function _hideAllSelectors() {
-        for (var index = 0; index < fileSelectorRepeater.count; index++) {
-            var fileSelector = fileSelectorRepeater.itemAt(index);
-            fileSelector.visible = false;
-        }
+        for (var index = 0; index < fileSelectorRepeater.count; index++)
+            fileSelectorRepeater.itemAt(index).visible = false;
         imageView.visible = false;
+    }
+
+    function _selectAll() {
+        if (_activeFileSelector) {
+            _activeFileSelector.selectAll();
+        }
+    }
+
+    function _clearSelection() {
+        if (_activeFileSelector) {
+            _activeFileSelector.clearSelection();
+        }
     }
 
     SilicaFlickable {
         id: flickable
-        anchors.top: title.bottom
+        anchors.top: dialogHeader.bottom
         anchors.bottom: page.bottom
         anchors.left: page.left
         anchors.right: page.right
@@ -56,10 +67,12 @@ Dialog {
                 text: qsTr("Images")
                 onClicked: {
                     _hideAllSelectors();
-                    title.title = qsTr("Choose images");
+                    dialogHeader.title = qsTr("Choose images");
+                    _activeFileSelector = imageView;
                     imageView.populate()
                     imageView.visible = true;
                     noSourceSelected.visible = false;
+                    selectedPaths = [];
                 }
             }
 
@@ -70,15 +83,28 @@ Dialog {
                     text: model.text
                     onClicked: {
                         _hideAllSelectors();
-                        title.title = model.title;
-                        var fileSelector = fileSelectorRepeater.itemAt(index);
-                        fileSelector.populate();
-                        fileSelector.visible = true;
+                        dialogHeader.title = model.title;
+                        _activeFileSelector = fileSelectorRepeater.itemAt(index);
+                        _activeFileSelector.populate();
+                        _activeFileSelector.visible = true;
                         noSourceSelected.visible = false;
+                        selectedPaths = [];
                     }
                 }
             }
+        }
 
+        PushUpMenu {
+            MenuItem {
+                text: qsTr("Select all")
+                onClicked: _selectAll()
+                enabled: !!_activeFileSelector
+            }
+            MenuItem {
+                text: qsTr("Clear selection")
+                onClicked: _clearSelection()
+                enabled: !!_activeFileSelector
+            }
         }
 
         ViewPlaceholder {

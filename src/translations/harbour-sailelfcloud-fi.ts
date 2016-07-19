@@ -430,62 +430,72 @@
 <context>
     <name>FileChooserDialog</name>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="15"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="16"/>
         <source>Choose source</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="56"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="67"/>
         <source>Images</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="59"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="70"/>
         <source>Choose images</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="24"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="25"/>
         <source>Documents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="25"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="26"/>
         <source>Choose documents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="27"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="28"/>
         <source>Music</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="28"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="29"/>
         <source>Choose music</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="30"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="31"/>
         <source>Videos</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="31"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="32"/>
         <source>Choose videos</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="33"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="34"/>
         <source>Downloads</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="34"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="35"/>
         <source>Choose files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="87"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="99"/>
+        <source>Select all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="104"/>
+        <source>Clear selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="113"/>
         <source>Pull down to choose source</source>
         <translation type="unfinished"></translation>
     </message>
@@ -493,7 +503,7 @@
 <context>
     <name>FileSelectorView</name>
     <message>
-        <location filename="../qml/views/FileSelectorView.qml" line="108"/>
+        <location filename="../qml/views/FileSelectorView.qml" line="111"/>
         <source>Size: </source>
         <translation type="unfinished"></translation>
     </message>

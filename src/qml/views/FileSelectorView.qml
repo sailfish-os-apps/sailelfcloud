@@ -6,7 +6,6 @@ SilicaFlickable {
     clip: true
 
     property var rootPath: null
-    property var _selectedItems: []
 
     signal selected(var paths)
 
@@ -14,48 +13,35 @@ SilicaFlickable {
         fileModel.clear();
         var files = helpers.getListOfFilesRecursively(rootPath);
         for(var fileIdx = 0; fileIdx < files.length; fileIdx++) {
-            console.info("File", files[fileIdx]);
             fileModel.append({"path":files[fileIdx],
-                              "filename":helpers.getFilenameFromPath(files[fileIdx])});
+                              "filename":helpers.getFilenameFromPath(files[fileIdx]),
+                              "selected":false});
         }
     }
 
-    function getSelectedPaths() {
+    function _getSelectedPaths() {
         var selectedPaths = [];
-        for (var i = 0; i < _selectedItems.length; i++) {
-            var m = fileModel.get(_selectedItems[i]);
-            selectedPaths.push(m.path);
+        for (var i = 0; i < fileModel.count; i++) {
+            var m = fileModel.get(i);
+            if (m.selected)
+                selectedPaths.push(m.path);
         }
-
         return selectedPaths;
     }
 
-    function isItemSelected(itemIndex) {
-        for (var i = 0; i < _selectedItems.length; i++) {
-            if (_selectedItems[i] === itemIndex)
-                return true;
-        }
-        return false;
+    function _isItemSelected(itemIndex) {
+        return fileModel.get(itemIndex).selected;
     }
 
-    function selectItem(itemIndex) {
-        _selectedItems.push(itemIndex);
+    function _selectItem(itemIndex) {
+        fileModel.setProperty(itemIndex, "selected", true);
     }
 
-    function deselectItem(itemIndex) {
-        for (var i = 0; i < _selectedItems.length; i++) {
-            if (_selectedItems[i] === itemIndex) {
-                _selectedItems.splice(i, 1);
-                return;
-            }
-        }
+    function _deselectItem(itemIndex) {
+        fileModel.setProperty(itemIndex, "selected", false);
     }
 
-    function isSelectedItems() {
-        return _selectedItems.length > 0;
-    }
-
-    function getIconForFileMimeType(path) {
+    function _getIconForFileMimeType(path) {
         var mime = helpers.getFileMimeType(path);
 
         if (mime === "text/plain") {
@@ -71,6 +57,20 @@ SilicaFlickable {
         }
     }
 
+    function selectAll() {
+        for (var i = 0; i < fileModel.count; i++) {
+            fileModel.setProperty(i, "selected", true);
+        }
+        selected(_getSelectedPaths());
+    }
+
+    function clearSelection() {
+        for (var i = 0; i < fileModel.count; i++) {
+            fileModel.setProperty(i, "selected", false);
+        }
+        selected([]);
+    }
+
     SilicaListView {
         id: fileView
         anchors.fill: parent
@@ -78,6 +78,9 @@ SilicaFlickable {
         model: ListModel { id: fileModel }
 
         delegate: ListItem {
+
+            highlighted: model.selected
+
             Image {
                 id: listIcon
                 x: Theme.paddingLarge
@@ -90,7 +93,7 @@ SilicaFlickable {
                 smooth: true
                 cache: true
                 asynchronous: true
-                source: viewer.getIconForFileMimeType(model.path)
+                source: viewer._getIconForFileMimeType(model.path)
             }
             Label {
                 id: labelContentName
@@ -109,18 +112,15 @@ SilicaFlickable {
             }
 
             onClicked: {
-                if (viewer.isItemSelected(model.index)) {
-                    viewer.deselectItem(model.index);
-                    highlighted = false;
-                }
-                else {
-                    viewer.selectItem(model.index);
-                    highlighted = true;
-                }
+                if (viewer._isItemSelected(model.index))
+                    viewer._deselectItem(model.index);
+                else
+                    viewer._selectItem(model.index);
 
-                viewer.selected(getSelectedPaths());
+                viewer.selected(_getSelectedPaths());
             }
         }
+
         VerticalScrollDecorator { flickable: fileView }
     }
 }
