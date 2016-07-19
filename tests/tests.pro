@@ -3,7 +3,7 @@ TEMPLATE = app
 # The name of your app
 TARGET = tst-harbour-sailelfcloud
 
-CONFIG += qmltestcase
+CONFIG += warn_on qmltestcase
 
 TARGETPATH = /usr/bin
 target.path = $$TARGETPATH
@@ -35,7 +35,8 @@ OTHER_FILES += \
 
 DISTFILES += \
     ElfCloudAdapterMock.qml \
-    HelpersMock.qml
+    HelpersMock.qml \
+    tst_ConnectionPage.qml
 
 
 
