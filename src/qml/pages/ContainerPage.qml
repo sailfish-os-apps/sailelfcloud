@@ -21,7 +21,6 @@ Page {
     function _updateContentListAndShowPage(contentList) {
         listModel.clear();
         for (var i = 0; i < contentList.length; i++) {
-            console.debug("Adding:", contentList[i]["name"], "id:", contentList[i]["id"]);
             listModel.append({"item": contentList[i]});
         }
         _makeVisible();
@@ -47,7 +46,6 @@ Page {
     function _addVault() {
         var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/AddVaultDialog.qml"));
         dialog.onCreateVault.connect( function(name) {
-            console.info("Creating vault", name);
             elfCloud.addVault(name, _refresh);
         });
     }
@@ -55,14 +53,12 @@ Page {
     function _upload() {
         var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/FileChooserDialog.qml"))
         dialog.accepted.connect( function() {
-            console.info("Uploading files: " + dialog.selectedPaths);
             var activeKeyAndIv = keyHandler.getActiveKeyAndIv();
             if (activeKeyAndIv !== undefined)
                 elfCloud.setEncryptionKey(activeKeyAndIv[0], activeKeyAndIv[1]);
             else
                 elfCloud.clearEncryption();
             _asyncCallRef = elfCloud.storeDataItems(containerId, dialog.selectedPaths, _refresh);
-            console.log("_asyncCallRef", _asyncCallRef)
             });
     }
 
@@ -114,7 +110,6 @@ Page {
     function _addCluster() {
         var dialog = pageStack.push(Qt.resolvedUrl("../dialogs/AddClusterDialog.qml"));
         dialog.onCreateCluster.connect( function(name) {
-                console.info("Creating cluster", name);
                 elfCloud.addCluster(containerId, name, _refresh);
             });
     }

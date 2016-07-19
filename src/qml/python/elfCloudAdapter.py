@@ -143,9 +143,7 @@ def listVaults(cbObj):
 @worker.run_async
 @handle_exception
 def listContent(cbObj, parentId):
-    contentList = []
-    _debug("Getting content of %s" % parentId)
-    
+    contentList = []   
     clusters, dataitems = client.list_contents(int(parentId))
 
     for cluster in clusters:
@@ -212,7 +210,6 @@ def _sendDataItemChunkStoredSignal(parentId, remotename, localName, totalSize, s
 @worker.run_async
 @handle_exception
 def storeDataItem(cbObj, parentId, remotename, filename):
-    _debug("Storing: " + filename + " as " + remotename)
     fileSize = os.path.getsize(filename)
     
     class _FileObj(object):
@@ -234,14 +231,12 @@ def storeDataItem(cbObj, parentId, remotename, filename):
 @worker.run_async
 @handle_exception
 def removeDataItem(cbObj, parentId, name):
-    _debug("Removing " + name) 
     client.remove_dataitem(parentId, name)
     _sendCompletedSignal(cbObj, parentId, name)
 
 @worker.run_async
 @handle_exception
 def renameDataItem(cbObj, parentId, oldName, newName):
-    _debug("Renaming ", oldName, "to", newName)
     client.rename_dataitem(int(parentId), oldName, newName)
     _sendCompletedSignal(cbObj, parentId, oldName, newName)
 
