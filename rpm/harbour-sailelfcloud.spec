@@ -13,8 +13,8 @@ Name:       harbour-sailelfcloud
 %{!?qtc_make:%define qtc_make make}
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 Summary:    Sailfish elfCLOUD client
-Version:    2.0
-Release:    1
+Version:    2.1
+Release:    0
 Group:      Qt/Qt
 License:    LICENSE
 URL:        https://github.com/TeemuAhola/sailelfcloud
@@ -82,7 +82,6 @@ desktop-file-install --delete-original       \
 %{_datadir}/%{name}/translations/*.qm
 %{_datadir}/%{name}/lib/*.egg
 %{_bindir}/%{name}
-%exclude %{_datadir}/%{name}/qml/python/tests
 # >> files
 # << files
 
