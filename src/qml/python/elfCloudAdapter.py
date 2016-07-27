@@ -189,7 +189,6 @@ def updateDataItem(parentId, name, description=None, tags=None):
 def _sendDataItemChunkFetchedSignal(parentId, name, totalSize, sizeFetched):
     pyotherside.send('fetch-dataitem-chunk', parentId, name, totalSize, sizeFetched)
     
-@worker.run_async
 @handle_exception
 def fetchDataItem(cbObj, parentId, name, outputPath, key=None):
     data = client.fetch_data(int(parentId), name)['data'] 
@@ -207,7 +206,6 @@ def fetchDataItem(cbObj, parentId, name, outputPath, key=None):
 def _sendDataItemChunkStoredSignal(parentId, remotename, localName, totalSize, storedSize):
     pyotherside.send('store-dataitem-chunk', parentId, remotename, localName, totalSize, storedSize)
 
-@worker.run_async
 @handle_exception
 def storeDataItem(cbObj, parentId, remotename, filename):
     fileSize = os.path.getsize(filename)
