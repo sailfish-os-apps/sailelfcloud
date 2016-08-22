@@ -7,7 +7,7 @@ Created on Jul 19, 2016
 import elfCloudAdapter
 import threading
 import queue
-import time
+from collections import deque
 
 def atomic(func):
     from functools import wraps
@@ -27,6 +27,12 @@ class UidGenerator(object):
     def get(self):
         self.value += 1
         return self.value
+
+class Task(object):
+    
+    def __init__(self, cb):
+        self.uid = None
+        self.cb = cb
 
 class UploadTask(object):
     
@@ -55,17 +61,43 @@ class DownloadTask(object):
         self.remoteParentId = remoteParentId
         self.localPath = localPath
         self.key = key
+
+class DownloadCompletedTask(DownloadTask):
     
+    @classmethod
+    def Create(cls, task):
+        return cls(task.cbObj, task.localPath, task.remoteParentId, task.remoteName, task.key)
+
+ 
 class WaitCompletionTask(object):
 
     def __init__(self):
         self.uid = None     
     
-class CancelTask(object):
+class CancelTask(Task):
 
-    def __init__(self, uid):
-        self.uid = None
-        self.uidOfTaskToCancel = uid  
+    def __init__(self, uidToCancel, cb):
+        super().__init__(cb)
+        self.uidOfTaskToCancel = uidToCancel  
+
+class CancelDownloadTask(CancelTask):
+
+    @classmethod
+    def Create(cls, uidToCancel, cb):
+        return cls(uidToCancel, cb)
+    
+    def __init__(self, uidToCancel, cb):
+        super().__init__(uidToCancel, cb)
+
+class CancelUploadTask(CancelTask):
+
+    @classmethod
+    def Create(cls, uidToCancel, cb):
+        return cls(uidToCancel, cb)
+    
+    def __init__(self, uidToCancel, cb):
+        super().__init__(uidToCancel, cb)
+
     
 class XferQueue(object):
     
@@ -122,17 +154,65 @@ class Uploader(threading.Thread):
 
 class Downloader(threading.Thread):
     
-    def __init__(self, queue):
+    def __init__(self, submitQueue, completedQueue):
         super(Downloader, self).__init__(daemon=True)
-        self.queue = queue
+        self.submitQueue = submitQueue
+        self.completedQueue = completedQueue
         self.start()
         
     def run(self):
         while True:
-            task = self.queue.pop()
+            task = self.submitQueue.pop()
             print("downloading", task.uid, task.remoteName, task.remoteParentId, task.localPath, task.key)
             elfCloudAdapter.fetchDataItem(task.cbObj, task.remoteParentId, task.remoteName, task.localPath, task.key)
-            self.queue.completed()
+            self.submitQueue.completed()
+            self.completedQueue.put(DownloadCompletedTask.Create(task))          
+
+class DownloadManager(threading.Thread):
+    
+    def __init__(self):
+        super(DownloadManager, self).__init__(daemon=True)        
+        self.commandQueue = queue.Queue()
+        self.submitQueue = queue.Queue(1)
+        self.todoQueue = deque()
+        self.downloader = Downloader(self.submitQueue)
+        self.start()
+    
+    def waitUntilCompleted(self):
+        pass
+    
+    def submitDownload(self, task):
+        self.commandQueue.put(task)
+   
+    def submitCancel(self, task):
+        self.commandQueue.put(task)
+
+    def _submitTodoTaskToDownloader(self):
+        if len(self.todoQueue):
+            self.submitQueue.put(self.todoQueue.popleft())
+
+    def _handleDownloadTask(self, task):
+        self.todoQueue.append(task)
+        self._submitTodoTaskToDownloader()
+
+    def _handleDownloadCompletedTask(self, task):
+        self._submitTodoTaskToDownloader()
+
+    def _handleCancelTask(self, task):
+        pass
+    
+    def run(self):
+        while True:
+            task = self.commandQueue.get() # blocks until work to do
+            
+            if isinstance(task, DownloadTask):
+                self._handleDownloadTask(task)
+            elif isinstance(task, CancelTask):
+                self._handleCancelTask(task)
+            elif isinstance(task, DownloadCompletedTask):
+                self._handleDownloadCompletedTask(task)
+            
+            self.tasks.task_done()
 
 
 class XferThread(threading.Thread):
@@ -140,29 +220,25 @@ class XferThread(threading.Thread):
     def __init__(self):
         super(XferThread, self).__init__(daemon=True)        
         self.uidGenerator = UidGenerator()
-        self.uploads = XferQueue()
-        self.downloads = XferQueue()
-        self.uploader = Uploader(self.uploads)
-        self.downloader = Downloader(self.downloads)
+        self.downloadManager = DownloadManager()
         self.tasks = queue.Queue()
         self.start()
+        self.running = True
 
     def _handleUploadTask(self, task):
-        self.uploads.push(task)
+        pass
     
     def _handleDownloadTask(self, task):
-        self.downloads.push(task)
+        self.downloadManager.submitDownload(task)
 
     def _handleWaitCompletionTask(self, task):
-        self.downloads.waitUntilEmpty()
-        self.uploads.waitUntilEmpty()
+        self.running = False
         
     def _handleCancelTask(self, task):
-        self.uploads.removeSpecific(task.uid)
-        self.downloads.removeSpecific(task.uid)
+        pass
 
     def run(self):
-        while True:
+        while self.running:
             task = self.tasks.get() # blocks until work to do
             
             if isinstance(task, UploadTask):
@@ -181,9 +257,6 @@ class XferThread(threading.Thread):
         self.tasks.put_nowait(task)
         return task.uid
 
-    def cancelTask(self, uid):
-        self.submitTask(CancelTask(uid))
-
     def waitAllDone(self):
         self.submitTask(WaitCompletionTask())
         self.tasks.join()
@@ -193,14 +266,50 @@ XFER_WORKER = XferThread()
 def submitTask(task):
     return XFER_WORKER.submitTask(task)
 
-def submitDownload(localPath, remoteParentId, remoteName, key=None, cbObj=None):
-    return XFER_WORKER.submitTask(DownloadTask.Create(localPath, remoteParentId, remoteName, key, cbObj))
+def download(localPath, remoteParentId, remoteName, key=None, cb=None):
+    return XFER_WORKER.submitTask(DownloadTask.Create(localPath, remoteParentId, remoteName, key, cb))
 
-def submitUpload(localPath, remoteParentId, remoteName, key=None, cbObj=None):
-    return XFER_WORKER.submitTask(UploadTask.Create(localPath, remoteParentId, remoteName, key, cbObj))
+def upload(localPath, remoteParentId, remoteName, key=None, cb=None):
+    return XFER_WORKER.submitTask(UploadTask.Create(localPath, remoteParentId, remoteName, key, cb))
 
-def cancel(uid):
-    XFER_WORKER.cancelTask(uid)
+def cancelUpload(uid, cb=None):
+    return XFER_WORKER.submitTask(CancelUploadTask.Create(uid, cb))
+
+def cancelDownload(uid, cb=None):
+    return XFER_WORKER.submitTask(CancelDownloadTask.Create(uid, cb))
+
+def renameDataItem(remoteParentId, remoteName, newName, cb=None):
+    pass
+
+def renameContainer(remoteId, newName, cb=None):
+    pass
+
+def addVault(remoteParentId, name, cb=None):
+    pass
+
+def removeVault(remoteId, cb=None):
+    pass
+
+def addCluster(remoteParentId, name, cb=None):
+    pass
+
+def removeCluster(remoteId, cb=None):
+    pass
+
+def getDataItemInfo(remoteParentId, remoteName, cb=None):
+    pass
+
+def setDataItemInfo(remoteParentId, remoteName, description, tags, cb=None):
+    pass
+
+def listContent(remoteParentId, cb=None):
+    pass
+
+def listVaults(cb=None):
+    pass
+
+def getSubscriptionInfo(cb=None):
+    pass
 
 def waitAllDone():
     XFER_WORKER.waitAllDone()
