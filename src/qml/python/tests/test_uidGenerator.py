@@ -11,14 +11,6 @@ import uidGenerator
 class TestUidGenerator(unittest.TestCase):
 
 
-    def setUp(self):
-        pass
-
-
-    def tearDown(self):
-        pass
-
-
     def test_getUid_ShouldReturnUniqueId(self):
         self.assertEqual(1, uidGenerator.getUid())
         self.assertEqual(2, uidGenerator.getUid())
