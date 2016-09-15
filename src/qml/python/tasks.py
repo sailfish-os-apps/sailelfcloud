@@ -8,7 +8,7 @@ import uidGenerator
 
 class Task(object):
     
-    def __init__(self, cb):
+    def __init__(self, cb=None):
         self.__uid = uidGenerator.getUid()
         self.__cb = cb
 
@@ -19,6 +19,12 @@ class Task(object):
     @property
     def cb(self):
         return self.__cb
+    
+    def __eq__(self, other):
+        if isinstance(other, int):
+            return other == self.__uid
+        else:
+            return self.__dict__ == other.__dict__
     
 
 class TerminateTask(Task):
