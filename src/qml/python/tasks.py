@@ -30,6 +30,7 @@ class XferTask(Task):
     
     def __init__(self, cb, *args):
         super().__init__(cb)
+        
 
 class DownloadTask(XferTask):
 
@@ -70,11 +71,3 @@ class CancelDownloadTask(CancelTask):
     def __init__(self, uidToCancel, cb):
         super().__init__(uidToCancel, cb)
 
-class CancelUploadTask(CancelTask):
-
-    @classmethod
-    def Create(cls, uidToCancel, cb):
-        return cls(uidToCancel, cb)
-    
-    def __init__(self, uidToCancel, cb):
-        super().__init__(uidToCancel, cb)
