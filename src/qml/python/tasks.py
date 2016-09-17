@@ -29,7 +29,7 @@ class Task(object):
 
 class TerminateTask(Task):
     
-    def __init__(self, cb, *args):
+    def __init__(self, cb=None, *args):
         super().__init__(cb)    
 
 class XferTask(Task):
@@ -66,7 +66,11 @@ class CancelTask(XferTask):
 
     def __init__(self, uidToCancel, cb):
         super().__init__(cb)
-        self.uidOfTaskToCancel = uidToCancel  
+        self.__uidOfTaskToCancel = uidToCancel
+        
+    @property
+    def uidOfTaskToCancel(self):
+        return self.__uidOfTaskToCancel 
 
 class CancelDownloadTask(CancelTask):
 
