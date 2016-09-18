@@ -12,7 +12,6 @@ import elfcloud
 
 class Test_elfcloudclient(unittest.TestCase):
 
-    @unittest.skip("reason")
     @unittest.mock.patch('elfcloudclient.elfcloud.Client')
     def test_connect_disconnect_isConnected_ShouldUseElfCloudApisWithProperParams_ShouldAffectIsConnected(self, mock_client):
         mock_clientObj = mock_client.return_value
@@ -28,6 +27,18 @@ class Test_elfcloudclient(unittest.TestCase):
         
         elfcloudclient.disconnect()
         self.assertFalse(elfcloudclient.isConnected())
+
+    @staticmethod
+    def _raise(exception):
+        raise exception
+
+    @unittest.mock.patch('elfcloudclient.elfcloud.Client')
+    def test_connect_AuthenticationFailed_ConnectionShouldStayDisconnected(self, mock_client):
+        mock_clientObj = mock_client.return_value
+        mock_clientObj.auth.side_effect = lambda : Test_elfcloudclient._raise(elfcloud.exceptions.ECAuthException(1,"message"))
+        elfcloudclient.connect("username", "password")
+        self.assertFalse(elfcloudclient.isConnected())
+
 
     TEST_DATA="1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
     TEST_DATA_SIZE=len(TEST_DATA)

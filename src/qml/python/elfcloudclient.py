@@ -9,6 +9,7 @@ import elfcloud
 import worker
 import binascii
 import logger
+import exceptionhandler
 
 
 APIKEY = 'swrqwb95d98ou8d'
@@ -19,20 +20,19 @@ client = None
 def setRequestSize(sizeInBytes):
     client.set_request_size(sizeInBytes)
 
+@exceptionhandler.handle_exception
 def connect(username, password):
     global client
     try:
         client = elfcloud.Client(username=username, auth_data=password,
                                  apikey=APIKEY,
                                  server_url=elfcloud.utils.SERVER_DEFAULT)
-        print(client)    
         client.auth()
         logger.info("elfCLOUD client connected")
         setRequestSize(DEFAULT_REQUEST_SIZE_BYTES)
-    except elfcloud.exceptions.ECAuthException as e:
-        logger.error(str(e))
+    except:
         client = None
-        raise # let caller do rest
+        raise
 
 def isConnected():
     return client != None
