@@ -27,7 +27,7 @@ def handle_exception(func):
     @wraps(func)
     def exception_handler(*args, **kwargs):
         try:
-            func(*args, **kwargs)
+            return func(*args, **kwargs)
         except elfcloud.exceptions.ECAuthException as e:
             logger.error("elfCLOUD exception occurred:", str(e))
             _sendExceptionSignal(e.id, e.message)            

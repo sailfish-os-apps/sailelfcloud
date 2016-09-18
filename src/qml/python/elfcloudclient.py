@@ -17,6 +17,16 @@ VALULT_TYPES = [elfcloud.utils.VAULT_TYPE_DEFAULT, 'com.ahola.sailelfcloud']
 DEFAULT_REQUEST_SIZE_BYTES =  256 * 1024 # Size of one request when sending or fetching
 client = None
 
+def check_connected(func):
+    from functools import wraps
+    @wraps(func)
+    def _check_connection(*args, **kwargs):
+        if not isConnected():
+            raise Exception("Not connected")
+        return func(*args, **kwargs)
+    return _check_connection
+
+
 def setRequestSize(sizeInBytes):
     client.set_request_size(sizeInBytes)
 
@@ -42,6 +52,16 @@ def disconnect():
     client = None
     logger.info("elfCLOUD client disconnected")    
 
+
+SUBSCRIPTION_FIELD_MAP = {'id':'Id', 'status':'Status', 'start_date':'Start date',
+                          'end_date':'End date', 'storage_quota': 'Quota',
+                          'subscription_type':'Subscription type', 'renewal_type':'Renewal type'}
+@check_connected
+@exceptionhandler.handle_exception
+def getSubscriptionInfo():
+    info = client.get_subscription_info()
+    subscr = info['current_subscription']
+    return {to_: str(subscr[from_]) for from_,to_ in SUBSCRIPTION_FIELD_MAP.items()}
 
 def upload(parentId, remotename, filename, chunkCb):
     fileSize = os.path.getsize(filename)
