@@ -207,7 +207,7 @@ def _sendDataItemChunkStoredSignal(parentId, remotename, localName, totalSize, s
     pyotherside.send('store-dataitem-chunk', parentId, remotename, localName, totalSize, storedSize)
 
 @handle_exception
-def storeDataItem(cbObj, parentId, remotename, filename):
+def storeDataItem(parentId, remotename, filename):
     fileSize = os.path.getsize(filename)
     
     class _FileObj(object):
@@ -224,7 +224,6 @@ def storeDataItem(cbObj, parentId, remotename, filename):
     with open(filename, "rb") as fileobj:
         fo = _FileObj(fileobj)     
         client.store_data(int(parentId), remotename, fo)
-    _sendCompletedSignal(cbObj, parentId, remotename, filename)
 
 @worker.run_async
 @handle_exception
