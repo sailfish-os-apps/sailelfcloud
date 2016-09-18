@@ -49,15 +49,15 @@ def upload(parentId, remotename, filename, chunkCb):
     class _FileObj(object):
         def __init__(self, fileobj):
             self.fileobj = fileobj
-            self.readSize = 0
+            self.totalReadSize = 0
             
         def read(self, size):
             data = self.fileobj.read(size)
-            self.readSize += len(data)
-            if chunkCb and callable(chunkCb): chunkCb(fileSize, self.readSize)
+            self.totalReadSize += len(data)
+            if len(data) and chunkCb and callable(chunkCb): chunkCb(fileSize, self.totalReadSize)
             return data
     
     with open(filename, "rb") as fileobj:
-        fo = _FileObj(fileobj)     
+        fo = _FileObj(fileobj)
         client.store_data(int(parentId), remotename, fo)
 
