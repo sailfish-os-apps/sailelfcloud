@@ -5,22 +5,25 @@ Created on Sep 18, 2016
 '''
 
 import elfcloud
-import logger
 
-try:
-    import pyotherside
-except ImportError:
-    import sys
-    # Allow testing Python backend alone.
-    print("PyOtherSide not found, continuing anyway!")
-    class pyotherside:
-        def atexit(self, *args): pass
-        def send(self, *args):
-            print("send:", [str(a) for a in args])
-    sys.modules["pyotherside"] = pyotherside()
+class ClientException(Exception):
+    
+    def __init__(self, id_, msg_):
+        self.__id = id_
+        self.__msg = msg_
+        
+    @property
+    def id(self):
+        return self.__id
 
-def _sendExceptionSignal(id_, message):
-    pyotherside.send('exception', id_, message)
+    @property
+    def msg(self):
+        return self.__msg
+
+class NotConnected(elfcloud.exceptions.ClientException):
+    
+    def __init__(self):
+        elfcloud.exceptions.ClientException.__init__(self, "not connected")
 
 def handle_exception(func):
     from functools import wraps
@@ -29,17 +32,15 @@ def handle_exception(func):
         try:
             return func(*args, **kwargs)
         except elfcloud.exceptions.ECAuthException as e:
-            logger.error("elfCLOUD exception occurred:", str(e))
-            _sendExceptionSignal(e.id, e.message)            
+            raise ClientException(e.id, e.message) from e
         except elfcloud.exceptions.ECException as e:
-            logger.error("elfCLOUD exception occurred:", str(e))
-            _sendExceptionSignal(e.id, e.message)
+            raise ClientException(e.id, e.message) from e            
         except elfcloud.exceptions.ClientException as e:
-            logger.error("Client exception occurred:", str(e))
-            _sendExceptionSignal(0, e.message)
+            raise ClientException(e.id, e.message) from e
+        except NotConnected as e:
+            raise ClientException(e.id, e.message) from e
         except Exception as e:
-            logger.error("Undefined exception occurred:", str(e))
-            _sendExceptionSignal(0, str(e))
+            raise ClientException(e.id, e.message) from e
             
     return exception_handler
 

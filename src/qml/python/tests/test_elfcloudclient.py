@@ -8,6 +8,7 @@ import unittest.mock
 from unittest.mock import call
 import io
 import elfcloudclient
+import exceptionhandler
 import elfcloud
 
 class Test_elfcloudclient(unittest.TestCase):
@@ -36,7 +37,7 @@ class Test_elfcloudclient(unittest.TestCase):
     def test_connect_AuthenticationFailed_ConnectionShouldStayDisconnected(self, mock_client):
         mock_clientObj = mock_client.return_value
         mock_clientObj.auth.side_effect = lambda : Test_elfcloudclient._raise(elfcloud.exceptions.ECAuthException(1,"message"))
-        elfcloudclient.connect("username", "password")
+        self.assertRaises(exceptionhandler.ClientException, elfcloudclient.connect, "username", "password")
         self.assertFalse(elfcloudclient.isConnected())
 
 
@@ -71,6 +72,24 @@ class Test_elfcloudclient(unittest.TestCase):
         
         EXPECTED_CB_PARAMS = [call(Test_elfcloudclient.TEST_DATA_SIZE,i) for i in Test_elfcloudclient.EXPECTED_TOTAL_READ_IN_CHUNKS]
         mock_cb.assert_has_calls(EXPECTED_CB_PARAMS)
+
+    def test_upload_NotConnected_ShouldRaiseException(self):
+        self.assertRaises(exceptionhandler.NotConnected, elfcloudclient.upload, 123, "remotename", "filename")
+
+    def test_getSubscriptionInfo_NotConnected_ShouldRaiseException(self):
+        self.assertRaises(exceptionhandler.NotConnected, elfcloudclient.getSubscriptionInfo)
+
+    @unittest.mock.patch('elfcloudclient.client')
+    def test_getSubscriptionInfo(self, mock_client):
+        SUBSCRIPTION_FIELD_VALUES = {'id':'Id', 'status':'Status', 'start_date':'Start date',
+                                     'end_date':'End date', 'storage_quota': 'Quota',
+                                     'subscription_type':'Subscription type', 'renewal_type':'Renewal type'}
+        SUBSCRIPTION_EXPECTED_VALUES = {'Id':'Id', 'Status':'Status', 'Start date':'Start date',
+                                        'End date':'End date', 'Quota': 'Quota',
+                                        'Subscription type':'Subscription type', 'Renewal type':'Renewal type'}
+        mock_client.get_subscription_info.return_value = {'current_subscription':SUBSCRIPTION_FIELD_VALUES}
+        self.assertDictEqual(SUBSCRIPTION_EXPECTED_VALUES, elfcloudclient.getSubscriptionInfo())
+        
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

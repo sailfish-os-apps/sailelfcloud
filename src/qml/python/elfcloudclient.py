@@ -22,7 +22,7 @@ def check_connected(func):
     @wraps(func)
     def _check_connection(*args, **kwargs):
         if not isConnected():
-            raise Exception("Not connected")
+            raise exceptionhandler.NotConnected()
         return func(*args, **kwargs)
     return _check_connection
 
@@ -63,6 +63,8 @@ def getSubscriptionInfo():
     subscr = info['current_subscription']
     return {to_: str(subscr[from_]) for from_,to_ in SUBSCRIPTION_FIELD_MAP.items()}
 
+@check_connected
+@exceptionhandler.handle_exception
 def upload(parentId, remotename, filename, chunkCb):
     fileSize = os.path.getsize(filename)
     
@@ -80,4 +82,23 @@ def upload(parentId, remotename, filename, chunkCb):
     with open(filename, "rb") as fileobj:
         fo = _FileObj(fileobj)
         client.store_data(int(parentId), remotename, fo)
+
+@check_connected
+@exceptionhandler.handle_exception
+def listVaults():
+    vaultList = []
+    vaults = client.list_vaults()   
+       
+    for vault in vaults:
+        vaultList.append({'name': vault.name,
+                          'id': vault.id,
+                          'size': 0,
+                          'type': 'vault',
+                          'vaultType': vault.vault_type,
+                          'permissions': vault.permissions,
+                          'modified': vault.modified_date,
+                          'accessed': vault.last_accessed_date,
+                          'ownerFirstName': vault.owner['firstname'],
+                          'ownerLastName': vault.owner['lastname']})
+    return vaultList
 

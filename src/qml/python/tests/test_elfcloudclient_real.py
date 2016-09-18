@@ -5,6 +5,7 @@ Created on Sep 18, 2016
 '''
 import unittest
 import elfcloudclient
+import exceptionhandler
 
 VALID_USERNAME = "xxxx" # Set proper username
 VALID_PASSWORD = "xxxx" # Set proper password
@@ -35,9 +36,9 @@ class Test_elfcloudclient_noMocks(unittest.TestCase):
     @unittest.skip("do not stress official server with invalid creditials")
     def test_connect_InValidCreditialsGiven_ShouldNotConnect(self):
         self.assertFalse(elfcloudclient.isConnected())
-        elfcloudclient.connect(INVALID_USERNAME, INVALID_PASSWORD)
+        self.assertRaises(exceptionhandler.ClientException, elfcloudclient.connect, INVALID_USERNAME, INVALID_PASSWORD)
         self.assertFalse(elfcloudclient.isConnected())
-        elfcloudclient.connect(VALID_USERNAME, INVALID_PASSWORD)
+        self.assertRaises(exceptionhandler.ClientException, elfcloudclient.connect, VALID_USERNAME, INVALID_PASSWORD)
         self.assertFalse(elfcloudclient.isConnected())       
 
     def test_getSubscriptionInfo_NotConnected_ShouldRaiseException(self):
@@ -46,6 +47,10 @@ class Test_elfcloudclient_noMocks(unittest.TestCase):
     @connect
     def test_getSubscriptionInfo_(self):
         self.assertDictContainsSubset({'Status':'active'}, elfcloudclient.getSubscriptionInfo())
+
+    @connect
+    def test_listVaults(self):        
+        print(elfcloudclient.listVaults())
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

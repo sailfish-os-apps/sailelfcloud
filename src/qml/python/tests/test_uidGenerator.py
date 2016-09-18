@@ -12,9 +12,8 @@ class TestUidGenerator(unittest.TestCase):
 
 
     def test_getUid_ShouldReturnUniqueId(self):
-        self.assertEqual(1, uidGenerator.getUid())
-        self.assertEqual(2, uidGenerator.getUid())
-        self.assertEqual(3, uidGenerator.getUid())
+        self.assertNotEqual(uidGenerator.getUid(), uidGenerator.getUid())
+        self.assertNotEqual(uidGenerator.getUid(), uidGenerator.getUid())
 
     parallelTasks = []
     parallelResults = []
