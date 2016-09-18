@@ -5,7 +5,7 @@ Created on Sep 15, 2016
 '''
 
 import threading
-import elfCloudAdapter
+import elfcloudclient
 import queue
 from collections import deque
 import tasks
@@ -66,7 +66,7 @@ class Uploader(threading.Thread):
         self.responseQueue.put(UploadCompletedTask.Create(task))
 
     def _handleUploadTask(self, task):
-        elfCloudAdapter.storeDataItem(task.remoteParentId, task.remoteName, task.localPath)
+        elfcloudclient.upload(task.remoteParentId, task.remoteName, task.localPath)
         self._submitUploadTaskDone(task)
 
     def _setBusy(self):

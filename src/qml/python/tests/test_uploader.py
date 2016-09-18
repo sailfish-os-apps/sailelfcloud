@@ -27,7 +27,7 @@ class TestUploader(unittest.TestCase):
     def _sideEffectAcquire(*args):
         TestUploader.LOCK.acquire()
 
-    @unittest.mock.patch('uploader.elfCloudAdapter.storeDataItem')
+    @unittest.mock.patch('uploader.elfcloudclient.upload')
     def test_upload_ShouldCallElfCloudAdapterAndCallback(self, mock_storeDataItem):
         mock_storeDataItem.side_effect = TestUploader._sideEffectRelease
         cb = unittest.mock.Mock()
@@ -44,13 +44,13 @@ class TestUploader(unittest.TestCase):
         mock_storeDataItem.assert_called_with("remoteParentId2", "remoteName2", "localPath2")
         cb.assert_called_with()
 
-    @unittest.mock.patch('uploader.elfCloudAdapter.storeDataItem')
+    @unittest.mock.patch('uploader.elfcloudclient.upload')
     def test_upload_CallbackNotGiven_ShouldOnlyCallElfCloudAdapter(self, mock_storeDataItem):
         uploader.upload("localPath1", "remoteParentId1", "remoteName1", "key1")
         uploader.wait()
         mock_storeDataItem.assert_called_with("remoteParentId1", "remoteName1", "localPath1")
 
-    @unittest.mock.patch('uploader.elfCloudAdapter.storeDataItem')
+    @unittest.mock.patch('uploader.elfcloudclient.upload')
     def test_upload_cancel_ShouldNotUploadCancelled(self, mock_storeDataItem):
         mock_storeDataItem.side_effect = TestUploader._sideEffectAcquire
         uploader.upload("localPath0", "remoteParentId0", "remoteName0", "key0")
