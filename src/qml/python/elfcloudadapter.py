@@ -65,14 +65,12 @@ def handle_exception(func=None, cbObjName=None):
 @worker.run_async
 @handle_exception(cbObjName='cbObj')
 def connect(username, password, cbObj=None):
-    elfcloudclient.connect(username, password)
-    _sendCompletedSignal(cbObj)
+    _sendCompletedSignal(cbObj, elfcloudclient.connect(username, password))
 
 @worker.run_async    
 @handle_exception(cbObjName='cbObj')
 def disconnect(cbObj=None):
-    elfcloudclient.disconnect()
-    _sendCompletedSignal(cbObj)
+    _sendCompletedSignal(cbObj, elfcloudclient.disconnect())
 
 @handle_exception(cbObjName='cbObj')    
 def getSubscription(cbObj=None):

@@ -13,7 +13,7 @@ except ImportError:
     class pyotherside:
         def atexit(self, *args): pass
         def send(self, *args):
-            print("send:", [str(a) for a in args])
+            print("printout:", [str(a) for a in args])
     sys.modules["pyotherside"] = pyotherside()
 
 def debug(*text):

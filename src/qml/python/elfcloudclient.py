@@ -42,7 +42,7 @@ def connect(username, password):
         setRequestSize(DEFAULT_REQUEST_SIZE_BYTES)
     except:
         client = None
-        raise
+        raise    
 
 def isConnected():
     return client != None
@@ -50,7 +50,7 @@ def isConnected():
 def disconnect():
     global client
     client = None
-    logger.info("elfCLOUD client disconnected")    
+    logger.info("elfCLOUD client disconnected")
 
 
 SUBSCRIPTION_FIELD_MAP = {'id':'Id', 'status':'Status', 'start_date':'Start date',
