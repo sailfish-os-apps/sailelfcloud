@@ -72,6 +72,12 @@ def connect(username, password, cbObj=None):
 def disconnect(cbObj=None):
     _sendCompletedSignal(cbObj, elfcloudclient.disconnect())
 
+@worker.run_async
 @handle_exception(cbObjName='cbObj')    
 def getSubscription(cbObj=None):
     _sendCompletedSignal(cbObj, elfcloudclient.getSubscriptionInfo())
+
+@worker.run_async
+@handle_exception(cbObjName='cbObj')    
+def getVaults(cbObj=None):
+    _sendCompletedSignal(cbObj, elfcloudclient.listVaults())
