@@ -17,10 +17,10 @@ except ImportError:
     sys.modules["pyotherside"] = pyotherside()
 
 def debug(*text):
-    pyotherside.send('log-d', ' '.join(text))
+    pyotherside.send('log-d', ' '.join([str(s) for s in text]))
 
 def info(*text):
-    pyotherside.send('log-i', ' '.join(text))
+    pyotherside.send('log-i', ' '.join([str(s) for s in text]))
 
 def error(*text):
-    pyotherside.send('log-e', ' '.join(text))
+    pyotherside.send('log-e', ' '.join([str(s) for s in text]))

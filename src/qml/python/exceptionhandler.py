@@ -8,7 +8,7 @@ import elfcloud
 
 class ClientException(Exception):
     
-    def __init__(self, id_, msg_):
+    def __init__(self, id_=0, msg_="unknown"):
         self.__id = id_
         self.__msg = msg_
         
