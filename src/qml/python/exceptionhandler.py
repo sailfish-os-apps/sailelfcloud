@@ -1,7 +1,7 @@
 '''
 Created on Sep 18, 2016
 
-@author: teemu
+@author: @author: Teemu Ahola [teemuahola7@gmail.com]
 '''
 
 import elfcloud
@@ -40,7 +40,7 @@ def handle_exception(func):
         except NotConnected as e:
             raise ClientException(e.id, e.message) from e
         except Exception as e:
-            raise ClientException(e.id, e.message) from e
+            raise ClientException(0, str(e)) from e
             
     return exception_handler
 

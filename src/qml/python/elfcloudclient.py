@@ -1,7 +1,7 @@
 '''
 Created on Sep 17, 2016
 
-@author: teemu
+@author: @author: Teemu Ahola [teemuahola7@gmail.com]
 '''
 
 import os
@@ -56,16 +56,17 @@ def disconnect():
 SUBSCRIPTION_FIELD_MAP = {'id':'Id', 'status':'Status', 'start_date':'Start date',
                           'end_date':'End date', 'storage_quota': 'Quota',
                           'subscription_type':'Subscription type', 'renewal_type':'Renewal type'}
-@check_connected
+
 @exceptionhandler.handle_exception
+@check_connected
 def getSubscriptionInfo():
     info = client.get_subscription_info()
     subscr = info['current_subscription']
     return {to_: str(subscr[from_]) for from_,to_ in SUBSCRIPTION_FIELD_MAP.items()}
 
-@check_connected
 @exceptionhandler.handle_exception
-def upload(parentId, remotename, filename, chunkCb):
+@check_connected
+def upload(parentId, remotename, filename, chunkCb=None):
     fileSize = os.path.getsize(filename)
     
     class _FileObj(object):
@@ -83,8 +84,8 @@ def upload(parentId, remotename, filename, chunkCb):
         fo = _FileObj(fileobj)
         client.store_data(int(parentId), remotename, fo)
 
-@check_connected
 @exceptionhandler.handle_exception
+@check_connected
 def listVaults():
     vaultList = []
     vaults = client.list_vaults()   
