@@ -17,7 +17,6 @@ be cleared if the owner of the `callback object` goes out of scope.
 '''
 
 import elfcloudclient
-import exceptionhandler
 import worker
 import logger
 
@@ -53,7 +52,7 @@ def handle_exception(func=None, cbObjName=None):
                 cbObj = kwargs[cbObjName]
         try:
             func(*args, **kwargs)
-        except exceptionhandler.ClientException as e:
+        except elfcloudclient.ClientException as e:
             logger.error("Exception occurred:", e.id, e.msg, cbObj)
             _sendFailedSignal(cbObj, e.id, e.msg)
         except Exception as e:

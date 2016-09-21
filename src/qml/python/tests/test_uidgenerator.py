@@ -5,21 +5,21 @@ Created on Sep 15, 2016
 '''
 import unittest
 import threading
-import uidGenerator
+import uidgenerator
 
 
 class TestUidGenerator(unittest.TestCase):
 
 
     def test_getUid_ShouldReturnUniqueId(self):
-        self.assertNotEqual(uidGenerator.getUid(), uidGenerator.getUid())
-        self.assertNotEqual(uidGenerator.getUid(), uidGenerator.getUid())
+        self.assertNotEqual(uidgenerator.getUid(), uidgenerator.getUid())
+        self.assertNotEqual(uidgenerator.getUid(), uidgenerator.getUid())
 
     parallelTasks = []
     parallelResults = []
 
     def async_getUid(self):
-        t = threading.Thread(target = lambda : self.parallelResults.append(uidGenerator.getUid()))
+        t = threading.Thread(target = lambda : self.parallelResults.append(uidgenerator.getUid()))
         t.start()
         self.parallelTasks.append(t)
 

@@ -8,7 +8,6 @@ import unittest.mock
 from unittest.mock import call
 import io
 import elfcloudclient
-import exceptionhandler
 import elfcloud
 
 class Test_elfcloudclient(unittest.TestCase):
@@ -37,7 +36,7 @@ class Test_elfcloudclient(unittest.TestCase):
     def test_connect_AuthenticationFailed_ConnectionShouldStayDisconnected(self, mock_client):
         mock_clientObj = mock_client.return_value
         mock_clientObj.auth.side_effect = lambda : Test_elfcloudclient._raise(elfcloud.exceptions.ECAuthException(1,"message"))
-        self.assertRaises(exceptionhandler.ClientException, elfcloudclient.connect, "username", "password")
+        self.assertRaises(elfcloudclient.ClientException, elfcloudclient.connect, "username", "password")
         self.assertFalse(elfcloudclient.isConnected())
 
 
@@ -74,10 +73,10 @@ class Test_elfcloudclient(unittest.TestCase):
         mock_cb.assert_has_calls(EXPECTED_CB_PARAMS)
 
     def test_upload_NotConnected_ShouldRaiseException(self):
-        self.assertRaises(exceptionhandler.NotConnected, elfcloudclient.upload, 123, "remotename", "filename")
+        self.assertRaises(elfcloudclient.NotConnected, elfcloudclient.upload, 123, "remotename", "filename")
 
     def test_getSubscriptionInfo_NotConnected_ShouldRaiseException(self):
-        self.assertRaises(exceptionhandler.NotConnected, elfcloudclient.getSubscriptionInfo)
+        self.assertRaises(elfcloudclient.NotConnected, elfcloudclient.getSubscriptionInfo)
 
     @unittest.mock.patch('elfcloudclient.client')
     def test_getSubscriptionInfo(self, mock_client):

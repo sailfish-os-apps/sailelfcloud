@@ -9,7 +9,6 @@ import elfcloud
 import worker
 import binascii
 import logger
-import exceptionhandler
 
 
 APIKEY = 'swrqwb95d98ou8d'
@@ -17,12 +16,50 @@ VALULT_TYPES = [elfcloud.utils.VAULT_TYPE_DEFAULT, 'com.ahola.sailelfcloud']
 DEFAULT_REQUEST_SIZE_BYTES =  256 * 1024 # Size of one request when sending or fetching
 client = None
 
+class ClientException(Exception):
+    
+    def __init__(self, id=0, msg="unknown"):
+        self.__id = id
+        self.__msg = msg
+        
+    @property
+    def id(self):
+        return self.__id
+
+    @property
+    def msg(self):
+        return self.__msg
+
+class NotConnected(ClientException):
+    
+    def __init__(self):
+        ClientException.__init__(self, 0, "not connected")
+
+def handle_exception(func):
+    from functools import wraps
+    @wraps(func)
+    def exception_handler(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except elfcloud.exceptions.ECAuthException as e:
+            raise ClientException(e.id, e.message) from e
+        except elfcloud.exceptions.ECException as e:
+            raise ClientException(e.id, e.message) from e            
+        except elfcloud.exceptions.ClientException as e:
+            raise ClientException(e.id, e.message) from e
+        except NotConnected:
+            raise
+        except Exception as e:
+            raise ClientException(0, str(e)) from e
+            
+    return exception_handler
+
 def check_connected(func):
     from functools import wraps
     @wraps(func)
     def _check_connection(*args, **kwargs):
         if not isConnected():
-            raise exceptionhandler.NotConnected()
+            raise NotConnected()
         return func(*args, **kwargs)
     return _check_connection
 
@@ -30,7 +67,7 @@ def check_connected(func):
 def setRequestSize(sizeInBytes):
     client.set_request_size(sizeInBytes)
 
-@exceptionhandler.handle_exception
+@handle_exception
 def connect(username, password):
     global client
     try:
@@ -57,14 +94,14 @@ SUBSCRIPTION_FIELD_MAP = {'id':'Id', 'status':'Status', 'start_date':'Start date
                           'end_date':'End date', 'storage_quota': 'Quota',
                           'subscription_type':'Subscription type', 'renewal_type':'Renewal type'}
 
-@exceptionhandler.handle_exception
+@handle_exception
 @check_connected
 def getSubscriptionInfo():
     info = client.get_subscription_info()
     subscr = info['current_subscription']
     return {to_: str(subscr[from_]) for from_,to_ in SUBSCRIPTION_FIELD_MAP.items()}
 
-@exceptionhandler.handle_exception
+@handle_exception
 @check_connected
 def upload(parentId, remotename, filename, chunkCb=None):
     fileSize = os.path.getsize(filename)
@@ -84,7 +121,7 @@ def upload(parentId, remotename, filename, chunkCb=None):
         fo = _FileObj(fileobj)
         client.store_data(int(parentId), remotename, fo)
 
-@exceptionhandler.handle_exception
+@handle_exception
 @check_connected
 def listVaults():
     vaultList = []

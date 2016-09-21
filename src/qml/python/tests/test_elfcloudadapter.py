@@ -5,13 +5,13 @@ Created on Sep 18, 2016
 '''
 import unittest
 import unittest.mock
+import elfcloudclient
 
 # worker.run_asyc is replaced a version which do not run code in thread.
 # MUST BE DONE BEFORE IMPORTING elfcloudadapter!
 unittest.mock.patch('worker.run_async', lambda x: x).start()
 
 import elfcloudadapter
-import exceptionhandler
 
 def _raise(exception):
     '''Helper for raising exception from lambda.'''
@@ -29,7 +29,7 @@ class Test_elfcloudadapter(unittest.TestCase):
     @unittest.mock.patch("elfcloudadapter.pyotherside")
     @unittest.mock.patch("elfcloudadapter.elfcloudclient.connect", return_value=None)
     def test_connect_Failure_ShouldConnectWithNameAndPassword_ShouldSendFailedSignal(self, mock_client, mock_pyotherside):
-        mock_client.side_effect = lambda username_, password_ : _raise(exceptionhandler.ClientException(123, "exception description")) 
+        mock_client.side_effect = lambda username_, password_ : _raise(elfcloudclient.ClientException(123, "exception description")) 
         elfcloudadapter.connect("username", "password", "my_cbobj")
         mock_client.assert_called_once_with("username", "password")
         mock_pyotherside.send.assert_called_once_with("failed", "my_cbobj", 123, "exception description")
@@ -44,7 +44,7 @@ class Test_elfcloudadapter(unittest.TestCase):
     @unittest.mock.patch("elfcloudadapter.pyotherside")
     @unittest.mock.patch("elfcloudadapter.elfcloudclient.disconnect", return_value=None)
     def test_disconnect_Failure_ShouldDisconnect_ShouldSendFailedSignal(self, mock_client, mock_pyotherside):
-        mock_client.side_effect = lambda : _raise(exceptionhandler.ClientException(123, "exception description")) 
+        mock_client.side_effect = lambda : _raise(elfcloudclient.ClientException(123, "exception description")) 
         elfcloudadapter.disconnect("my_cbobj")
         mock_client.assert_called_once_with()
         mock_pyotherside.send.assert_called_once_with("failed", "my_cbobj", 123, "exception description")
@@ -59,7 +59,7 @@ class Test_elfcloudadapter(unittest.TestCase):
     @unittest.mock.patch("elfcloudadapter.pyotherside")
     @unittest.mock.patch("elfcloudadapter.elfcloudclient.getSubscriptionInfo")
     def test_getSubscription_Failure_ShouldGetSubscription_ShouldSendFailedSignal(self, mock_client, mock_pyotherside):
-        mock_client.side_effect = lambda : _raise(exceptionhandler.ClientException(123, "exception description"))
+        mock_client.side_effect = lambda : _raise(elfcloudclient.ClientException(123, "exception description"))
         elfcloudadapter.getSubscription("my_cbObj")
         mock_client.assert_called_once_with()
         mock_pyotherside.send.assert_called_once_with('failed', 'my_cbObj', 123, 'exception description')
@@ -74,7 +74,7 @@ class Test_elfcloudadapter(unittest.TestCase):
     @unittest.mock.patch("elfcloudadapter.pyotherside")
     @unittest.mock.patch("elfcloudadapter.elfcloudclient.listVaults")
     def test_getVaults_Failure_ShouldGetVaults_ShouldSendFailedSignal(self, mock_client, mock_pyotherside):
-        mock_client.side_effect = lambda : _raise(exceptionhandler.ClientException(123, "exception description")) 
+        mock_client.side_effect = lambda : _raise(elfcloudclient.ClientException(123, "exception description")) 
         elfcloudadapter.getVaults("my_cbObj")
         mock_client.assert_called_once_with()
         mock_pyotherside.send.assert_called_once_with('failed', 'my_cbObj', 123, 'exception description')
