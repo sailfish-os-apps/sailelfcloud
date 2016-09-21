@@ -3,7 +3,7 @@ Created on Sep 18, 2016
 
 @author: Teemu Ahola [teemuahola7@gmail.com]
 '''
-import unittest
+
 import unittest.mock
 import elfcloudclient
 

@@ -61,6 +61,12 @@ def handle_exception(func=None, cbObjName=None):
             
     return exception_handler
 
+def setEncryption(key, iv):
+    elfcloudclient.setEncryption(key, iv)
+
+def clearEncryption():
+    elfcloudclient.clearEncryption()
+
 @worker.run_async
 @handle_exception(cbObjName='cbObj')
 def connect(username, password, cbObj=None):

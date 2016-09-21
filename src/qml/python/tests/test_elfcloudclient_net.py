@@ -3,13 +3,12 @@ Created on Sep 18, 2016
 
 @author: @author: Teemu Ahola [teemuahola7@gmail.com]
 '''
-import unittest
+
 import unittest.mock
 from unittest.mock import call
 import tempfile
 from os.path import basename
 import elfcloudclient
-import exceptionhandler
 
 VALID_USERNAME = "xxxx" # Set proper username
 VALID_PASSWORD = "xxxx" # Set proper password
@@ -46,14 +45,14 @@ class Test_elfcloudclient_network(unittest.TestCase):
     @unittest.skip("do not stress official server with invalid creditials")
     def test_connect_InValidCreditialsGiven_ShouldNotConnect(self):
         self.assertFalse(elfcloudclient.isConnected())
-        self.assertRaises(exceptionhandler.ClientException, elfcloudclient.connect, INVALID_USERNAME, INVALID_PASSWORD)
+        self.assertRaises(elfcloudclient.ClientException, elfcloudclient.connect, INVALID_USERNAME, INVALID_PASSWORD)
         self.assertFalse(elfcloudclient.isConnected())
-        self.assertRaises(exceptionhandler.ClientException, elfcloudclient.connect, VALID_USERNAME, INVALID_PASSWORD)
+        self.assertRaises(elfcloudclient.ClientException, elfcloudclient.connect, VALID_USERNAME, INVALID_PASSWORD)
         self.assertFalse(elfcloudclient.isConnected())       
 
     def test_getSubscriptionInfo_NotConnected_ShouldRaiseException(self):
         self.assertRaises(Exception, elfcloudclient.getSubscriptionInfo)
-        
+
     @connect
     def test_getSubscriptionInfo_(self):
         self.assertDictContainsSubset({'Status':'active'}, elfcloudclient.getSubscriptionInfo())
@@ -64,7 +63,7 @@ class Test_elfcloudclient_network(unittest.TestCase):
             if vault['name'] == 'unittest' and vault['type'] == 'vault' and vault['id'] == VALID_PARENTID:
                 return
         self.fail("not found expected vault")
-        
+    
     @connect
     def test_upload(self):
         chunkCb = unittest.mock.Mock()

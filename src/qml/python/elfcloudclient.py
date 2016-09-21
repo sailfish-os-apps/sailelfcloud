@@ -89,6 +89,13 @@ def disconnect():
     client = None
     logger.info("elfCLOUD client disconnected")
 
+def setEncryption(key, iv):
+    client.encryption_mode = elfcloud.utils.ENC_AES256
+    client.set_encryption_key(binascii.unhexlify(key))
+    client.set_iv(binascii.unhexlify(iv))
+
+def clearEncryption():
+    client.encryption_mode = elfcloud.utils.ENC_NONE    
 
 SUBSCRIPTION_FIELD_MAP = {'id':'Id', 'status':'Status', 'start_date':'Start date',
                           'end_date':'End date', 'storage_quota': 'Quota',
@@ -139,4 +146,30 @@ def listVaults():
                           'ownerFirstName': vault.owner['firstname'],
                           'ownerLastName': vault.owner['lastname']})
     return vaultList
+
+def listContent(parentId):
+    contentList = []   
+    clusters, dataitems = client.list_contents(int(parentId))
+
+    for cluster in clusters:
+        contentList.append({'name':        cluster.name,
+                            'id'  :        cluster.id,
+                            'descendants': cluster.descendants,
+                            'parentId':    cluster.parent_id,
+                            'modified':    cluster.modified_date,
+                            'accessed':    cluster.last_accessed_date, 
+                            'permissions': cluster.permissions,                            
+                            'type':        'cluster'})
+
+    for dataitem in dataitems:
+        contentList.append({'name':       dataitem.name,
+                            'id'  :       0,
+                            'parentId':   dataitem.parent_id,
+                            'type':       'dataitem',
+                            'tags':       dataitem.meta.get('TGS', ""),
+                            'encryption': dataitem.meta.get('ENC', "NONE"),
+                            'contentHash':dataitem.meta.get('CHA', ""),
+                            'keyHash':    dataitem.meta.get('KHA', "")})
+        
+    return contentList
 

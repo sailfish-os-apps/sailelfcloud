@@ -9,7 +9,6 @@ import elfcloudclient
 import queue
 from collections import deque
 import tasks
-import worker
 
 class UploadTask(tasks.XferTask):
     
@@ -30,11 +29,17 @@ class UploadTask(tasks.XferTask):
 class UploadCompletedTask(UploadTask):
     
     @classmethod
-    def Create(cls, task):
-        return cls(task.cb, task.localPath, task.remoteParentId, task.remoteName, task.key)
+    def Create(cls, task, exception=None):
+        o = cls(task.cb, task.localPath, task.remoteParentId, task.remoteName, task.key)
+        o.__exc = exception
+        return o
+
+    @property
+    def exception(self):
+        return self.__exc
 
     def __str__(self):
-        return "UploadCompletedTask: %i" % (self.uid)
+        return "UploadCompletedTask: %i %s" % (self.uid, str(self.exc) if self.exc else "")
 
 class CancelUploadTask(tasks.CancelTask):
 
@@ -62,12 +67,15 @@ class Uploader(threading.Thread):
     def isIdling(self):
         return self.idle.isSet()
 
-    def _submitUploadTaskDone(self, task):
-        self.responseQueue.put(UploadCompletedTask.Create(task))
+    def _submitUploadTaskDone(self, task, exception=None):
+        self.responseQueue.put(UploadCompletedTask.Create(task, exception))
 
     def _handleUploadTask(self, task):
-        elfcloudclient.upload(task.remoteParentId, task.remoteName, task.localPath)
-        self._submitUploadTaskDone(task)
+        try:
+            elfcloudclient.upload(task.remoteParentId, task.remoteName, task.localPath)
+            self._submitUploadTaskDone(task)
+        except elfcloudclient.ClientException as e:
+            self._submitUploadTaskDone(task, e)
 
     def _setBusy(self):
         self.idle.clear()
@@ -124,7 +132,7 @@ class UploadManager(threading.Thread):
 
     def _callCb(self, task):
         if callable(task.cb):
-            task.cb()
+            task.cb() if not task.exception else task.cb(task.exception)
 
     def _handleUploadCompletedTask(self, task):
         self._callCb(task)

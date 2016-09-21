@@ -1,9 +1,9 @@
 '''
 Created on Sep 15, 2016
 
-@author: teemu
+@author: Teemu Ahola [teemuahola7@gmail.com]
 '''
-import unittest
+
 import unittest.mock
 import tasks
 
@@ -16,7 +16,7 @@ class TestTasks(unittest.TestCase):
     def _dummyCb():
         pass
 
-    @unittest.mock.patch('tasks.uidGenerator.getUid', return_value = EXPECTED_UID_FROM_GET_UID)
+    @unittest.mock.patch('tasks.uidgenerator.getUid', return_value = EXPECTED_UID_FROM_GET_UID)
     def test_Task_ShouldGetUid(self, mock_getUid):
         t = tasks.Task(TestTasks._dummyCb)
         self.assertEqual(self.EXPECTED_UID_FROM_GET_UID, t.uid)

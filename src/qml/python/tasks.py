@@ -1,15 +1,15 @@
 '''
 Created on Aug 22, 2016
 
-@author: teemu
+@author: Teemu Ahola [teemuahola7@gmail.com]
 '''
 
-import uidGenerator
+import uidgenerator
 
 class Task(object):
     
     def __init__(self, cb=None):
-        self.__uid = uidGenerator.getUid()
+        self.__uid = uidgenerator.getUid()
         self.__cb = cb
 
     @property
