@@ -38,20 +38,20 @@ class TestUploader(unittest.TestCase):
         uploader.upload("localPath1", "remoteParentId1", "remoteName1", "key1", cb)
         TestUploader._sideEffectAcquire()
         uploader.wait()
-        mock_upload.assert_called_with("remoteParentId1", "remoteName1", "localPath1")
+        mock_upload.assert_called_with("remoteParentId1", "remoteName1", "localPath1", None)
         cb.assert_called_with()
 
         uploader.upload("localPath2", "remoteParentId2", "remoteName2", "key2", cb)
         TestUploader._sideEffectAcquire()
         uploader.wait()
-        mock_upload.assert_called_with("remoteParentId2", "remoteName2", "localPath2")
+        mock_upload.assert_called_with("remoteParentId2", "remoteName2", "localPath2", None)
         cb.assert_called_with()
 
     @unittest.mock.patch('uploader.elfcloudclient.upload')
     def test_upload_CallbackNotGiven_ShouldOnlyCallElfCloudAdapter(self, mock_upload):
         uploader.upload("localPath1", "remoteParentId1", "remoteName1", "key1")
         uploader.wait()
-        mock_upload.assert_called_with("remoteParentId1", "remoteName1", "localPath1")
+        mock_upload.assert_called_with("remoteParentId1", "remoteName1", "localPath1", None)
 
     @unittest.mock.patch('uploader.elfcloudclient.upload')
     def test_upload_cancel_ShouldNotUploadCancelled(self, mock_upload):
@@ -65,17 +65,17 @@ class TestUploader(unittest.TestCase):
         TestUploader._sideEffectRelease()
         TestUploader._sideEffectRelease()
         uploader.wait()
-        mock_upload.assert_has_calls([unittest.mock.call("remoteParentId0", "remoteName0", "localPath0"),
-                                      unittest.mock.call("remoteParentId1", "remoteName1", "localPath1"),
-                                      unittest.mock.call("remoteParentId3", "remoteName3", "localPath3")])
+        mock_upload.assert_has_calls([unittest.mock.call("remoteParentId0", "remoteName0", "localPath0", None),
+                                      unittest.mock.call("remoteParentId1", "remoteName1", "localPath1", None),
+                                      unittest.mock.call("remoteParentId3", "remoteName3", "localPath3", None)])
 
     @unittest.mock.patch('uploader.elfcloudclient.upload')
     def test_upload_Failure_(self, mock_upload):
-        mock_upload.side_effect = lambda x_,y_,z_ : self._raise(uploader.elfcloudclient.ClientException())
+        mock_upload.side_effect = lambda x_,y_,z_,w_ : self._raise(uploader.elfcloudclient.ClientException())
         cb = unittest.mock.Mock()
         uploader.upload("localPath1", "remoteParentId1", "remoteName1", "key1", cb)
         uploader.wait()
-        mock_upload.assert_called_with("remoteParentId1", "remoteName1", "localPath1")
+        mock_upload.assert_called_with("remoteParentId1", "remoteName1", "localPath1", None)
         print(cb.mock_calls)
 
     

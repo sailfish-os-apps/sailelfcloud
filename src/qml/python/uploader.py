@@ -13,15 +13,16 @@ import tasks
 class UploadTask(tasks.XferTask):
     
     @classmethod
-    def Create(cls, localPath, remoteParentId, remoteName, key=None, cb=None):
-        return cls(cb, localPath, remoteParentId, remoteName, key)
+    def Create(cls, localPath, remoteParentId, remoteName, key=None, cb=None, chunkCb=None):
+        return cls(cb, localPath, remoteParentId, remoteName, key, chunkCb)
     
-    def __init__(self, cb, localPath, remoteParentId, remoteName, key):
+    def __init__(self, cb, localPath, remoteParentId, remoteName, key, chunkCb):
         super().__init__(cb)
         self.localPath = localPath
         self.remoteParentId = remoteParentId
         self.remoteName = remoteName
         self.key = key
+        self.chunkCb = chunkCb
         
     def __str__(self):
         return "UploadTask: %i, %s, %s, %s, %s" % (self.uid, self.localPath, self.remoteParentId, self.remoteName, self.key)
@@ -30,7 +31,7 @@ class UploadCompletedTask(UploadTask):
     
     @classmethod
     def Create(cls, task, exception=None):
-        o = cls(task.cb, task.localPath, task.remoteParentId, task.remoteName, task.key)
+        o = cls(task.cb, task.localPath, task.remoteParentId, task.remoteName, task.key, task.chunkCb)
         o.__exc = exception
         return o
 
@@ -72,7 +73,7 @@ class Uploader(threading.Thread):
 
     def _handleUploadTask(self, task):
         try:
-            elfcloudclient.upload(task.remoteParentId, task.remoteName, task.localPath)
+            elfcloudclient.upload(task.remoteParentId, task.remoteName, task.localPath, task.chunkCb)
             self._submitUploadTaskDone(task)
         except elfcloudclient.ClientException as e:
             self._submitUploadTaskDone(task, e)
@@ -187,8 +188,8 @@ class UploadManager(threading.Thread):
                         
 UPLOADER = UploadManager()
 
-def upload(localPath, remoteParentId, remoteName, key=None, cb=None):
-    return UPLOADER.submitTask(UploadTask.Create(localPath, remoteParentId, remoteName, key, cb))
+def upload(localPath, remoteParentId, remoteName, key=None, cb=None, chunkCb=None):
+    return UPLOADER.submitTask(UploadTask.Create(localPath, remoteParentId, remoteName, key, cb, chunkCb))
 
 def cancel(uid, cb=None):
     UPLOADER.submitTask(CancelUploadTask.Create(uid, cb))
