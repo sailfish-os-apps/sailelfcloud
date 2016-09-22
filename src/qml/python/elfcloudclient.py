@@ -132,6 +132,9 @@ def upload(parentId, remotename, filename, chunkCb=None):
         fo = _FileObj(fileobj)
         client.store_data(int(parentId), remotename, fo)
 
+def cancelUpload(uid, cb=None):
+    pass
+
 @handle_exception
 @check_connected
 def listVaults():
@@ -151,6 +154,8 @@ def listVaults():
                           'ownerLastName': vault.owner['lastname']})
     return vaultList
 
+@handle_exception
+@check_connected
 def listContent(parentId):
     contentList = []   
     clusters, dataitems = client.list_contents(int(parentId))
@@ -177,3 +182,39 @@ def listContent(parentId):
         
     return contentList
 
+
+def getDataItemInfo(cbObj, parentId, name):
+    pass
+
+def updateDataItem(parentId, name, description=None, tags=None):
+    pass
+
+def download(cbObj, parentId, name, outputPath, key=None):
+    pass
+
+def cancelDownload(uid, cb=None):
+    pass
+
+def removeDataItem(cbObj, parentId, name):
+    pass
+
+def renameDataItem(cbObj, parentId, oldName, newName):
+    pass
+
+def addVault(cbObj, name):
+    pass
+
+def removeVault(cbObj, vaultId):
+    pass
+
+def renameVault(cbObj):
+    pass
+
+def addCluster(cbObj, parentId, name):
+    pass
+
+def removeCluster(cbObj, clusterId):
+    pass
+
+def renameCluster(cbObj):
+    pass
