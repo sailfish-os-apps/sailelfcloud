@@ -41,6 +41,7 @@ Python {
         setHandler('exception', exceptionOccurred);
         setHandler('fetch-dataitem-chunk', _fetchDataItemChunkCb);
         setHandler('store-dataitem-chunk', _storeDataItemChunkCb);
+        setHandler('store-dataitem-completed', _storeDataItemCompletedCb);
         setHandler('completed', _handleCompleted);
         setHandler('failed', _handleFailed);
     }
@@ -89,7 +90,7 @@ Python {
     }
 
     function _callInCb(cbObj, func, wrapper) {
-        var callName = "elfCloudAdapter." + func;
+        var callName = "elfcloudadapter." + func;
         var args = [cbObj].concat(_getVarArgs(_callInCb, arguments));
         cbObj.wrapperCb = wrapper;
         if (py.call_sync(callName, args))
@@ -99,7 +100,7 @@ Python {
     }
 
     function _call(func, callback) {
-        var callName = "elfCloudAdapter." + func;
+        var callName = "elfcloudadapter." + func;
         var cbObj = _createCbObj(callback);
         var args = [cbObj].concat(_getVarArgs(_call, arguments));
         if (py.call_sync(callName, args))
@@ -109,7 +110,7 @@ Python {
     }
 
     function _callWrap(func, callback, wrapper) {
-        var callName = "elfCloudAdapter." + func;
+        var callName = "elfcloudadapter." + func;
         var cbObj = _createCbObj(callback, wrapper);
         var args = [cbObj].concat(_getVarArgs(_callWrap, arguments));
         if (py.call_sync(callName, args))
@@ -135,7 +136,7 @@ Python {
     }
 
     function _call2(func, successCb, failureCb) {
-        var callName = "elfCloudAdapter." + func;
+        var callName = "elfcloudadapter." + func;
         var cbObj = _createCbObj2(successCb, failureCb);
         var args = [cbObj].concat(_getVarArgs(_call2, arguments));
         if (py.call_sync(callName, args))
@@ -158,7 +159,7 @@ Python {
     }
 
     function isConnected() {
-        return py.call_sync("elfCloudAdapter.isConnected", []);
+        return py.call_sync("elfcloudadapter.isConnected", []);
     }
 
     // This function is needed to make a copy from content list got from python since it seems to vanish and cause null pointer accesses
@@ -221,35 +222,17 @@ Python {
         storeDataItemChunkCompleted(parentId, remoteName, localName, totalSize, sizeStored)
     }
 
-    function _storeDataItemsCb(cbObj, parentId, remoteLocalNames, index) {
-
-        storeDataItemCompleted(parentId, remoteLocalNames[index][0], remoteLocalNames[index][1], remoteLocalNames.length-index);
-
-        if (++index < remoteLocalNames.length) {
-            storeDataItemStarted(parentId, remoteLocalNames[index][0], remoteLocalNames[index][1], remoteLocalNames.length-index);
-            _callInCb(cbObj, "storeDataItem", function(cbObj) { _storeDataItemsCb(cbObj, parentId, remoteLocalNames, index); },
-                parentId, remoteLocalNames[index][0], remoteLocalNames[index][1]);
-        } else {
-            cbObj.unsetWrapper();
-            _handleCompleted(cbObj, parentId, remoteLocalNames);
-            storeDataItemsCompleted(parentId, remoteLocalNames);
-        }
+    function _storeDataItemCompletedCb(parentId, remoteName, localName, exception) {
+        storeDataItemCompleted(parentId, remoteName, localName, 0);
     }
 
     function storeDataItems(parentId, localPaths, callback) {
-        var remoteLocalNames = []
 
         for (var i = 0; i < localPaths.length; i++) {
             var localName = localPaths[i]
             var remoteName = helpers.getFilenameFromPath(localPaths[i]);
-            remoteLocalNames.push([remoteName,localName]);
+            _call("storeDataItem", undefined, parentId, remoteName, localName);
         }
-
-        storeDataItemsStarted(parentId, remoteLocalNames);
-        storeDataItemStarted(parentId, remoteLocalNames[0][0], remoteLocalNames[0][1], remoteLocalNames.length);
-        return _callWrap("storeDataItem", callback,
-                         function(cbObj) { _storeDataItemsCb(cbObj, parentId, remoteLocalNames, 0); },
-                         parentId, remoteLocalNames[0][0], remoteLocalNames[0][1])
    }
 
     function removeDataItem(parentId, name, callback) {
@@ -277,16 +260,16 @@ Python {
     }
 
     function setEncryptionKey(key, initVector) {
-       return py.call_sync("elfCloudAdapter.setEncryption", [key, initVector]);
+       return py.call_sync("elfcloudadapter.setEncryption", [key, initVector]);
     }
 
     function clearEncryption() {
-        return py.call_sync("elfCloudAdapter.clearEncryption");
+        return py.call_sync("elfcloudadapter.clearEncryption");
     }
 
     Component.onCompleted: {
         if (!py.ready) {
-            console.info("elfCloudAdapter starting up...");
+            console.info("elfcloudadapter starting up...");
             console.info("Python version: " + pythonVersion());
             console.info("PyOtherSide version: " + pluginVersion());
             __setHandlers();
@@ -295,7 +278,7 @@ Python {
             addImportPath(Qt.resolvedUrl("../lib/pycrypto-2.6.1-py3.4-linux-i486.egg"));
             addImportPath(Qt.resolvedUrl("../lib/decorator-4.0.9-py3.4.egg"));
             addImportPath(Qt.resolvedUrl("../lib/elfcloud_weasel-1.2.2-py3.4.egg"));
-            importModule('elfCloudAdapter', function() {  py.ready = true; readyForUse(); });
+            importModule('elfcloudadapter', function() {  py.ready = true; readyForUse(); });
         }
     }
 
