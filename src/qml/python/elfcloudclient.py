@@ -35,6 +35,10 @@ class NotConnected(ClientException):
     def __init__(self):
         ClientException.__init__(self, 0, "not connected")
 
+class AuthenticationFailure(ClientException):
+    pass
+
+
 def handle_exception(func):
     from functools import wraps
     @wraps(func)
@@ -42,7 +46,7 @@ def handle_exception(func):
         try:
             return func(*args, **kwargs)
         except elfcloud.exceptions.ECAuthException as e:
-            raise ClientException(e.id, e.message) from e
+            raise AuthenticationFailure(e.id, e.message) from e
         except elfcloud.exceptions.ECException as e:
             raise ClientException(e.id, e.message) from e            
         except elfcloud.exceptions.ClientException as e:
@@ -77,9 +81,9 @@ def connect(username, password):
         client.auth()
         logger.info("elfCLOUD client connected")
         setRequestSize(DEFAULT_REQUEST_SIZE_BYTES)
-    except:
+    except elfcloud.exceptions.ECAuthException: # this we will handle by ourselves
         client = None
-        raise    
+        raise   
 
 def isConnected():
     return client != None

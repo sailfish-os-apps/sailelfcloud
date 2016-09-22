@@ -17,6 +17,7 @@ be cleared if the owner of the `callback object` goes out of scope.
 '''
 
 import elfcloudclient
+import uploader
 import worker
 import logger
 
@@ -38,6 +39,9 @@ def _sendCompletedSignal(cbObj, *args):
 def _sendFailedSignal(cbObj, *args):
     if cbObj: pyotherside.send('failed', cbObj, *args)
 
+def _sendExceptionSignal(id_, message):
+    pyotherside.send('exception', id_, message)
+
 def handle_exception(func=None, cbObjName=None):
     import functools
     if not func:
@@ -54,10 +58,10 @@ def handle_exception(func=None, cbObjName=None):
             func(*args, **kwargs)
         except elfcloudclient.ClientException as e:
             logger.error("Exception occurred:", e.id, e.msg, cbObj)
-            _sendFailedSignal(cbObj, e.id, e.msg)
+            _sendExceptionSignal(e.id, e.msg)
         except Exception as e:
             logger.error("Unknown exception occurred:", str(e))
-            _sendFailedSignal(cbObj, 0, "unknown exception")
+            _sendExceptionSignal(0, "unknown exception")
             
     return exception_handler
 
@@ -66,23 +70,42 @@ def setEncryption(key, iv):
 
 def clearEncryption():
     elfcloudclient.clearEncryption()
-
+    
 @worker.run_async
 @handle_exception(cbObjName='cbObj')
-def connect(username, password, cbObj=None):
-    _sendCompletedSignal(cbObj, elfcloudclient.connect(username, password))
+def connect(cbObj, username, password):
+    try:
+        _sendCompletedSignal(cbObj, elfcloudclient.connect(username, password))
+    except elfcloudclient.AuthenticationFailure as e:
+        _sendFailedSignal(cbObj, e.id, e.msg)
+        raise
 
 @worker.run_async    
 @handle_exception(cbObjName='cbObj')
-def disconnect(cbObj=None):
+def disconnect(cbObj):
     _sendCompletedSignal(cbObj, elfcloudclient.disconnect())
 
 @worker.run_async
 @handle_exception(cbObjName='cbObj')    
-def getSubscription(cbObj=None):
+def getSubscription(cbObj):
     _sendCompletedSignal(cbObj, elfcloudclient.getSubscriptionInfo())
 
 @worker.run_async
 @handle_exception(cbObjName='cbObj')    
-def getVaults(cbObj=None):
+def listVaults(cbObj):
     _sendCompletedSignal(cbObj, elfcloudclient.listVaults())
+
+def _uploadCb(parentId, remoteName, localName, *args):
+    pyotherside.send('store-dataitem-completed', parentId, remoteName, localName)
+
+def _uploadChunkCb(parentId, remoteName, localName, totalSize, totalSizeStored):
+    pyotherside.send('store-dataitem-chunk', parentId, remoteName, localName, totalSize, totalSizeStored)
+
+@handle_exception(cbObjName='cbObj')    
+def storeDataItem(cbObj, parentId, remotename, filename):
+    _sendCompletedSignal(cbObj,
+        uploader.upload(filename, parentId,
+                        remotename, None,
+                        lambda *args : _uploadCb(parentId, remotename, filename, *args),
+                        lambda totalSize, totalSizeStored : _uploadChunkCb(parentId, remotename, filename, totalSize, totalSizeStored)))
+    
