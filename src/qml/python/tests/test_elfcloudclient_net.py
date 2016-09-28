@@ -17,8 +17,8 @@ import tempfile
 from os.path import basename
 import elfcloudclient
 
-VALID_USERNAME = "xxxx" # Set proper username
-VALID_PASSWORD = "xxxx" # Set proper password
+VALID_USERNAME = "unittestuser" # Set proper username
+VALID_PASSWORD = "utyghK!!" # Set proper password
 
 INVALID_USERNAME = "invalid_username"
 INVALID_PASSWORD = "invalid_password"
@@ -37,7 +37,12 @@ def connect(func):
         return func(*args, **kwargs)
     return _connect
 
-class Test_elfcloudclient_connection_network(unittest.TestCase):
+def removeAllDataItemsFromContainer(containerId):
+    for i in elfcloudclient.listContent(containerId):
+        elfcloudclient.removeDataItem(containerId, i['name'])
+    
+
+class Test_elfcloudclient_connection_cloud(unittest.TestCase):
 
     def tearDown(self):
         elfcloudclient.disconnect()    
@@ -49,7 +54,7 @@ class Test_elfcloudclient_connection_network(unittest.TestCase):
         elfcloudclient.disconnect()
         self.assertFalse(elfcloudclient.isConnected())
 
-    #@unittest.skip("do not stress official server with invalid creditials")
+    @unittest.skip("do not stress official server with invalid creditials")
     def test_connect_InValidCreditialsGiven_ShouldNotConnect(self):
         self.assertFalse(elfcloudclient.isConnected())
         self.assertRaises(elfcloudclient.ClientException, elfcloudclient.connect, INVALID_USERNAME, INVALID_PASSWORD)
@@ -58,7 +63,7 @@ class Test_elfcloudclient_connection_network(unittest.TestCase):
         self.assertFalse(elfcloudclient.isConnected())       
 
 
-class Test_elfcloudclient_subscription_network(unittest.TestCase):
+class Test_elfcloudclient_subscription_cloud(unittest.TestCase):
 
     
     def tearDown(self):
@@ -71,13 +76,14 @@ class Test_elfcloudclient_subscription_network(unittest.TestCase):
     def test_getSubscriptionInfo_ShouldReturnValidSubscription(self):
         self.assertDictContainsSubset({'Status':'active'}, elfcloudclient.getSubscriptionInfo())
 
-class Test_elfcloudclient_upload_download_network(unittest.TestCase):
+class Test_elfcloudclient_upload_download_cloud(unittest.TestCase):
 
     DATA = bytes(range(256)) * 4 * 1000 * 1
     EXPECTED_CHUNKS = [i_ for i_ in range(elfcloudclient.DEFAULT_REQUEST_SIZE_BYTES, len(DATA), \
                                           elfcloudclient.DEFAULT_REQUEST_SIZE_BYTES)] + [len(DATA)]
     
     def tearDown(self):
+        removeAllDataItemsFromContainer(TEST_VAULT_ID)
         elfcloudclient.disconnect()    
 
     @connect
@@ -91,10 +97,12 @@ class Test_elfcloudclient_upload_download_network(unittest.TestCase):
             chunkCb.assert_has_calls(EXPECTED_CB_PARAMS)
 
 
-class Test_elfcloudclient_dataitem_and_vaults_network(unittest.TestCase):
-    
-        
+class Test_elfcloudclient_dataitems_and_vaults_cloud(unittest.TestCase):
+
+    DATA = bytes(range(256))    
+
     def tearDown(self):
+        removeAllDataItemsFromContainer(TEST_VAULT_ID)
         elfcloudclient.disconnect()    
 
     @connect
@@ -106,22 +114,56 @@ class Test_elfcloudclient_dataitem_and_vaults_network(unittest.TestCase):
     
     @connect
     def test_listContent_getDataItemInfo_updateDataItem_ListedAndModifiedDataItemShouldHaveValidInfo(self):
-        dataItems = elfcloudclient.listContent(VALID_PARENTID)
-        self.assertTrue(dataItems)
-        dataItemName = dataItems[0]['name'] # Just choose first data item for subsequent testing
-        print(elfcloudclient.getDataItemInfo(VALID_PARENTID, dataItemName))
-        self.assertDictContainsSubset({'name':dataItemName,
-                                       'encryption':'NONE',
-                                       'description':'',
-                                       'tags':[]},
-                                      elfcloudclient.getDataItemInfo(VALID_PARENTID, dataItemName))
-        elfcloudclient.updateDataItem(VALID_PARENTID, dataItemName, "description", ["tag1","tag2","tag3"])
-        print(elfcloudclient.getDataItemInfo(VALID_PARENTID, dataItemName))
-        self.assertDictContainsSubset({'name':dataItemName,
-                                       'encryption':'NONE',
-                                       'description':'description',
-                                       'tags':["tag1","tag2","tag3"]},
-                                      elfcloudclient.getDataItemInfo(VALID_PARENTID, dataItemName))
+        with tempfile.NamedTemporaryFile('wb') as tf:
+            tf.write(self.DATA)
+            tf.flush()
+            dataItemName = basename(tf.name)
+            elfcloudclient.upload(VALID_PARENTID, dataItemName, tf.name)
+
+            items = elfcloudclient.listContent(VALID_PARENTID)
+            self.assertTrue(any(i['name'] == dataItemName for i in items))
+            self.assertDictContainsSubset({'name':dataItemName,
+                                           'encryption':'NONE',
+                                           'description':'',
+                                           'tags':[]},
+                                          elfcloudclient.getDataItemInfo(TEST_VAULT_ID, dataItemName))
+            elfcloudclient.updateDataItem(VALID_PARENTID, dataItemName, "description", ["tag1","tag2","tag3"])
+            self.assertDictContainsSubset({'name':dataItemName,
+                                           'encryption':'NONE',
+                                           'description':'description',
+                                           'tags':["tag1","tag2","tag3"]},
+                                          elfcloudclient.getDataItemInfo(TEST_VAULT_ID, dataItemName))
+            
+    @connect
+    def test_removeDataItem_ShouldNotBeInContentList(self):
+        with tempfile.NamedTemporaryFile('wb') as tf:
+            tf.write(self.DATA)
+            tf.flush()
+            dataItemName = basename(tf.name)
+            elfcloudclient.upload(VALID_PARENTID, dataItemName, tf.name)
+            
+            items = elfcloudclient.listContent(TEST_VAULT_ID)
+            self.assertTrue(any(i['name'] == dataItemName for i in items))
+                
+            elfcloudclient.removeDataItem(TEST_VAULT_ID, dataItemName)
+
+            items = elfcloudclient.listContent(TEST_VAULT_ID)
+            self.assertFalse(any(i['name'] == dataItemName for i in items))
+    
+    @connect
+    def test_rename(self):
+        with tempfile.NamedTemporaryFile('wb') as tf:
+            tf.write(self.DATA)
+            tf.flush()
+            dataItemName = basename(tf.name)
+            newDataItemName = dataItemName+"_new_name_prefix"
+            elfcloudclient.upload(VALID_PARENTID, dataItemName, tf.name)
+            
+            elfcloudclient.renameDataItem(VALID_PARENTID, dataItemName, newDataItemName)
+
+            items = elfcloudclient.listContent(TEST_VAULT_ID)
+            self.assertFalse(any(i['name'] == dataItemName for i in items))
+            self.assertTrue(any(i['name'] == newDataItemName for i in items))        
     
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
