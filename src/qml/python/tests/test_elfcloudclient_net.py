@@ -15,6 +15,7 @@ import unittest.mock
 from unittest.mock import call
 import tempfile
 from os.path import basename
+from contextlib import contextmanager
 import elfcloudclient
 
 VALID_USERNAME = "unittestuser" # Set proper username
@@ -28,24 +29,27 @@ TEST_VAULT_ID = 687590
 
 VALID_PARENTID = TEST_VAULT_ID
 
-def connect(func):
-    from functools import wraps
-    @wraps(func)
-    def _connect(*args, **kwargs):
-        if not elfcloudclient.isConnected():
-            elfcloudclient.connect(VALID_USERNAME, VALID_PASSWORD)
-        return func(*args, **kwargs)
-    return _connect
-
 def removeAllDataItemsFromContainer(containerId):
     for i in elfcloudclient.listContent(containerId):
-        elfcloudclient.removeDataItem(containerId, i['name'])
-    
+        if i['type'] == 'dataitem':
+            elfcloudclient.removeDataItem(containerId, i['name'])
+        else:
+            elfcloudclient.removeCluster(i['id'])
 
-class Test_elfcloudclient_connection_cloud(unittest.TestCase):
+def setUpModule():
+    elfcloudclient.connect(VALID_USERNAME, VALID_PASSWORD)
+
+def tearDownModule():
+    removeAllDataItemsFromContainer(TEST_VAULT_ID)
+    elfcloudclient.disconnect()
+
+class Test_connection_cloud(unittest.TestCase):
+
+    def setUp(self):
+        elfcloudclient.disconnect() # Do disconnect since we will test connections    
 
     def tearDown(self):
-        elfcloudclient.disconnect()    
+        elfcloudclient.connect(VALID_USERNAME, VALID_PASSWORD) # Leave connected state    
 
     def test_connect_disconnect_ValidCreditialsGiven_ShouldConnectSuccesfully(self):
         self.assertFalse(elfcloudclient.isConnected())
@@ -63,30 +67,24 @@ class Test_elfcloudclient_connection_cloud(unittest.TestCase):
         self.assertFalse(elfcloudclient.isConnected())       
 
 
-class Test_elfcloudclient_subscription_cloud(unittest.TestCase):
+class Test_subscription_cloud(unittest.TestCase):
 
-    
     def tearDown(self):
-        elfcloudclient.disconnect()    
-
+        elfcloudclient.connect(VALID_USERNAME, VALID_PASSWORD) # Leave connected state since one test does disconnect
+    
     def test_getSubscriptionInfo_NotConnected_ShouldRaiseException(self):
+        elfcloudclient.disconnect()
         self.assertRaises(Exception, elfcloudclient.getSubscriptionInfo)
 
-    @connect
     def test_getSubscriptionInfo_ShouldReturnValidSubscription(self):
         self.assertDictContainsSubset({'Status':'active'}, elfcloudclient.getSubscriptionInfo())
 
-class Test_elfcloudclient_upload_download_cloud(unittest.TestCase):
+class Test_upload_download_cloud(unittest.TestCase):
 
     DATA = bytes(range(256)) * 4 * 1000 * 1
     EXPECTED_CHUNKS = [i_ for i_ in range(elfcloudclient.DEFAULT_REQUEST_SIZE_BYTES, len(DATA), \
                                           elfcloudclient.DEFAULT_REQUEST_SIZE_BYTES)] + [len(DATA)]
     
-    def tearDown(self):
-        removeAllDataItemsFromContainer(TEST_VAULT_ID)
-        elfcloudclient.disconnect()    
-
-    @connect
     def test_upload(self):
         chunkCb = unittest.mock.Mock()
         with tempfile.NamedTemporaryFile('wb') as tf:
@@ -96,30 +94,22 @@ class Test_elfcloudclient_upload_download_cloud(unittest.TestCase):
             EXPECTED_CB_PARAMS = [call(len(self.DATA),i_) for i_ in self.EXPECTED_CHUNKS]
             chunkCb.assert_has_calls(EXPECTED_CB_PARAMS)
 
+@contextmanager
+def createRemoteTempFile():
+    DATA = bytes(range(256))
+    with tempfile.NamedTemporaryFile('wb') as tf:
+        tf.write(DATA)
+        tf.flush()
+        dataItemName = basename(tf.name)
+        elfcloudclient.upload(VALID_PARENTID, dataItemName, tf.name)
+        yield dataItemName
 
-class Test_elfcloudclient_dataitems_and_vaults_cloud(unittest.TestCase):
+class Test_dataitems_cloud(unittest.TestCase):
 
     DATA = bytes(range(256))    
 
-    def tearDown(self):
-        removeAllDataItemsFromContainer(TEST_VAULT_ID)
-        elfcloudclient.disconnect()    
-
-    @connect
-    def test_listVaults_TestVaultShouldBeListed(self):
-        for vault in elfcloudclient.listVaults():
-            if vault['name'] == TEST_VAULT_NAME and vault['type'] == 'vault' and vault['id'] == TEST_VAULT_ID:
-                return
-        self.fail("not found expected vault")
-    
-    @connect
     def test_listContent_getDataItemInfo_updateDataItem_ListedAndModifiedDataItemShouldHaveValidInfo(self):
-        with tempfile.NamedTemporaryFile('wb') as tf:
-            tf.write(self.DATA)
-            tf.flush()
-            dataItemName = basename(tf.name)
-            elfcloudclient.upload(VALID_PARENTID, dataItemName, tf.name)
-
+        with createRemoteTempFile() as dataItemName:
             items = elfcloudclient.listContent(VALID_PARENTID)
             self.assertTrue(any(i['name'] == dataItemName for i in items))
             self.assertDictContainsSubset({'name':dataItemName,
@@ -134,36 +124,49 @@ class Test_elfcloudclient_dataitems_and_vaults_cloud(unittest.TestCase):
                                            'tags':["tag1","tag2","tag3"]},
                                           elfcloudclient.getDataItemInfo(TEST_VAULT_ID, dataItemName))
             
-    @connect
     def test_removeDataItem_ShouldNotBeInContentList(self):
-        with tempfile.NamedTemporaryFile('wb') as tf:
-            tf.write(self.DATA)
-            tf.flush()
-            dataItemName = basename(tf.name)
-            elfcloudclient.upload(VALID_PARENTID, dataItemName, tf.name)
-            
+        with createRemoteTempFile() as dataItemName:
             items = elfcloudclient.listContent(TEST_VAULT_ID)
             self.assertTrue(any(i['name'] == dataItemName for i in items))
-                
             elfcloudclient.removeDataItem(TEST_VAULT_ID, dataItemName)
 
             items = elfcloudclient.listContent(TEST_VAULT_ID)
             self.assertFalse(any(i['name'] == dataItemName for i in items))
     
-    @connect
     def test_rename(self):
-        with tempfile.NamedTemporaryFile('wb') as tf:
-            tf.write(self.DATA)
-            tf.flush()
-            dataItemName = basename(tf.name)
-            newDataItemName = dataItemName+"_new_name_prefix"
-            elfcloudclient.upload(VALID_PARENTID, dataItemName, tf.name)
-            
+        with createRemoteTempFile() as dataItemName:
+            newDataItemName = dataItemName+"_new_name_prefix"           
             elfcloudclient.renameDataItem(VALID_PARENTID, dataItemName, newDataItemName)
 
             items = elfcloudclient.listContent(TEST_VAULT_ID)
             self.assertFalse(any(i['name'] == dataItemName for i in items))
             self.assertTrue(any(i['name'] == newDataItemName for i in items))        
+
+class Test_vaults_and_clusters_cloud(unittest.TestCase):
+
+    def test_listVaults_TestVaultShouldBeListed(self):
+        for vault in elfcloudclient.listVaults():
+            if vault['name'] == TEST_VAULT_NAME and vault['type'] == 'vault' and vault['id'] == TEST_VAULT_ID:
+                return
+        self.fail("not found expected vault")
+        
+    def test_addCluster_renameCluster_removeCluster(self):
+        clusterId = elfcloudclient.addCluster(TEST_VAULT_ID, "new cluster")
+        self.assertTrue(any(i['name'] == "new cluster" and i['type'] == "cluster" \
+                            for i in elfcloudclient.listContent(TEST_VAULT_ID)))
+        
+        elfcloudclient.renameCluster(clusterId, "renamed cluster name")
+        self.assertFalse(any(i['name'] == "new cluster" and i['type'] == "cluster" \
+                             for i in elfcloudclient.listContent(TEST_VAULT_ID)))
+        self.assertTrue(any(i['name'] == "renamed cluster name" and i['type'] == "cluster" \
+                            for i in elfcloudclient.listContent(TEST_VAULT_ID)))
+
+        elfcloudclient.removeCluster(clusterId)
+        self.assertFalse(any(i['name'] == "new cluster" and i['type'] == "cluster" \
+                             for i in elfcloudclient.listContent(TEST_VAULT_ID)))
+        self.assertFalse(any(i['name'] == "renamed cluster name" and i['type'] == "cluster" \
+                             for i in elfcloudclient.listContent(TEST_VAULT_ID)))
+        
     
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
