@@ -1,7 +1,7 @@
 '''
 Created on Sep 17, 2016
 
-@author: @author: Teemu Ahola [teemuahola7@gmail.com]
+@author: Teemu Ahola [teemuahola7@gmail.com]
 '''
 
 import os
@@ -50,7 +50,7 @@ def handle_exception(func):
         except elfcloud.exceptions.ECException as e:
             raise ClientException(e.id, e.message) from e            
         except elfcloud.exceptions.ClientException as e:
-            raise ClientException(e.id, e.message) from e
+            raise ClientException(0, e.message) from e
         except NotConnected:
             raise
         except Exception as e:
@@ -67,7 +67,7 @@ def check_connected(func):
         return func(*args, **kwargs)
     return _check_connection
 
-
+@handle_exception
 def setRequestSize(sizeInBytes):
     client.set_request_size(sizeInBytes)
 
@@ -85,19 +85,23 @@ def connect(username, password):
         client = None
         raise   
 
+@handle_exception
 def isConnected():
     return client != None
 
+@handle_exception
 def disconnect():
     global client
     client = None
     logger.info("elfCLOUD client disconnected")
 
+@handle_exception
 def setEncryption(key, iv):
     client.encryption_mode = elfcloud.utils.ENC_AES256
     client.set_encryption_key(binascii.unhexlify(key))
     client.set_iv(binascii.unhexlify(iv))
 
+@handle_exception
 def clearEncryption():
     client.encryption_mode = elfcloud.utils.ENC_NONE    
 
@@ -131,9 +135,6 @@ def upload(parentId, remotename, filename, chunkCb=None):
     with open(filename, "rb") as fileobj:
         fo = _FileObj(fileobj)
         client.store_data(int(parentId), remotename, fo)
-
-def cancelUpload(uid, cb=None):
-    pass
 
 @handle_exception
 @check_connected
@@ -182,39 +183,77 @@ def listContent(parentId):
         
     return contentList
 
+@handle_exception
+@check_connected
+def getDataItemInfo(parentId, name):
+    dataitem = client.get_dataitem(parentId, name)
+    return {'id': dataitem.dataitem_id,
+            'name': dataitem.name,
+            'size': dataitem.size,
+            'description': dataitem.description if dataitem.description else '',
+            'tags': dataitem.tags if dataitem.tags else [],
+            'accessed': dataitem.last_accessed_date if dataitem.last_accessed_date else '',
+            'contentHash': dataitem.content_hash if dataitem.content_hash else '',
+            'encryption': dataitem.__dict__.get('meta').get('ENC', "NONE"),
+            'keyHash': dataitem.key_hash if dataitem.key_hash else ''}
 
-def getDataItemInfo(cbObj, parentId, name):
-    pass
-
+@handle_exception
+@check_connected
 def updateDataItem(parentId, name, description=None, tags=None):
-    pass
+    client.update_dataitem(parentId, name, description, tags)
 
-def download(cbObj, parentId, name, outputPath, key=None):
-    pass
+@handle_exception
+@check_connected
+def download(parentId, name, outputPath, key=None, chunkCb=None):
+    data = client.fetch_data(int(parentId), name)['data'] 
+    dataLength = data.fileobj.getheader('Content-Length') # Nasty way to get total size since what if Content-Length does not exist.
+                                                          # I haven't found good way to provide this information in upper level sw.
+    dataFetched = 0
+    with open(outputPath, mode='wb') as outputFile:
+        for chunk in data:
+            outputFile.write(chunk)
+            dataFetched += len(chunk)
+            _sendDataItemChunkFetchedSignal(parentId, name, dataLength, dataFetched)
 
-def cancelDownload(uid, cb=None):
-    pass
+    _sendCompletedSignal(cbObj, True, parentId, name, outputPath)
 
-def removeDataItem(cbObj, parentId, name):
-    pass
 
-def renameDataItem(cbObj, parentId, oldName, newName):
-    pass
+@handle_exception
+@check_connected
+def removeDataItem(parentId, name):
+    client.remove_dataitem(parentId, name)
 
-def addVault(cbObj, name):
-    pass
+@handle_exception
+@check_connected
+def renameDataItem(parentId, oldName, newName):
+    client.rename_dataitem(parentId, oldName, newName)
 
-def removeVault(cbObj, vaultId):
-    pass
+@handle_exception
+@check_connected
+def addVault(name):
+    return client.add_vault(name, VALULT_TYPES[0]).id
 
-def renameVault(cbObj):
-    pass
+@handle_exception
+@check_connected
+def removeVault(vaultId):
+    client.remove_vault(vaultId)
 
-def addCluster(cbObj, parentId, name):
-    pass
+@handle_exception
+@check_connected
+def renameVault(vaultId, newName):
+    client.rename_vault(vaultId, newName)
 
-def removeCluster(cbObj, clusterId):
-    pass
+@handle_exception
+@check_connected
+def addCluster(parentId, name):
+    return client.add_cluster(name, parentId).id
 
-def renameCluster(cbObj):
-    pass
+@handle_exception
+@check_connected
+def removeCluster(clusterId):
+    client.remove_cluster(clusterId)
+    
+@handle_exception
+@check_connected
+def renameCluster(clusterId, newName):
+    client.rename_cluster(clusterId, newName)

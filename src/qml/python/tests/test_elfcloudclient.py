@@ -1,9 +1,13 @@
 '''
 Created on Sep 17, 2016
 
-@author: teemu
+@author: Teemu Ahola [teemuahola7@gmail.com]
+
+Many of the APIs are quite simple pass-through type calls,
+not all of them are tested in here with mocks. Instead testing
+focuses on real elfCLOUD access in `test_elfcloudclient_net`.
 '''
-import unittest
+
 import unittest.mock
 from unittest.mock import call
 import io
