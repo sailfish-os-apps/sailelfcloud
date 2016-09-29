@@ -68,7 +68,8 @@ Page {
         else if (modelItem["type"] === "cluster")
             return "";
         else if (modelItem["type"] === "vault")
-            return qsTr("owner: ") + modelItem["ownerFirstName"] + " " + modelItem["ownerLastName"];
+            return qsTr("owner: ") + modelItem["ownerFirstName"] + " " + modelItem["ownerLastName"] + " " +
+                    qsTr("size: ") + modelItem["size"];
     }
 
     function _openItem(modelItem) {

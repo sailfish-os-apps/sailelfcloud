@@ -109,3 +109,7 @@ def storeDataItem(cbObj, parentId, remotename, filename):
                         lambda *args : _uploadCb(parentId, remotename, filename, *args),
                         lambda totalSize, totalSizeStored : _uploadChunkCb(parentId, remotename, filename, totalSize, totalSizeStored)))
     
+@worker.run_async
+@handle_exception(cbObjName='cbObj')    
+def listContent(cbObj, parentId):
+    _sendCompletedSignal(cbObj, elfcloudclient.listContent(parentId))

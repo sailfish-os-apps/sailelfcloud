@@ -141,11 +141,11 @@ def upload(parentId, remotename, filename, chunkCb=None):
 def listVaults():
     vaultList = []
     vaults = client.list_vaults()   
-
+    print ("aaaaaaaaaa", vaults[0].__dict__)
     for vault in vaults:
         vaultList.append({'name': vault.name,
                           'id': vault.id,
-                          'size': 0,
+                          'size': vault.size,
                           'type': 'vault',
                           'vaultType': vault.vault_type,
                           'permissions': vault.permissions,

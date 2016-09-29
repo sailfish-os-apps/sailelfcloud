@@ -117,8 +117,8 @@
 <context>
     <name>ContainerPage</name>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="124"/>
-        <location filename="../qml/pages/ContainerPage.qml" line="172"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="125"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="173"/>
         <source>Vaults</source>
         <translation type="unfinished"></translation>
     </message>
@@ -133,32 +133,37 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="106"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="72"/>
+        <source>size: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/ContainerPage.qml" line="107"/>
         <source>Removing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="179"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="180"/>
         <source>Add vault</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="185"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="186"/>
         <source>Remove cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="191"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="192"/>
         <source>Add cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="197"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="198"/>
         <source>Upload file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="203"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="204"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
