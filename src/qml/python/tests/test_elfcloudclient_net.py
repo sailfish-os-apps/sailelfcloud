@@ -18,8 +18,8 @@ from os.path import basename
 from contextlib import contextmanager
 import elfcloudclient
 
-VALID_USERNAME = "unittestuser" # Set proper username
-VALID_PASSWORD = "utyghK!!" # Set proper password
+VALID_USERNAME = "xxxx" # Set proper username
+VALID_PASSWORD = "xxxx" # Set proper password
 
 INVALID_USERNAME = "invalid_username"
 INVALID_PASSWORD = "invalid_password"
@@ -133,7 +133,7 @@ class Test_dataitems_cloud(unittest.TestCase):
             items = elfcloudclient.listContent(TEST_VAULT_ID)
             self.assertFalse(any(i['name'] == dataItemName for i in items))
     
-    def test_rename(self):
+    def test_rename_ShouldChangeNameOfDataItem(self):
         with createRemoteTempFile() as dataItemName:
             newDataItemName = dataItemName+"_new_name_prefix"           
             elfcloudclient.renameDataItem(VALID_PARENTID, dataItemName, newDataItemName)
@@ -144,11 +144,14 @@ class Test_dataitems_cloud(unittest.TestCase):
 
 class Test_vaults_and_clusters_cloud(unittest.TestCase):
 
-    def test_listVaults_TestVaultShouldBeListed(self):
-        for vault in elfcloudclient.listVaults():
-            if vault['name'] == TEST_VAULT_NAME and vault['type'] == 'vault' and vault['id'] == TEST_VAULT_ID:
-                return
-        self.fail("not found expected vault")
+    def test_addVault_listVaults_removeVault_AddedVaultShouldBeListed(self):
+        vaultId = elfcloudclient.addVault("new vault")
+        self.assertTrue(any(i['name'] == "new vault" and i['id'] == vaultId and i['type'] == "vault" \
+                            for i in elfcloudclient.listVaults()))
+        
+        elfcloudclient.removeVault(vaultId)
+        self.assertFalse(any(i['name'] == "new vault" and i['id'] == vaultId and i['type'] == "vault" \
+                            for i in elfcloudclient.listVaults()))
         
     def test_addCluster_renameCluster_removeCluster(self):
         clusterId = elfcloudclient.addCluster(TEST_VAULT_ID, "new cluster")
