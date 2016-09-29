@@ -35,7 +35,7 @@ def uploadTestFile(data):
     cb.assert_called_once_with()
     chunkCb.assert_has_calls([call(len(data),i_) for i_ in EXPECTED_CHUNKS])
 
-class Test_uploader_network(unittest.TestCase):
+class Test_uploader_cloud(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
