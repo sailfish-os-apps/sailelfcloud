@@ -28,6 +28,7 @@ TEST_VAULT_NAME = 'unittest'
 TEST_VAULT_ID = 687590
 
 VALID_PARENTID = TEST_VAULT_ID
+INVALID_PARENTID = -1
 
 def removeAllDataItemsFromContainer(containerId):
     for i in elfcloudclient.listContent(containerId):
@@ -93,6 +94,27 @@ class Test_upload_download_cloud(unittest.TestCase):
             elfcloudclient.upload(VALID_PARENTID, basename(tf.name), tf.name, chunkCb)
             EXPECTED_CB_PARAMS = [call(len(self.DATA),i_) for i_ in self.EXPECTED_CHUNKS]
             chunkCb.assert_has_calls(EXPECTED_CB_PARAMS)
+
+    def test_upload_InvalidParentIdGiven_ShouldRaiseExcpetion(self):
+        with tempfile.NamedTemporaryFile('wb') as tf:
+            tf.write(self.DATA)
+            tf.flush()
+            self.assertRaises(elfcloudclient.ClientException,
+                              elfcloudclient.upload, INVALID_PARENTID, basename(tf.name), tf.name)
+            
+    def test_upload_NoFileGiven_ShouldRaiseExcpetion(self):
+            self.assertRaises(elfcloudclient.ClientException,
+                              elfcloudclient.upload, VALID_PARENTID, None, "filename")
+
+    def test_upload_InvalidFileGiven_ShouldRaiseExcpetion(self):
+            self.assertRaises(elfcloudclient.ClientException,
+                              elfcloudclient.upload, VALID_PARENTID, "None", "filename")
+
+    def test_upload_EmptyFileGiven_ShouldRaiseExcpetion(self):
+        with tempfile.NamedTemporaryFile('w+') as tf:
+            self.assertRaises(elfcloudclient.ClientException,
+                              elfcloudclient.upload, VALID_PARENTID, basename(tf.name), tf.name)
+
 
 @contextmanager
 def createRemoteTempFile():

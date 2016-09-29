@@ -1,20 +1,39 @@
 '''
 Created on Sep 19, 2016
 
-@author: @author: Teemu Ahola [teemuahola7@gmail.com]
+@author: Teemu Ahola [teemuahola7@gmail.com]
 '''
-import unittest
+import unittest.mock
+from unittest.mock import call
 import tempfile
-import os.path
-import uploader
 from os.path import basename
+from contextlib import contextmanager
 import elfcloudclient
+import uploader
 
 USERNAME = "xxxx" # Set proper username
 PASSWORD = "xxxx" # Set proper password
 
 VALID_PARENTID = 687590
 INVALID_PARENTID = -1
+
+@contextmanager
+def uploadTestFile(data):
+    EXPECTED_CHUNKS = [i_ for i_ in range(elfcloudclient.DEFAULT_REQUEST_SIZE_BYTES, len(data), \
+                                      elfcloudclient.DEFAULT_REQUEST_SIZE_BYTES)] + [len(data)]
+
+    chunkCb = unittest.mock.Mock()
+    cb = unittest.mock.Mock()
+    
+    with tempfile.NamedTemporaryFile('wb') as tf:
+        tf.write(data)
+        tf.flush()
+        remoteName = basename(tf.name)
+        uploader.upload(tf.name, VALID_PARENTID, remoteName, key=None, cb=cb, chunkCb=chunkCb)
+        yield
+        
+    cb.assert_called_once_with()
+    chunkCb.assert_has_calls([call(len(data),i_) for i_ in EXPECTED_CHUNKS])
 
 class Test_uploader_network(unittest.TestCase):
 
@@ -27,31 +46,24 @@ class Test_uploader_network(unittest.TestCase):
         elfcloudclient.disconnect()
 
 
-    def test_upload_ValidParentIdGiven_ShouldUploadFileToServer(self):
-        with tempfile.NamedTemporaryFile('w+') as tf:
-            tf.write("some data")
-            tf.flush()
-            elfcloudclient.upload(VALID_PARENTID, basename(tf.name), tf.name)
+    def test_upload_wait_ShouldUploadFileToServer_ShouldWaitUntilUploadCompleted(self):
+        DATA = bytes(range(256)) * 4 * 1000 * 2
+        with uploadTestFile(DATA):
+            uploader.wait() 
 
-    def test_upload_InvalidParentIdGiven_ShouldRaiseExcpetion(self):
-        with tempfile.NamedTemporaryFile('w+') as tf:
-            tf.write("some data")
-            tf.flush()
-            self.assertRaises(elfcloudclient.ClientException,
-                              elfcloudclient.upload, INVALID_PARENTID, basename(tf.name), tf.name)
+    def test_upload_ManyFilesGiven_wait_ShouldUploadFileToServer_ShouldWaitUntilUploadCompleted(self):
+        DATA1 = bytes(range(256)) * 4 * 1000 * 2
+        with uploadTestFile(DATA1):
+            DATA2 = bytes(range(256)) * 4 * 1000 * 1
+            with uploadTestFile(DATA2):
+                uploader.wait()
 
-    def test_upload_NoFileGiven_ShouldRaiseExcpetion(self):
-            self.assertRaises(elfcloudclient.ClientException,
-                              elfcloudclient.upload, VALID_PARENTID, None, "filename")
-
-    def test_upload_InvalidFileGiven_ShouldRaiseExcpetion(self):
-            self.assertRaises(elfcloudclient.ClientException,
-                              elfcloudclient.upload, VALID_PARENTID, "None", "filename")
-
-    def test_upload_EmptyFileGiven_ShouldRaiseExcpetion(self):
-        with tempfile.NamedTemporaryFile('w+') as tf:
-            self.assertRaises(elfcloudclient.ClientException,
-                              elfcloudclient.upload, VALID_PARENTID, basename(tf.name), tf.name)
+    def test_upload_ManyFilesGiven_cancel_ShouldNotUploadCancelled(self):
+        DATA1 = bytes(range(256)) * 4 * 1000 * 2
+        with uploadTestFile(DATA1):
+            DATA2 = bytes(range(256)) * 4 * 1000 * 1
+            with uploadTestFile(DATA2):
+                uploader.wait()
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

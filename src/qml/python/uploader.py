@@ -1,7 +1,7 @@
 '''
 Created on Sep 15, 2016
 
-@author: teemu
+@author: Teemu Ahola [teemuahola7@gmail.com]
 '''
 
 import threading
@@ -195,6 +195,7 @@ def cancel(uid, cb=None):
     UPLOADER.submitTask(CancelUploadTask.Create(uid, cb))
 
 def wait():
+    """Returns when all running tasks are compeleted."""
     UPLOADER.waitUntilTasksDone()
 
 def terminate():
