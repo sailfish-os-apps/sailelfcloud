@@ -205,7 +205,7 @@ def updateDataItem(parentId, name, description=None, tags=None):
 @handle_exception
 @check_connected
 def download(parentId, name, outputPath, key=None, chunkCb=None):
-    data = client.fetch_data(int(parentId), name)['data'] 
+    data = client.fetch_data(parentId, name)['data'] 
     dataLength = data.fileobj.getheader('Content-Length') # Nasty way to get total size since what if Content-Length does not exist.
                                                           # I haven't found good way to provide this information in upper level sw.
     dataFetched = 0
@@ -213,9 +213,7 @@ def download(parentId, name, outputPath, key=None, chunkCb=None):
         for chunk in data:
             outputFile.write(chunk)
             dataFetched += len(chunk)
-            _sendDataItemChunkFetchedSignal(parentId, name, dataLength, dataFetched)
-
-    _sendCompletedSignal(cbObj, True, parentId, name, outputPath)
+            if len(chunk) and chunkCb and callable(chunkCb): chunkCb(dataLength, dataFetched)
 
 
 @handle_exception

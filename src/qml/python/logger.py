@@ -1,7 +1,7 @@
 '''
 Created on Sep 17, 2016
 
-@author: teemu
+@author: Teemu Ahola [teemuahola7@gmail.com]
 '''
 
 try:
