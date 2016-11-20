@@ -31,16 +31,20 @@ Page {
         _updateTextViewForPlainFile(helpers.readPlainFile(filename), mime);
     }
 
-    function _displayFile(status, parentId, name, localPath) {
-        if (parentId === parentContainerId && name === dataItemName)
-        {
-            var mime = helpers.getFileMimeType(localPath);
-            console.debug("File:", localPath, "mime type is", mime);
+    function _displayFile(parentId, name, localPath) {
+        var mime = helpers.getFileMimeType(localPath);
+        console.debug("File:", localPath, "mime type is", mime);
 
-            if (mime === "text/plain")
-                _displayPlainFile(localPath, mime);
-            else
-                _displayUnknownFile(localPath, mime);
+        if (mime === "text/plain")
+            _displayPlainFile(localPath, mime);
+        else
+            _displayUnknownFile(localPath, mime);
+    }
+
+    function _handleFetchDataItemCompleted(parentId, remoteName, localName) {
+        if (parentId === parentContainerId && remoteName === dataItemName)
+        {
+            _displayFile(parentId, remoteName, localName);
         }
     }
 
@@ -53,14 +57,16 @@ Page {
         else
             elfCloud.clearEncryption();
 
-        elfCloud.fetchDataItem(parentContainerId, dataItemName, outputPath, _displayFile);
+        elfCloud.fetchDataItem(parentContainerId, dataItemName, outputPath);
     }
 
     Component.onCompleted: {
+        elfCloud.fetchDataItemCompleted.connect(_handleFetchDataItemCompleted);
         _fetchDataItem();
     }
 
     Component.onDestruction: {
+        elfCloud.fetchDataItemCompleted.disconnect(_handleFetchDataItemCompleted);
     }
 
     BusyIndicator {

@@ -6,18 +6,19 @@ Python {
     signal readyForUse()
 
     signal fetchDataItemChunkCompleted(int parentId, string name, int totalSize, int fetchedSize)
+    signal fetchDataItemCompleted(int parentId, string remoteName, string localName)
 
     signal fetchAndMoveDataItemStarted(int parentId, string name, string localName)
     signal fetchAndMoveDataItemCompleted(int parentId, string name, string localName)
     signal fetchAndMoveDataItemFailed(int parentId, string name, string localName, string reason)
 
     signal storeDataItemChunkCompleted(int parentId, string remoteName, string localName, int totalSize, int storedSize)
-
-    signal storeDataItemsStarted(int parentId, var remoteLocalNames)
-    signal storeDataItemStarted(int parentId, string remoteName, string localName, int dataItemsLeft)
     signal storeDataItemCompleted(int parentId, string remoteName, string localName, int dataItemsLeft)
-    signal storeDataItemFailed(int parentId, string remoteName, string localName, int dataItemsLeft, string reason)
-    signal storeDataItemsCompleted(int parentId, var remoteLocalNames)
+
+//    signal storeDataItemsStarted(int parentId, var remoteLocalNames)
+//    signal storeDataItemStarted(int parentId, string remoteName, string localName, int dataItemsLeft)
+//    signal storeDataItemFailed(int parentId, string remoteName, string localName, int dataItemsLeft, string reason)
+//    signal storeDataItemsCompleted(int parentId, var remoteLocalNames)
 
     signal contentChanged(int containerId)
     signal exceptionOccurred(int id, string message)
@@ -39,11 +40,12 @@ Python {
                 });
 
         setHandler('exception', exceptionOccurred);
-        setHandler('fetch-dataitem-chunk', _fetchDataItemChunkCb);
-        setHandler('store-dataitem-chunk', _storeDataItemChunkCb);
-        setHandler('store-dataitem-completed', _storeDataItemCompletedCb);
         setHandler('completed', _handleCompleted);
         setHandler('failed', _handleFailed);
+        setHandler('fetch-dataitem-chunk', _fetchDataItemChunkCb);
+        setHandler('fetch-dataitem-completed', _fetchDataItemCompletedCb)
+        setHandler('store-dataitem-chunk', _storeDataItemChunkCb);
+        setHandler('store-dataitem-completed', _storeDataItemCompletedCb);
     }
 
     function _callCbWithArgs(cb, args) {
@@ -196,6 +198,10 @@ Python {
         fetchDataItemChunkCompleted(parentId, name, totalSize, sizeFetched)
     }
 
+    function _fetchDataItemCompletedCb(parentId, remoteName, localName) {
+        fetchDataItemCompleted(parentId, remoteName, localName)
+    }
+
     function fetchDataItem(parentId, name, outputPath, callback) {
         return _call("fetchDataItem", callback, parentId, name, outputPath);
     }
@@ -224,6 +230,7 @@ Python {
 
     function _storeDataItemCompletedCb(parentId, remoteName, localName, exception) {
         storeDataItemCompleted(parentId, remoteName, localName, 0);
+        contentChanged(parentId);
     }
 
     function storeDataItems(parentId, localPaths, callback) {
