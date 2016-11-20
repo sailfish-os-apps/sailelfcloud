@@ -18,6 +18,7 @@ be cleared if the owner of the `callback object` goes out of scope.
 
 import elfcloudclient
 import uploader
+import downloader
 import worker
 import logger
 
@@ -85,6 +86,9 @@ def connect(cbObj, username, password):
 def disconnect(cbObj):
     _sendCompletedSignal(cbObj, elfcloudclient.disconnect())
 
+def isConnected():
+    return elfcloudclient.isConnected()
+
 @worker.run_async
 @handle_exception(cbObjName='cbObj')    
 def getSubscription(cbObj):
@@ -94,6 +98,7 @@ def getSubscription(cbObj):
 @handle_exception(cbObjName='cbObj')    
 def listVaults(cbObj):
     _sendCompletedSignal(cbObj, elfcloudclient.listVaults())
+
 
 def _uploadCb(parentId, remoteName, localName, *args):
     pyotherside.send('store-dataitem-completed', parentId, remoteName, localName)
@@ -108,8 +113,59 @@ def storeDataItem(cbObj, parentId, remotename, filename):
                         remotename, None,
                         lambda *args : _uploadCb(parentId, remotename, filename, *args),
                         lambda totalSize, totalSizeStored : _uploadChunkCb(parentId, remotename, filename, totalSize, totalSizeStored)))
+
+def _downloadCb(parentId, remoteName, localName, *args):
+    pyotherside.send('fetch-dataitem-completed', parentId, remoteName, localName)
+
+def _downloadChunkCb(parentId, remoteName, localName, totalSize, totalSizeStored):
+    pyotherside.send('fetch-dataitem-chunk', parentId, remoteName, localName, totalSize, totalSizeStored)
+
+@handle_exception(cbObjName='cbObj')    
+def fetchDataItem(cbObj, parentId, remotename, filename):
+    _sendCompletedSignal(cbObj,
+        downloader.download(filename, parentId,
+                        remotename, None,
+                        lambda *args : _downloadCb(parentId, remotename, filename, *args),
+                        lambda totalSize, totalSizeFetched : _downloadChunkCb(parentId, remotename, filename, totalSize, totalSizeFetched)))
     
 @worker.run_async
 @handle_exception(cbObjName='cbObj')    
 def listContent(cbObj, parentId):
     _sendCompletedSignal(cbObj, elfcloudclient.listContent(parentId))
+
+@worker.run_async
+@handle_exception(cbObjName='cbObj')
+def getDataItemInfo(cbObj, parentId, name):
+    _sendCompletedSignal(cbObj, elfcloudclient.getDataItemInfo(parentId, name))
+
+@worker.run_async
+@handle_exception(cbObjName='cbObj')
+def removeDataItem(cbObj, parentId, name):
+    _sendCompletedSignal(cbObj, elfcloudclient.removeDataItem(parentId, name))
+
+@worker.run_async
+@handle_exception(cbObjName='cbObj')
+def renameDataItem(cbObj, parentId, oldName, newName):
+    _sendCompletedSignal(cbObj, elfcloudclient.renameDataItem(parentId, oldName, newName))
+
+@worker.run_async
+@handle_exception(cbObjName='cbObj')
+def addVault(cbObj, name):
+    _sendCompletedSignal(cbObj, elfcloudclient.addVault(name))
+
+@worker.run_async
+@handle_exception(cbObjName='cbObj')
+def removeVault(cbObj, vaultId):
+    _sendCompletedSignal(cbObj, elfcloudclient.removeVault(vaultId))
+
+@worker.run_async
+@handle_exception(cbObjName='cbObj')
+def addCluster(cbObj, parentId, name):
+    _sendCompletedSignal(cbObj, elfcloudclient.addCluster(parentId, name))
+    
+@worker.run_async
+@handle_exception(cbObjName='cbObj')
+def removeCluster(cbObj, clusterId):
+    _sendCompletedSignal(cbObj, elfcloudclient.removeCluster(clusterId))
+
+    
