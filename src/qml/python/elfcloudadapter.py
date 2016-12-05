@@ -127,6 +127,14 @@ def fetchDataItem(cbObj, parentId, remotename, filename):
                         remotename, None,
                         lambda *args : _downloadCb(parentId, remotename, filename, *args),
                         lambda totalSize, totalSizeFetched : _downloadChunkCb(parentId, remotename, filename, totalSize, totalSizeFetched)))
+
+@handle_exception(cbObjName='cbObj')    
+def listStores(cbObj):
+    uploader.list(lambda uploads : _sendCompletedSignal(cbObj, uploads))
+
+@handle_exception(cbObjName='cbObj')    
+def listFetches(cbObj):
+    downloader.list(lambda downloads : _sendCompletedSignal(cbObj, downloads))
     
 @worker.run_async
 @handle_exception(cbObjName='cbObj')    

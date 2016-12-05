@@ -240,7 +240,15 @@ Python {
             var remoteName = helpers.getFilenameFromPath(localPaths[i]);
             _call("storeDataItem", undefined, parentId, remoteName, localName);
         }
-   }
+    }
+
+    function listStores(callback) {
+        return _call("listStores", function() { _callCbWithArgs(callback, arguments); })
+    }
+
+    function listFetches(callback) {
+        return _call("listFetches", function() { _callCbWithArgs(callback, arguments); })
+    }
 
     function removeDataItem(parentId, name, callback) {
         return _call("removeDataItem", function() { _callCbWithArgs(callback, arguments); contentChanged(parentId); },

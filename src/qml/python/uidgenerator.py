@@ -24,8 +24,15 @@ class UidGenerator(object):
     def get(self):
         self.value += 1
         return self.value
+    
+    @atomic
+    def peek(self):
+        return self.value
 
 UID_GENERATOR = UidGenerator()
 
 def getUid():
     return UID_GENERATOR.get()
+
+def peekUid():
+    return UID_GENERATOR.peek()

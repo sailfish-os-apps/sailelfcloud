@@ -62,6 +62,11 @@
         <source>Configuration</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../qml/items/CommonPullDownMenu.qml" line="11"/>
+        <source>Transfers</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConfigPage</name>
@@ -769,6 +774,44 @@
     <message>
         <location filename="../qml/pages/SubscriptionInfoPage.qml" line="33"/>
         <source>Subscription Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TransfersPage</name>
+    <message>
+        <location filename="../qml/pages/TransfersPage.qml" line="17"/>
+        <source>Uploads</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/TransfersPage.qml" line="26"/>
+        <source>Ongoing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/TransfersPage.qml" line="92"/>
+        <source>Size:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/TransfersPage.qml" line="101"/>
+        <source>Transfers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/TransfersPage.qml" line="108"/>
+        <source>Refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/TransfersPage.qml" line="175"/>
+        <source>%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/TransfersPage.qml" line="182"/>
+        <source>No transfers</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

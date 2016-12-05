@@ -7,5 +7,9 @@ PullDownMenu {
         text: qsTr("Configuration")
         onClicked: pageStack.push(Qt.resolvedUrl("../pages/ConfigPage.qml"));
     }
+    MenuItem {
+        text: qsTr("Transfers")
+        onClicked: pageStack.push(Qt.resolvedUrl("../pages/TransfersPage.qml"));
+    }
 }
 

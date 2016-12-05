@@ -4,6 +4,7 @@ Created on Sep 15, 2016
 @author: Teemu Ahola [teemuahola7@gmail.com]
 '''
 
+import os
 import threading
 import elfcloudclient
 import queue
@@ -53,6 +54,18 @@ class CancelUploadTask(tasks.CancelTask):
         
     def __str__(self):
         return "CancelTask: %i" % (self.uidOfTaskToCancel)
+
+class ListUploadTask(tasks.ListTask):
+
+    @classmethod
+    def Create(cls, cb):
+        return cls(cb)
+    
+    def __init__(self, cb):
+        super().__init__(cb)
+        
+    def __str__(self):
+        return "ListTask"
 
 class Uploader(threading.Thread):
     
@@ -107,6 +120,7 @@ class UploadManager(threading.Thread):
         self.commandQueue = queue.Queue()
         self.submitQueue = queue.Queue(1)
         self.todoQueue = deque()
+        self.currentUploaderTask = None        
         self.uploader = Uploader(self.submitQueue, self.commandQueue)
         self.idle.set()
         self.start()
@@ -123,13 +137,14 @@ class UploadManager(threading.Thread):
         self.commandQueue.put(task)
         return task.uid
    
-    def _submitTodoTaskToDownloader(self):
+    def _submitTodoTaskToUploader(self):
         if len(self.todoQueue) and self.submitQueue.unfinished_tasks == 0:
-            self.submitQueue.put(self.todoQueue.popleft())
+            self.currentUploaderTask = self.todoQueue.popleft()
+            self.submitQueue.put(self.currentUploaderTask)
 
     def _handleUploadTask(self, task):
         self.todoQueue.append(task)
-        self._submitTodoTaskToDownloader()
+        self._submitTodoTaskToUploader()
 
     def _callCb(self, task):
         if callable(task.cb):
@@ -137,7 +152,8 @@ class UploadManager(threading.Thread):
 
     def _handleUploadCompletedTask(self, task):
         self._callCb(task)
-        self._submitTodoTaskToDownloader()
+        self.currentUploaderTask = None
+        self._submitTodoTaskToUploader()
 
     def _handleCancelTask(self, task):
         try:
@@ -158,6 +174,25 @@ class UploadManager(threading.Thread):
         self.running = False
         self._submitTerminateTaskToUploader()
         self.uploader.join(1.5)
+        
+    def _handleListUploadTask(self, task):
+        uploads = []
+
+        if self.currentUploaderTask:
+            uploads.append({"uid":self.currentUploaderTask.uid,
+                            "remoteName":self.currentUploaderTask.remoteName,
+                            "parentId":self.currentUploaderTask.remoteParentId,
+                            "size":os.path.getsize(self.currentUploaderTask.localPath),
+                            "state":"ongoing"})
+
+        for t in self.todoQueue:
+            uploads.append({"uid":t.uid,
+                            "remoteName":t.remoteName,
+                            "parentId":t.remoteParentId,
+                            "size":os.path.getsize(t.localPath),
+                            "state":"todo"})
+            
+        if task.cb: task.cb(uploads)
 
     def _setBusy(self):
         self.idle.clear()
@@ -182,6 +217,8 @@ class UploadManager(threading.Thread):
                 self._handleUploadCompletedTask(task)
             elif type(task) == tasks.TerminateTask:
                 self._handleTerminateTask(task)
+            elif type(task) == ListUploadTask:
+                self._handleListUploadTask(task)
 
             self._setIdleIfNothingOngoingOrTodo()
             self.commandQueue.task_done()
@@ -193,6 +230,9 @@ def upload(localPath, remoteParentId, remoteName, key=None, cb=None, chunkCb=Non
 
 def cancel(uid, cb=None):
     UPLOADER.submitTask(CancelUploadTask.Create(uid, cb))
+
+def list(cb=None):
+    UPLOADER.submitTask(ListUploadTask.Create(cb))
 
 def wait():
     """Returns when all running tasks are compeleted."""

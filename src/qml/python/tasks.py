@@ -37,25 +37,6 @@ class XferTask(Task):
     def __init__(self, cb, *args):
         super().__init__(cb)
         
-
-class DownloadTask(XferTask):
-
-    @classmethod
-    def Create(cls, localPath, remoteParentId, remoteName, key=None, cb=None):
-        return cls(cb, localPath, remoteParentId, remoteName, key)
-    
-    def __init__(self, cb, remoteName, remoteParentId, localPath, key):
-        self.remoteName = remoteName
-        self.remoteParentId = remoteParentId
-        self.localPath = localPath
-        self.key = key
-
-class DownloadCompletedTask(DownloadTask):
-    
-    @classmethod
-    def Create(cls, task):
-        return cls(task.cbObj, task.localPath, task.remoteParentId, task.remoteName, task.key)
-
  
 class WaitCompletionTask(object):
 
@@ -72,12 +53,7 @@ class CancelTask(XferTask):
     def uidOfTaskToCancel(self):
         return self.__uidOfTaskToCancel 
 
-class CancelDownloadTask(CancelTask):
-
-    @classmethod
-    def Create(cls, uidToCancel, cb):
-        return cls(uidToCancel, cb)
+class ListTask(Task):
     
-    def __init__(self, uidToCancel, cb):
-        super().__init__(uidToCancel, cb)
-
+    def __init__(self, cb=None, *args):
+        super().__init__(cb)

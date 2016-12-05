@@ -54,6 +54,18 @@ class CancelDownloadTask(tasks.CancelTask):
     def __str__(self):
         return "CancelDownloadTask: %i" % (self.uidOfTaskToCancel)
 
+class ListDownloadTask(tasks.ListTask):
+
+    @classmethod
+    def Create(cls, cb):
+        return cls(cb)
+    
+    def __init__(self, cb):
+        super().__init__(cb)
+        
+    def __str__(self):
+        return "ListTask"
+
 class Downloader(threading.Thread):
     
     def __init__(self, commandQueue, responseQueue):
@@ -107,6 +119,7 @@ class DownloadManager(threading.Thread):
         self.commandQueue = queue.Queue()
         self.submitQueue = queue.Queue(1)
         self.todoQueue = deque()
+        self.currentDownloaderTask = None
         self.uploader = Downloader(self.submitQueue, self.commandQueue)
         self.idle.set()
         self.start()
@@ -125,7 +138,8 @@ class DownloadManager(threading.Thread):
    
     def _submitTodoTaskToDownloader(self):
         if len(self.todoQueue) and self.submitQueue.unfinished_tasks == 0:
-            self.submitQueue.put(self.todoQueue.popleft())
+            self.currentDownloaderTask = self.todoQueue.popleft()
+            self.submitQueue.put(self.currentDownloaderTask)
 
     def _handleDownloadTask(self, task):
         self.todoQueue.append(task)
@@ -137,6 +151,7 @@ class DownloadManager(threading.Thread):
 
     def _handleDownloadCompletedTask(self, task):
         self._callCb(task)
+        self.currentDownloaderTask = None
         self._submitTodoTaskToDownloader()
 
     def _handleCancelTask(self, task):
@@ -158,6 +173,23 @@ class DownloadManager(threading.Thread):
         self.running = False
         self._submitTerminateTaskToUploader()
         self.uploader.join(1.5)
+
+    def _handleListDownloadTask(self, task):
+        uploads = []
+
+        if self.currentDownloaderTask:
+            uploads.append({"uid":self.currentUploaderTask.uid,
+                            "remoteName":self.currentUploaderTask.remoteName,
+                            "parentId":self.currentUploaderTask.remoteParentId,
+                            "state":"ongoing"})
+
+        for t in self.todoQueue:
+            uploads.append({"uid":t.uid,
+                            "remoteName":t.remoteName,
+                            "parentId":t.remoteParentId,
+                            "state":"todo"})
+            
+        if task.cb: task.cb(uploads)
 
     def _setBusy(self):
         self.idle.clear()
@@ -182,6 +214,8 @@ class DownloadManager(threading.Thread):
                 self._handleDownloadCompletedTask(task)
             elif type(task) == tasks.TerminateTask:
                 self._handleTerminateTask(task)
+            elif type(task) == ListDownloadTask:
+                self._handleListDownloadTask(task)
 
             self._setIdleIfNothingOngoingOrTodo()
             self.commandQueue.task_done()
@@ -193,6 +227,9 @@ def download(localPath, remoteParentId, remoteName, key=None, cb=None, chunkCb=N
 
 def cancel(uid, cb=None):
     DOWNLOADER.submitTask(CancelDownloadTask.Create(uid, cb))
+
+def list(cb=None):
+    DOWNLOADER.submitTask(ListDownloadTask.Create(cb))
 
 def wait():
     """Returns when all running tasks are compeleted."""

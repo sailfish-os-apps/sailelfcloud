@@ -15,6 +15,10 @@ class TestUidGenerator(unittest.TestCase):
         self.assertNotEqual(uidgenerator.getUid(), uidgenerator.getUid())
         self.assertNotEqual(uidgenerator.getUid(), uidgenerator.getUid())
 
+    def test_peekUid_ShouldReturnCurrentUuid(self):
+        self.assertEqual(uidgenerator.getUid(), uidgenerator.peekUid())
+        self.assertEqual(uidgenerator.peekUid(), uidgenerator.peekUid())
+
     parallelTasks = []
     parallelResults = []
 
