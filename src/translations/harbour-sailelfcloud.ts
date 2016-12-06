@@ -250,77 +250,77 @@
 <context>
     <name>DataItemDetailsPage</name>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="137"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="136"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="46"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="45"/>
         <source>Deleting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="141"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="140"/>
         <source>Rename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="146"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="145"/>
         <source>Download</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="151"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="150"/>
         <source>View Contents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="212"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="211"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="216"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="215"/>
         <source>Tags</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="220"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="219"/>
         <source>Id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="223"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="222"/>
         <source>ParentId</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="228"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="227"/>
         <source>Size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="232"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="231"/>
         <source>Last access time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="236"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="235"/>
         <source>Hash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="240"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="239"/>
         <source>Key hash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="244"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="243"/>
         <source>Decryption key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/DataItemDetailsPage.qml" line="80"/>
+        <location filename="../qml/pages/DataItemDetailsPage.qml" line="79"/>
         <source>No decryption key available</source>
         <translation type="unfinished"></translation>
     </message>
@@ -369,7 +369,7 @@
 <context>
     <name>ElfCloudAdapter</name>
     <message>
-        <location filename="../qml/ElfCloudAdapter.qml" line="214"/>
+        <location filename="../qml/ElfCloudAdapter.qml" line="209"/>
         <source>Destination file exists</source>
         <translation type="unfinished"></translation>
     </message>
@@ -772,7 +772,7 @@
 <context>
     <name>SubscriptionInfoPage</name>
     <message>
-        <location filename="../qml/pages/SubscriptionInfoPage.qml" line="33"/>
+        <location filename="../qml/pages/SubscriptionInfoPage.qml" line="34"/>
         <source>Subscription Info</source>
         <translation type="unfinished"></translation>
     </message>
@@ -780,37 +780,43 @@
 <context>
     <name>TransfersPage</name>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="17"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="18"/>
         <source>Uploads</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="26"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="27"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="50"/>
         <source>Ongoing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="92"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="41"/>
+        <source>Downloads</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/TransfersPage.qml" line="134"/>
         <source>Size:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="101"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="143"/>
         <source>Transfers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="108"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="150"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="175"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="217"/>
         <source>%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="182"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="224"/>
         <source>No transfers</source>
         <translation type="unfinished"></translation>
     </message>

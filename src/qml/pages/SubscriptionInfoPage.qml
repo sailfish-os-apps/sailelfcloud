@@ -10,8 +10,9 @@ Page {
                                          // This prevent accessing undefined variables.
 
     function _subscriptionCb(infoItems) {
-        for (var i = 0; i < infoItems.length; i++) {
-            infoModel.append(infoItems[i]); // every element in info is {'fieldName':name,'fieldValue':value} mappings
+        console.log("!!!!!!!!!!!!!", infoItems.length, infoItems)
+        for (var i in infoItems) {
+            infoModel.append({"fieldName":i, "fieldValue":infoItems[i]});
         }
     }
 

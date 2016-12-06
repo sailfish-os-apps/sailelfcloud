@@ -3,6 +3,8 @@ import io.thp.pyotherside 1.3
 
 Python {
 
+    id: py
+
     signal readyForUse()
 
     signal fetchDataItemChunkCompleted(int parentId, string name, int totalSize, int fetchedSize)
@@ -15,17 +17,10 @@ Python {
     signal storeDataItemChunkCompleted(int parentId, string remoteName, string localName, int totalSize, int storedSize)
     signal storeDataItemCompleted(int parentId, string remoteName, string localName, int dataItemsLeft)
 
-//    signal storeDataItemsStarted(int parentId, var remoteLocalNames)
-//    signal storeDataItemStarted(int parentId, string remoteName, string localName, int dataItemsLeft)
-//    signal storeDataItemFailed(int parentId, string remoteName, string localName, int dataItemsLeft, string reason)
-//    signal storeDataItemsCompleted(int parentId, var remoteLocalNames)
-
-    signal contentChanged(int containerId)
+    signal contentChanged(int containerId) // emitted when content of a container (containerId) has been changed
     signal exceptionOccurred(int id, string message)
 
     property bool ready: false // True if init done succesfully
-
-    id: py
 
     // Sets up handlers for events and signals from python module
     function __setHandlers() {
@@ -148,7 +143,7 @@ Python {
     }
 
     function getSubscriptionInfo(callback) {
-        return _call("getSubscriptionInfo", callback)
+        return _call("getSubscription", callback)
     }
 
 
@@ -218,10 +213,10 @@ Python {
 
     function fetchAndMoveDataItem(parentId, name, outputPath, overwrite, callback) {
         fetchAndMoveDataItemStarted(parentId, name, outputPath);
-        return _call("fetchDataItem", function() {
-                var rc = _fetchAndMoveDataItemCb(parentId, name, outputPath, overwrite);
-                _callCbWithArgs(callback, arguments);
-            }, parentId, name, outputPath)
+        return fetchDataItem(parentId, name, outputPath, function() {
+            _fetchAndMoveDataItemCb(parentId, name, outputPath, overwrite);
+            _callCbWithArgs(callback, arguments);
+        });
     }
 
     function _storeDataItemChunkCb(parentId, remoteName, localName, totalSize, sizeStored) {
@@ -298,5 +293,5 @@ Python {
     }
 
     onError: console.error("Exception: %1".arg(traceback));
-    onExceptionOccurred: console.error("Exception occurred: ", id, message)
+    onExceptionOccurred: console.error("Exception occurred: ", id, message);
 }

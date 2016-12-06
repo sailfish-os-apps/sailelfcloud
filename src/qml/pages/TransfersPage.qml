@@ -38,7 +38,7 @@ Page {
                                              "parentId":stores[i].parentId,
                                              "totalSize":0,
                                              "completedSize":0,
-                                             "section":qsTr("Uploads"),
+                                             "section":qsTr("Downloads"),
                                              "state": "todo",
                                              "type":"fetch"});
             else if (fetches[i]["state"] === "ongoing")
@@ -65,32 +65,48 @@ Page {
         _refresh();
     }
 
-    function _update(parentId, remoteName, totalSize, storedSize) {
+    function _update(parentId, remoteName, totalSize, transferredSize) {
         for (var i=0; i < transferListModel.count; i++) {
             var item = transferListModel.get(i);
             if (item.parentId === parentId && item.remoteName === remoteName) {
-                transferListModel.setProperty(i, "completedSize", storedSize);
+                transferListModel.setProperty(i, "completedSize", transferredSize);
             }
         }
     }
 
-    function _chunkCompletedCb(parentId, remoteName, localName, totalSize, storedSize) {
+    function _storeChunkCompletedCb(parentId, remoteName, localName, totalSize, storedSize) {
         _update(parentId, remoteName, totalSize, storedSize);
+    }
+
+    function _fetchChunkCompletedCb(parentId, name, totalSize, fetchedSize) {
+        _update(parentId, name, totalSize, fetchedSize);
+    }
+
+    function _fetchCompletedCb(parentId, remoteName, localName) {
+        _refresh();
     }
 
 
     Component.onCompleted: {
         elfCloud.storeDataItemCompleted.connect(_storeCompletedCb);
-        elfCloud.storeDataItemChunkCompleted.connect(_chunkCompletedCb);
+        elfCloud.storeDataItemChunkCompleted.connect(_storeChunkCompletedCb);
+        elfCloud.fetchDataItemChunkCompleted.connect(_fetchChunkCompletedCb);
+        elfCloud.fetchDataItemCompleted.connect(_fetchCompletedCb);
+
         _refresh();
     }
 
     Component.onDestruction: {
         elfCloud.storeDataItemCompleted.disconnect(_storeCompletedCb);
-        elfCloud.storeDataItemChunkCompleted.disconnect(_chunkCompletedCb);
+        elfCloud.storeDataItemChunkCompleted.disconnect(_storeChunkCompletedCb);
+        elfCloud.fetchDataItemChunkCompleted.disconnect(_fetchChunkCompletedCb);
+        elfCloud.fetchDataItemCompleted.disconnect(_fetchCompletedCb);
 
-        if (_asyncCallRef !== undefined)
-            _asyncCallRef.invalidate();
+        if (_asyncCallRef1 !== undefined)
+            _asyncCallRef1.invalidate();
+
+        if (_asyncCallRef2 !== undefined)
+            _asyncCallRef2.invalidate();
     }
 
     function _getIconForTransferState(state) {
@@ -115,7 +131,7 @@ Page {
     }
 
     function createTransferInfoStringForModelItem(modelItem) {
-        return qsTr("Size:") + modelItem.size;
+        return qsTr("Size:") + modelItem.totalSize;
     }
 
     SilicaListView {
@@ -197,7 +213,7 @@ Page {
                 width: parent.width - listIcon.width - transferModeIcon.width
                 indeterminate: false
                 maximumValue: 100.0
-                value: (model.completedSize / model.size) * 100
+                value: (model.completedSize / model.totalSize) * 100
                 valueText: progressValue.toFixed(0) + qsTr("%")
             }
         }

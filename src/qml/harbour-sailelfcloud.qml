@@ -100,13 +100,13 @@ ApplicationWindow
     }
 
     Component.onCompleted: {
+        elfCloud.exceptionOccurred.connect(_handleException);
         elfCloud.fetchAndMoveDataItemStarted.connect(_downloadStarted);
         elfCloud.fetchAndMoveDataItemCompleted.connect(_downloadCompleted);
         elfCloud.fetchAndMoveDataItemFailed.connect(_downloadFailed);
         elfCloud.storeDataItemsStarted.connect(_uploadCompleted);
         elfCloud.storeDataItemsCompleted.connect(_uploadCompleted);
         elfCloud.storeDataItemCompleted.connect(_uploadFileCompleted);
-        elfCloud.exceptionOccurred.connect(_handleException);
     }
 
     initialPage: Qt.resolvedUrl("pages/MainPage.qml")
