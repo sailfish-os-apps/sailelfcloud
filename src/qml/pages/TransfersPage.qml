@@ -35,6 +35,7 @@ Page {
     }
 
     function _listFetchesCb(fetches) {
+        console.log("listFetches", fetches)
         for (var i = 0; i < fetches.length; i++) {
             if (fetches[i]["state"] === "todo")
                 transferListModel.append({
@@ -56,6 +57,17 @@ Page {
                                              "completedSize":0,
                                              "section":qsTr("Ongoing"),
                                              "state": "ongoing",
+                                             "type":"fetch"
+                                         });
+            else if (fetches[i]["state"] === "paused")
+                transferListModel.append({
+                                             "uid":fetches[i].uid,
+                                             "remoteName":fetches[i].remoteName,
+                                             "parentId":fetches[i].parentId,
+                                             "totalSize":fetches[i].size,
+                                             "completedSize":0,
+                                             "section":qsTr("Downloads"),
+                                             "state": "paused",
                                              "type":"fetch"
                                          });
         }
@@ -206,7 +218,7 @@ Page {
             }
             Label {
                 id: todoTransferInfo
-                visible: model.state === "todo"
+                visible: model.state !== "ongoing"
                 anchors.top: remoteName.bottom
                 anchors.left: listIcon.right
                 anchors.leftMargin: Theme.paddingSmall
@@ -231,11 +243,11 @@ Page {
                     MenuItem {
                         text: qsTr("Pause")
                         visible: model.state === "ongoing"
-                        onClicked: console.log("pause")
+                        onClicked: elfCloud.pauseDataItemFetch(model.uid)
                     }
                     MenuItem {
                         text: qsTr("Cancel")
-                        onClicked: console.log("cancel")
+                        onClicked: elfCloud.cancelDataItemFetch(model.uid)
                     }
                     MenuItem {
                         text: qsTr("Continue")

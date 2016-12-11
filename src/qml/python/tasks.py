@@ -36,6 +36,15 @@ class XferTask(Task):
     
     def __init__(self, cb, *args):
         super().__init__(cb)
+        self.__running = True
+        
+    @property
+    def running(self):
+        return self.__running
+    
+    @running.setter
+    def running(self, r):
+        self.__running = r 
         
  
 class WaitCompletionTask(object):
@@ -52,6 +61,16 @@ class CancelTask(XferTask):
     @property
     def uidOfTaskToCancel(self):
         return self.__uidOfTaskToCancel 
+
+class PauseTask(XferTask):
+
+    def __init__(self, uidToPause, cb):
+        super().__init__(cb)
+        self.__uidOfTaskToPause = uidToPause
+        
+    @property
+    def uidOfTaskToPause(self):
+        return self.__uidOfTaskToPause 
 
 class ListTask(Task):
     

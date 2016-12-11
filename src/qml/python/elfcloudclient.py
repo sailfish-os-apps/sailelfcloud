@@ -204,7 +204,8 @@ def updateDataItem(parentId, name, description=None, tags=None):
 
 @handle_exception
 @check_connected
-def download(parentId, name, outputPath, key=None, chunkCb=None):
+def download(parentId, name, outputPath, key=None, chunkCb=None, cancelCb=None):
+    """If cancelCb returns True, download is stopped."""
     data = client.fetch_data(parentId, name)['data'] 
     dataLength = data.fileobj.getheader('Content-Length') # Nasty way to get total size since what if Content-Length does not exist.
                                                           # I haven't found good way to provide this information in upper level sw.
@@ -214,6 +215,7 @@ def download(parentId, name, outputPath, key=None, chunkCb=None):
             outputFile.write(chunk)
             dataFetched += len(chunk)
             if len(chunk) and callable(chunkCb): chunkCb(dataLength, dataFetched)
+            if callable(cancelCb) and cancelCb(): break          
 
 
 @handle_exception

@@ -11,8 +11,8 @@ import filecmp
 import elfcloudclient
 import downloader
 
-USERNAME = "xxxx" # Set proper username
-PASSWORD = "xxxx" # Set proper password
+USERNAME = "unittestuser" # Set proper username
+PASSWORD = "utyghK!!" # Set proper password
 
 VALID_PARENTID = 687590
 INVALID_PARENTID = -1

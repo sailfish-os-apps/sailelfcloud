@@ -219,6 +219,14 @@ Python {
         });
     }
 
+    function cancelDataItemFetch(uid, callback) {
+        return _call("cancelFetchDataItem", callback, uid);
+    }
+
+    function pauseDataItemFetch(uid, callback) {
+        return _call("pauseFetchDataItem", callback, uid);
+    }
+
     function _storeDataItemChunkCb(parentId, remoteName, localName, totalSize, sizeStored) {
         storeDataItemChunkCompleted(parentId, remoteName, localName, totalSize, sizeStored)
     }

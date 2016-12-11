@@ -128,6 +128,14 @@ def fetchDataItem(cbObj, parentId, remotename, filename):
                         lambda *args : _downloadCb(cbObj, parentId, remotename, filename, *args), # TODO why *args and not like in chunk cb
                         lambda totalSize, totalSizeFetched : _downloadChunkCb(parentId, remotename, filename, totalSize, totalSizeFetched))
 
+@handle_exception(cbObjName='cbObj')
+def cancelFetchDataItem(cbObj, uid):
+    downloader.cancel(uid)
+
+@handle_exception(cbObjName='cbObj')
+def pauseFetchDataItem(cbObj, uid):
+    downloader.pause(uid)
+
 @handle_exception(cbObjName='cbObj')    
 def listStores(cbObj):
     uploader.list(lambda uploads : _sendCompletedSignal(cbObj, uploads))

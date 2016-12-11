@@ -57,6 +57,18 @@ class CancelDownloadTask(tasks.CancelTask):
     def __str__(self):
         return "CancelDownloadTask: %i" % (self.uidOfTaskToCancel)
 
+class PauseDownloadTask(tasks.PauseTask):
+
+    @classmethod
+    def Create(cls, uidToPause, cb):
+        return cls(uidToPause, cb)
+    
+    def __init__(self, uidToPause, cb):
+        super().__init__(uidToPause, cb)
+        
+    def __str__(self):
+        return "CancelDownloadTask: %i" % (self.uidOfTaskToPause)
+
 class ListDownloadTask(tasks.ListTask):
 
     @classmethod
@@ -90,10 +102,15 @@ class Downloader(threading.Thread):
     def _getRemoteSize(remoteParentId, remoteName):
         return elfcloudclient.getDataItemInfo(remoteParentId, remoteName)['size']
 
+    @staticmethod
+    def __cancelCb(task, *args):
+        return not task.running
+
     def _handleDownloadTask(self, task):
         try:
             task.size = self._getRemoteSize(task.remoteParentId, task.remoteName)
-            elfcloudclient.download(task.remoteParentId, task.remoteName, task.localPath, None, task.chunkCb)
+            elfcloudclient.download(task.remoteParentId, task.remoteName, task.localPath, None, task.chunkCb,
+                                    lambda *args : self.__cancelCb(task, *args))
             self._submitDownloadTaskDone(task)
         except elfcloudclient.ClientException as e:
             self._submitDownloadTaskDone(task, e)
@@ -127,6 +144,7 @@ class DownloadManager(threading.Thread):
         self.commandQueue = queue.Queue()
         self.submitQueue = queue.Queue(1)
         self.todoQueue = deque()
+        self.pausedQueue = deque()
         self.currentDownloaderTask = None
         self.downloader = Downloader(self.submitQueue, self.commandQueue)
         self.idle.set()
@@ -163,10 +181,24 @@ class DownloadManager(threading.Thread):
         self._submitTodoTaskToDownloader()
 
     def _handleCancelTask(self, task):
-        try:
-            self.todoQueue.remove(task.uidOfTaskToCancel)
-        except ValueError:
-            print("Task %i not in todo list" % task.uidOfTaskToCancel)
+        if self.currentDownloaderTask and self.currentDownloaderTask.uid == task.uidOfTaskToCancel:
+            self.currentDownloaderTask.running = False
+        else:        
+            try:
+                self.todoQueue.remove(task.uidOfTaskToCancel)
+            except ValueError:
+                print("Task %i not in todo list" % task.uidOfTaskToCancel)
+
+    def _handlePauseTask(self, task):
+        if self.currentDownloaderTask and self.currentDownloaderTask.uid == task.uidOfTaskToPause:
+            self.currentDownloaderTask.running = False
+            self.pausedQueue.append(self.currentDownloaderTask)            
+        else:        
+            try:
+                self.pausedQueue.append(self.todoQueue[self.todoQueue.index(task.uidOfTaskToCancel)])
+                self.todoQueue.remove(task.uidOfTaskToCancel)
+            except ValueError:
+                print("Task %i not in todo list" % task.uidOfTaskToCancel)
     
     def _submitTerminateTaskToDownloader(self):
         try:
@@ -198,6 +230,13 @@ class DownloadManager(threading.Thread):
                               "parentId":t.remoteParentId,
                               "size":self.currentDownloaderTask.size,
                               "state":"todo"})
+
+        for t in self.pausedQueue:
+            downloads.append({"uid":t.uid,
+                              "remoteName":t.remoteName,
+                              "parentId":t.remoteParentId,
+                              "size":self.currentDownloaderTask.size,
+                              "state":"paused"})
             
         if task.cb: task.cb(downloads)
 
@@ -220,6 +259,8 @@ class DownloadManager(threading.Thread):
                 self._handleDownloadTask(task)
             elif type(task) == CancelDownloadTask:
                 self._handleCancelTask(task)
+            elif type(task) == PauseDownloadTask:
+                self._handlePauseTask(task)                
             elif type(task) == DownloadCompletedTask:
                 self._handleDownloadCompletedTask(task)
             elif type(task) == tasks.TerminateTask:
@@ -237,6 +278,9 @@ def download(localPath, remoteParentId, remoteName, key=None, cb=None, chunkCb=N
 
 def cancel(uid, cb=None):
     DOWNLOADER.submitTask(CancelDownloadTask.Create(uid, cb))
+
+def pause(uid, cb=None):
+    DOWNLOADER.submitTask(PauseDownloadTask.Create(uid, cb))
 
 def list(cb):
     DOWNLOADER.submitTask(ListDownloadTask.Create(cb))
