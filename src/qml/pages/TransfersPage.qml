@@ -31,20 +31,21 @@ Page {
     }
 
     function _listFetchesCb(fetches) {
+        console.log("list fetches", fetches)
         for (var i = 0; i < fetches.length; i++) {
             if (fetches[i]["state"] === "todo")
-                transferListModel.append({"uid":stores[i].uid,
-                                             "remoteName":stores[i].remoteName,
-                                             "parentId":stores[i].parentId,
+                transferListModel.append({"uid":fetches[i].uid,
+                                             "remoteName":fetches[i].remoteName,
+                                             "parentId":fetches[i].parentId,
                                              "totalSize":0,
                                              "completedSize":0,
                                              "section":qsTr("Downloads"),
                                              "state": "todo",
                                              "type":"fetch"});
             else if (fetches[i]["state"] === "ongoing")
-                transferListModel.append({"uid":stores[i].uid,
-                                             "remoteName":stores[i].remoteName,
-                                             "parentId":stores[i].parentId,
+                transferListModel.append({"uid":fetches[i].uid,
+                                             "remoteName":fetches[i].remoteName,
+                                             "parentId":fetches[i].parentId,
                                              "totalSize":0,
                                              "completedSize":0,
                                              "section":qsTr("Ongoing"),

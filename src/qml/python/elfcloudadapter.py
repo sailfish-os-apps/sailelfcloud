@@ -114,19 +114,19 @@ def storeDataItem(cbObj, parentId, remotename, filename):
                         lambda *args : _uploadCb(parentId, remotename, filename, *args),
                         lambda totalSize, totalSizeStored : _uploadChunkCb(parentId, remotename, filename, totalSize, totalSizeStored)))
 
-def _downloadCb(parentId, remoteName, localName, *args):
+def _downloadCb(cbObj, parentId, remoteName, localName, *args):
     pyotherside.send('fetch-dataitem-completed', parentId, remoteName, localName)
+    _sendCompletedSignal(cbObj)
 
 def _downloadChunkCb(parentId, remoteName, localName, totalSize, totalSizeStored):
     pyotherside.send('fetch-dataitem-chunk', parentId, remoteName, localName, totalSize, totalSizeStored)
 
 @handle_exception(cbObjName='cbObj')    
 def fetchDataItem(cbObj, parentId, remotename, filename):
-    _sendCompletedSignal(cbObj,
-        downloader.download(filename, parentId,
+    downloader.download(filename, parentId,
                         remotename, None,
-                        lambda *args : _downloadCb(parentId, remotename, filename, *args),
-                        lambda totalSize, totalSizeFetched : _downloadChunkCb(parentId, remotename, filename, totalSize, totalSizeFetched)))
+                        lambda *args : _downloadCb(cbObj, parentId, remotename, filename, *args),
+                        lambda totalSize, totalSizeFetched : _downloadChunkCb(parentId, remotename, filename, totalSize, totalSizeFetched))
 
 @handle_exception(cbObjName='cbObj')    
 def listStores(cbObj):

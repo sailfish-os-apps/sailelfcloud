@@ -786,37 +786,37 @@
     </message>
     <message>
         <location filename="../qml/pages/TransfersPage.qml" line="27"/>
-        <location filename="../qml/pages/TransfersPage.qml" line="50"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="51"/>
         <source>Ongoing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="41"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="42"/>
         <source>Downloads</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="134"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="135"/>
         <source>Size:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="143"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="144"/>
         <source>Transfers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="150"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="151"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="217"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="218"/>
         <source>%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="224"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="225"/>
         <source>No transfers</source>
         <translation type="unfinished"></translation>
     </message>
