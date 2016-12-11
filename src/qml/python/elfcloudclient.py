@@ -213,7 +213,7 @@ def download(parentId, name, outputPath, key=None, chunkCb=None):
         for chunk in data:
             outputFile.write(chunk)
             dataFetched += len(chunk)
-            if len(chunk) and chunkCb and callable(chunkCb): chunkCb(dataLength, dataFetched)
+            if len(chunk) and callable(chunkCb): chunkCb(dataLength, dataFetched)
 
 
 @handle_exception

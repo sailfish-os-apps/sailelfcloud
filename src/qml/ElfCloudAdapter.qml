@@ -189,8 +189,8 @@ Python {
     }
 
 
-    function _fetchDataItemChunkCb(parentId, name, totalSize, sizeFetched) {
-        fetchDataItemChunkCompleted(parentId, name, totalSize, sizeFetched)
+    function _fetchDataItemChunkCb(parentId, remoteName, localName, totalSize, sizeFetched) {
+        fetchDataItemChunkCompleted(parentId, remoteName, totalSize, sizeFetched)
     }
 
     function _fetchDataItemCompletedCb(parentId, remoteName, localName) {

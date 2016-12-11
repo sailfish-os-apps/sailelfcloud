@@ -125,7 +125,7 @@ def _downloadChunkCb(parentId, remoteName, localName, totalSize, totalSizeStored
 def fetchDataItem(cbObj, parentId, remotename, filename):
     downloader.download(filename, parentId,
                         remotename, None,
-                        lambda *args : _downloadCb(cbObj, parentId, remotename, filename, *args),
+                        lambda *args : _downloadCb(cbObj, parentId, remotename, filename, *args), # TODO why *args and not like in chunk cb
                         lambda totalSize, totalSizeFetched : _downloadChunkCb(parentId, remotename, filename, totalSize, totalSizeFetched))
 
 @handle_exception(cbObjName='cbObj')    

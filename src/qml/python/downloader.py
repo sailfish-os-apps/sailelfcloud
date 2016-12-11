@@ -23,9 +23,12 @@ class DownloadTask(tasks.XferTask):
         self.remoteName = remoteName
         self.key = key
         self.chunkCb = chunkCb
+        self.size = 0
         
     def __str__(self):
-        return "DownloadTask: %i, %s, %s, %s, %s" % (self.uid, self.localPath, self.remoteParentId, self.remoteName, self.key)
+        return "DownloadTask: %i, %s, %s, %s, %i, %s" % (self.uid, self.localPath,
+                                                         self.remoteParentId, self.remoteName,
+                                                         self.size, self.key)
         
 class DownloadCompletedTask(DownloadTask):
     
@@ -82,9 +85,14 @@ class Downloader(threading.Thread):
 
     def _submitDownloadTaskDone(self, task, exception=None):
         self.responseQueue.put(DownloadCompletedTask.Create(task, exception))
+    
+    @staticmethod
+    def _getRemoteSize(remoteParentId, remoteName):
+        return elfcloudclient.getDataItemInfo(remoteParentId, remoteName)['size']
 
     def _handleDownloadTask(self, task):
         try:
+            task.size = self._getRemoteSize(task.remoteParentId, task.remoteName)
             elfcloudclient.download(task.remoteParentId, task.remoteName, task.localPath, None, task.chunkCb)
             self._submitDownloadTaskDone(task)
         except elfcloudclient.ClientException as e:
@@ -181,12 +189,14 @@ class DownloadManager(threading.Thread):
             downloads.append({"uid":self.currentDownloaderTask.uid,
                               "remoteName":self.currentDownloaderTask.remoteName,
                               "parentId":self.currentDownloaderTask.remoteParentId,
+                              "size":self.currentDownloaderTask.size,
                               "state":"ongoing"})
 
         for t in self.todoQueue:
             downloads.append({"uid":t.uid,
                               "remoteName":t.remoteName,
                               "parentId":t.remoteParentId,
+                              "size":self.currentDownloaderTask.size,
                               "state":"todo"})
             
         if task.cb: task.cb(downloads)

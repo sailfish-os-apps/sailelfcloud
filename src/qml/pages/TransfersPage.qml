@@ -10,47 +10,54 @@ Page {
     function _listStoresCb(stores) {
         for (var i = 0; i < stores.length; i++) {
             if (stores[i]["state"] === "todo")
-                transferListModel.append({"uid":stores[i].uid,
+                transferListModel.append({
+                                             "uid":stores[i].uid,
                                              "remoteName":stores[i].remoteName,
                                              "parentId":stores[i].parentId,
                                              "totalSize":stores[i].size,
                                              "completedSize":0,
                                              "section":qsTr("Uploads"),
                                              "state": "todo",
-                                             "type":"store"});
+                                             "type":"store"
+                                         });
             else if (stores[i]["state"] === "ongoing")
-                transferListModel.append({"uid":stores[i].uid,
+                transferListModel.append({
+                                             "uid":stores[i].uid,
                                              "remoteName":stores[i].remoteName,
                                              "parentId":stores[i].parentId,
                                              "totalSize":stores[i].size,
                                              "completedSize":0,
                                              "section":qsTr("Ongoing"),
                                              "state": "ongoing",
-                                             "type":"store"});
+                                             "type":"store"
+                                         });
         }
     }
 
     function _listFetchesCb(fetches) {
-        console.log("list fetches", fetches)
         for (var i = 0; i < fetches.length; i++) {
             if (fetches[i]["state"] === "todo")
-                transferListModel.append({"uid":fetches[i].uid,
+                transferListModel.append({
+                                             "uid":fetches[i].uid,
                                              "remoteName":fetches[i].remoteName,
                                              "parentId":fetches[i].parentId,
-                                             "totalSize":0,
+                                             "totalSize":fetches[i].size,
                                              "completedSize":0,
                                              "section":qsTr("Downloads"),
                                              "state": "todo",
-                                             "type":"fetch"});
+                                             "type":"fetch"
+                                         });
             else if (fetches[i]["state"] === "ongoing")
-                transferListModel.append({"uid":fetches[i].uid,
+                transferListModel.append({
+                                             "uid":fetches[i].uid,
                                              "remoteName":fetches[i].remoteName,
                                              "parentId":fetches[i].parentId,
-                                             "totalSize":0,
+                                             "totalSize":fetches[i].size,
                                              "completedSize":0,
                                              "section":qsTr("Ongoing"),
                                              "state": "ongoing",
-                                             "type":"fetch"});
+                                             "type":"fetch"
+                                         });
         }
     }
 
@@ -70,6 +77,8 @@ Page {
         for (var i=0; i < transferListModel.count; i++) {
             var item = transferListModel.get(i);
             if (item.parentId === parentId && item.remoteName === remoteName) {
+                console.log("Updating", remoteName, totalSize, transferredSize)
+                transferListModel.setProperty(i, "totalSize", totalSize);
                 transferListModel.setProperty(i, "completedSize", transferredSize);
             }
         }
