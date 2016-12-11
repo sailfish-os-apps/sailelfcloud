@@ -796,27 +796,42 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="144"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="143"/>
         <source>Size:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="153"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="152"/>
         <source>Transfers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="160"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="159"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="227"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="226"/>
         <source>%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="234"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="232"/>
+        <source>Pause</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/TransfersPage.qml" line="237"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/TransfersPage.qml" line="241"/>
+        <source>Continue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/TransfersPage.qml" line="253"/>
         <source>No transfers</source>
         <translation type="unfinished"></translation>
     </message>

@@ -77,7 +77,6 @@ Page {
         for (var i=0; i < transferListModel.count; i++) {
             var item = transferListModel.get(i);
             if (item.parentId === parentId && item.remoteName === remoteName) {
-                console.log("Updating", remoteName, totalSize, transferredSize)
                 transferListModel.setProperty(i, "totalSize", totalSize);
                 transferListModel.setProperty(i, "completedSize", transferredSize);
             }
@@ -170,11 +169,11 @@ Page {
             }
         }
 
-        delegate: BackgroundItem {
+        delegate: ListItem {
             id: itemContent
             width: parent.width
-            height: remoteName.height + (model.state === "ongoing" ? transferProgress.height :
-                                                                     todoTransferInfo.height)
+            contentHeight: remoteName.height + (model.state === "ongoing" ? transferProgress.height :
+                                                                            todoTransferInfo.height)
             Image {
                 id: transferModeIcon
                 visible: model.state === "ongoing"
@@ -226,6 +225,26 @@ Page {
                 value: (model.completedSize / model.totalSize) * 100
                 valueText: progressValue.toFixed(0) + qsTr("%")
             }
+
+            menu: Component {
+                ContextMenu {
+                    MenuItem {
+                        text: qsTr("Pause")
+                        visible: model.state === "ongoing"
+                        onClicked: console.log("pause")
+                    }
+                    MenuItem {
+                        text: qsTr("Cancel")
+                        onClicked: console.log("cancel")
+                    }
+                    MenuItem {
+                        text: qsTr("Continue")
+                        visible: model.state === "paused"
+                        onClicked: console.log("continue")
+                    }
+                }
+            }
+
         }
 
         ViewPlaceholder {
