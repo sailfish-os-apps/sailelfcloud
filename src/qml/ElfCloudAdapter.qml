@@ -227,6 +227,10 @@ Python {
         return _call("pauseFetchDataItem", callback, uid);
     }
 
+    function resumeDataItemFetch(uid, callback) {
+        return _call("resumeFetchDataItem", callback, uid);
+    }
+
     function _storeDataItemChunkCb(parentId, remoteName, localName, totalSize, sizeStored) {
         storeDataItemChunkCompleted(parentId, remoteName, localName, totalSize, sizeStored)
     }

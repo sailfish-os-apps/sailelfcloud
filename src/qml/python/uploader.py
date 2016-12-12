@@ -231,7 +231,7 @@ def upload(localPath, remoteParentId, remoteName, key=None, cb=None, chunkCb=Non
 def cancel(uid, cb=None):
     UPLOADER.submitTask(CancelUploadTask.Create(uid, cb))
 
-def list(cb):
+def listAll(cb):
     UPLOADER.submitTask(ListUploadTask.Create(cb))
 
 def wait():

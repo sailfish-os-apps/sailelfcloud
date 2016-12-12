@@ -130,19 +130,23 @@ def fetchDataItem(cbObj, parentId, remotename, filename):
 
 @handle_exception(cbObjName='cbObj')
 def cancelFetchDataItem(cbObj, uid):
-    downloader.cancel(uid)
+    downloader.cancel(int(uid))
 
 @handle_exception(cbObjName='cbObj')
 def pauseFetchDataItem(cbObj, uid):
-    downloader.pause(uid)
+    downloader.pause(int(uid))
+
+@handle_exception(cbObjName='cbObj')
+def resumeFetchDataItem(cbObj, uid):
+    downloader.resume(int(uid))
 
 @handle_exception(cbObjName='cbObj')    
 def listStores(cbObj):
-    uploader.list(lambda uploads : _sendCompletedSignal(cbObj, uploads))
+    uploader.listAll(lambda uploads : _sendCompletedSignal(cbObj, uploads))
 
 @handle_exception(cbObjName='cbObj')    
 def listFetches(cbObj):
-    downloader.list(lambda downloads : _sendCompletedSignal(cbObj, downloads))
+    downloader.listAll(lambda downloads : _sendCompletedSignal(cbObj, downloads))
     
 @worker.run_async
 @handle_exception(cbObjName='cbObj')    

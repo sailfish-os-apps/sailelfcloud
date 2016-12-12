@@ -252,7 +252,7 @@ Page {
                     MenuItem {
                         text: qsTr("Continue")
                         visible: model.state === "paused"
-                        onClicked: console.log("continue")
+                        onClicked: elfCloud.resumeDataItemFetch(model.uid)
                     }
                 }
             }

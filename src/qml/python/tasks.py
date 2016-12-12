@@ -72,6 +72,16 @@ class PauseTask(XferTask):
     def uidOfTaskToPause(self):
         return self.__uidOfTaskToPause 
 
+class ResumeTask(XferTask):
+
+    def __init__(self, uidToResume, cb):
+        super().__init__(cb)
+        self.__uidOfTaskToResume = uidToResume
+        
+    @property
+    def uidOfTaskToResume(self):
+        return self.__uidOfTaskToResume 
+
 class ListTask(Task):
     
     def __init__(self, cb=None, *args):

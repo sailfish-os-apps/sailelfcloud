@@ -5,10 +5,12 @@ Created on Sep 15, 2016
 '''
 
 import threading
+import traceback
 import elfcloudclient
 import queue
 from collections import deque
 import tasks
+import logger
 
 class DownloadTask(tasks.XferTask):
     
@@ -67,7 +69,19 @@ class PauseDownloadTask(tasks.PauseTask):
         super().__init__(uidToPause, cb)
         
     def __str__(self):
-        return "CancelDownloadTask: %i" % (self.uidOfTaskToPause)
+        return "PauseDownloadTask: %i" % (self.uidOfTaskToPause)
+
+class ResumeDownloadTask(tasks.ResumeTask):
+
+    @classmethod
+    def Create(cls, uidToResume, cb):
+        return cls(uidToResume, cb)
+    
+    def __init__(self, uidToResume, cb):
+        super().__init__(uidToResume, cb)
+        
+    def __str__(self):
+        return "ResumeDownloadTask: %i" % (self.uidToResume)
 
 class ListDownloadTask(tasks.ListTask):
 
@@ -144,7 +158,7 @@ class DownloadManager(threading.Thread):
         self.commandQueue = queue.Queue()
         self.submitQueue = queue.Queue(1)
         self.todoQueue = deque()
-        self.pausedQueue = deque()
+        self.pausedList = list()
         self.currentDownloaderTask = None
         self.downloader = Downloader(self.submitQueue, self.commandQueue)
         self.idle.set()
@@ -187,24 +201,32 @@ class DownloadManager(threading.Thread):
             try:
                 self.todoQueue.remove(task.uidOfTaskToCancel)
             except ValueError:
-                print("Task %i not in todo list" % task.uidOfTaskToCancel)
+                logger.error("Task %i not in todo list" % task.uidOfTaskToCancel)
 
     def _handlePauseTask(self, task):
         if self.currentDownloaderTask and self.currentDownloaderTask.uid == task.uidOfTaskToPause:
             self.currentDownloaderTask.running = False
-            self.pausedQueue.append(self.currentDownloaderTask)            
+            self.pausedList.append(self.currentDownloaderTask)            
         else:        
             try:
-                self.pausedQueue.append(self.todoQueue[self.todoQueue.index(task.uidOfTaskToCancel)])
-                self.todoQueue.remove(task.uidOfTaskToCancel)
+                l = list(self.todoQueue)
+                self.pausedList.append(l[l.index(task.uidOfTaskToPause)])
+                self.todoQueue.remove(task.uidOfTaskToPause)
             except ValueError:
-                print("Task %i not in todo list" % task.uidOfTaskToCancel)
+                logger.error("Task %i not in todo list" % task.uidOfTaskToPause)
+
+    def _handleResumeTask(self, task):
+        try:
+            self.todoQueue.append(self.pausedList[self.pausedList.index(task.uidOfTaskToResume)])
+            self.pausedList.remove(task.uidOfTaskToResume)
+        except ValueError:
+            logger.error("Task %i not in paused list" % task.uidOfTaskToResume)
     
     def _submitTerminateTaskToDownloader(self):
         try:
             self.submitQueue.put(tasks.TerminateTask(), timeout=1)
         except queue.Full:
-            print("takes too long to terminate downloader")
+            logger.error("takes too long to terminate downloader")
             return
         
         self.submitQueue.join()
@@ -228,16 +250,16 @@ class DownloadManager(threading.Thread):
             downloads.append({"uid":t.uid,
                               "remoteName":t.remoteName,
                               "parentId":t.remoteParentId,
-                              "size":self.currentDownloaderTask.size,
+                              "size":t.size,
                               "state":"todo"})
 
-        for t in self.pausedQueue:
+        for t in self.pausedList:
             downloads.append({"uid":t.uid,
                               "remoteName":t.remoteName,
                               "parentId":t.remoteParentId,
-                              "size":self.currentDownloaderTask.size,
+                              "size":t.size,
                               "state":"paused"})
-            
+
         if task.cb: task.cb(downloads)
 
     def _setBusy(self):
@@ -251,25 +273,30 @@ class DownloadManager(threading.Thread):
             self.idle.set()        
     
     def run(self):
-        while self.running:
-            task = self.commandQueue.get() # blocks until work to do
-            self._setBusy()
-            
-            if type(task) == DownloadTask:
-                self._handleDownloadTask(task)
-            elif type(task) == CancelDownloadTask:
-                self._handleCancelTask(task)
-            elif type(task) == PauseDownloadTask:
-                self._handlePauseTask(task)                
-            elif type(task) == DownloadCompletedTask:
-                self._handleDownloadCompletedTask(task)
-            elif type(task) == tasks.TerminateTask:
-                self._handleTerminateTask(task)
-            elif type(task) == ListDownloadTask:
-                self._handleListDownloadTask(task)
-
-            self._setIdleIfNothingOngoingOrTodo()
-            self.commandQueue.task_done()
+        try:
+            while self.running:
+                task = self.commandQueue.get() # blocks until work to do
+                self._setBusy()
+                
+                if type(task) == DownloadTask:
+                    self._handleDownloadTask(task)
+                elif type(task) == CancelDownloadTask:
+                    self._handleCancelTask(task)
+                elif type(task) == PauseDownloadTask:
+                    self._handlePauseTask(task)
+                elif type(task) == ResumeDownloadTask:
+                    self._handleResumeTask(task)
+                elif type(task) == DownloadCompletedTask:
+                    self._handleDownloadCompletedTask(task)
+                elif type(task) == tasks.TerminateTask:
+                    self._handleTerminateTask(task)
+                elif type(task) == ListDownloadTask:
+                    self._handleListDownloadTask(task)
+    
+                self._setIdleIfNothingOngoingOrTodo()
+                self.commandQueue.task_done()
+        except:
+            logger.error("Downloader had unhandled exception: %s" % traceback.format_exc())
                         
 DOWNLOADER = DownloadManager()
 
@@ -282,7 +309,10 @@ def cancel(uid, cb=None):
 def pause(uid, cb=None):
     DOWNLOADER.submitTask(PauseDownloadTask.Create(uid, cb))
 
-def list(cb):
+def resume(uid, cb=None):
+    DOWNLOADER.submitTask(ResumeDownloadTask.Create(uid, cb))
+
+def listAll(cb):
     DOWNLOADER.submitTask(ListDownloadTask.Create(cb))
 
 def wait():
