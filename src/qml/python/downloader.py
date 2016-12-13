@@ -35,8 +35,9 @@ class DownloadTask(tasks.XferTask):
 class DownloadCompletedTask(DownloadTask):
     
     @classmethod
-    def Create(cls, task, exception=None):
+    def Create(cls, task, running, exception=None):
         o = cls(task.cb, task.localPath, task.remoteParentId, task.remoteName, task.key, task.chunkCb)
+        o.running = running
         o.__exc = exception
         return o
 
@@ -45,7 +46,7 @@ class DownloadCompletedTask(DownloadTask):
         return self.__exc
 
     def __str__(self):
-        return "DownloadCompletedTask: %i %s" % (self.uid, str(self.exc) if self.exc else "")
+        return "DownloadCompletedTask: %i %s %s" % (self.uid, self.running, str(self.exc) if self.exc else "")
 
 class CancelDownloadTask(tasks.CancelTask):
 
@@ -110,7 +111,7 @@ class Downloader(threading.Thread):
         return self.idle.isSet()
 
     def _submitDownloadTaskDone(self, task, exception=None):
-        self.responseQueue.put(DownloadCompletedTask.Create(task, exception))
+        self.responseQueue.put(DownloadCompletedTask.Create(task, task.running, exception))
     
     @staticmethod
     def _getRemoteSize(remoteParentId, remoteName):
@@ -125,6 +126,7 @@ class Downloader(threading.Thread):
             task.size = self._getRemoteSize(task.remoteParentId, task.remoteName)
             elfcloudclient.download(task.remoteParentId, task.remoteName, task.localPath, None, task.chunkCb,
                                     lambda *args : self.__cancelCb(task, *args))
+            
             self._submitDownloadTaskDone(task)
         except elfcloudclient.ClientException as e:
             self._submitDownloadTaskDone(task, e)
@@ -190,36 +192,51 @@ class DownloadManager(threading.Thread):
             task.cb() if not task.exception else task.cb(task.exception)
 
     def _handleDownloadCompletedTask(self, task):
-        self._callCb(task)
+        if task.running:
+            self._callCb(task)
+        
         self.currentDownloaderTask = None
         self._submitTodoTaskToDownloader()
 
     def _handleCancelTask(self, task):
+        logger.debug("Cancelling task %i" % task.uidOfTaskToCancel)
         if self.currentDownloaderTask and self.currentDownloaderTask.uid == task.uidOfTaskToCancel:
             self.currentDownloaderTask.running = False
-        else:        
-            try:
-                self.todoQueue.remove(task.uidOfTaskToCancel)
-            except ValueError:
-                logger.error("Task %i not in todo list" % task.uidOfTaskToCancel)
+        elif self.todoQueue.count(task.uidOfTaskToCancel):
+            self.todoQueue.remove(task.uidOfTaskToCancel)
+        elif self.pausedList.count(task.uidOfTaskToCancel):
+            self.pausedList.remove(task.uidOfTaskToCancel)
+        else:
+            logger.error("Task %i not current nor in todo list or paused list" % task.uidOfTaskToCancel)
+
+    @staticmethod
+    def _removeTaskOfUid(uid, from_):
+        l = list(from_)
+        t = l[l.index(uid)]
+        from_.remove(t)
+        return t
+
+    @staticmethod
+    def _moveTaskOfUid(uid, from_, to):
+        to.append(DownloadManager._removeTaskOfUid(uid, from_))
 
     def _handlePauseTask(self, task):
+        logger.debug("Pausing task %i" % task.uidOfTaskToPause)
         if self.currentDownloaderTask and self.currentDownloaderTask.uid == task.uidOfTaskToPause:
             self.currentDownloaderTask.running = False
             self.pausedList.append(self.currentDownloaderTask)            
-        else:        
-            try:
-                l = list(self.todoQueue)
-                self.pausedList.append(l[l.index(task.uidOfTaskToPause)])
-                self.todoQueue.remove(task.uidOfTaskToPause)
-            except ValueError:
-                logger.error("Task %i not in todo list" % task.uidOfTaskToPause)
+        elif self.todoQueue.count(task.uidOfTaskToCancel):        
+            self._moveTaskOfUid(task.uidOfTaskToPause, self.todoQueue, self.pausedList)
+        else:
+            logger.error("Task %i not current nor in todo list" % task.uidOfTaskToPause)
 
     def _handleResumeTask(self, task):
-        try:
-            self.todoQueue.append(self.pausedList[self.pausedList.index(task.uidOfTaskToResume)])
-            self.pausedList.remove(task.uidOfTaskToResume)
-        except ValueError:
+        logger.debug("Resuming task %i" % task.uidOfTaskToResume)
+        if self.pausedList.count(task.uidOfTaskToResume):
+            taskToResume = self._removeTaskOfUid(task.uidOfTaskToResume, self.pausedList)
+            taskToResume.running = True
+            self._handleDownloadTask(taskToResume)
+        else:
             logger.error("Task %i not in paused list" % task.uidOfTaskToResume)
     
     def _submitTerminateTaskToDownloader(self):
@@ -236,29 +253,25 @@ class DownloadManager(threading.Thread):
         self._submitTerminateTaskToDownloader()
         self.downloader.join(1.5)
 
+    @staticmethod
+    def _createTaskInfoDict(task, state):
+        return {"uid":task.uid,
+                "remoteName":task.remoteName,
+                "parentId":task.remoteParentId,
+                "size":task.size,
+                "state":state}
+
     def _handleListDownloadTask(self, task):
         downloads = []
 
-        if self.currentDownloaderTask:
-            downloads.append({"uid":self.currentDownloaderTask.uid,
-                              "remoteName":self.currentDownloaderTask.remoteName,
-                              "parentId":self.currentDownloaderTask.remoteParentId,
-                              "size":self.currentDownloaderTask.size,
-                              "state":"ongoing"})
-
+        if self.currentDownloaderTask and self.currentDownloaderTask.running:
+            downloads.append(self._createTaskInfoDict(self.currentDownloaderTask, "ongoing"))
+        
         for t in self.todoQueue:
-            downloads.append({"uid":t.uid,
-                              "remoteName":t.remoteName,
-                              "parentId":t.remoteParentId,
-                              "size":t.size,
-                              "state":"todo"})
+            downloads.append(self._createTaskInfoDict(t, "todo"))
 
         for t in self.pausedList:
-            downloads.append({"uid":t.uid,
-                              "remoteName":t.remoteName,
-                              "parentId":t.remoteParentId,
-                              "size":t.size,
-                              "state":"paused"})
+            downloads.append(self._createTaskInfoDict(t, "paused"))
 
         if task.cb: task.cb(downloads)
 

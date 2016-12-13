@@ -35,7 +35,6 @@ Page {
     }
 
     function _listFetchesCb(fetches) {
-        console.log("listFetches", fetches)
         for (var i = 0; i < fetches.length; i++) {
             if (fetches[i]["state"] === "todo")
                 transferListModel.append({
@@ -155,6 +154,28 @@ Page {
         return qsTr("Size:") + modelItem.totalSize;
     }
 
+    function _pause(model) {
+        if (model.type === "fetch")
+            elfCloud.pauseDataItemFetch(model.uid);
+
+        _refresh();
+    }
+
+    function _cancel(model) {
+        if (model.type === "fetch")
+            elfCloud.cancelDataItemFetch(model.uid);
+
+        _refresh();
+    }
+
+    function _continue(model) {
+        if (model.type === "fetch")
+            elfCloud.resumeDataItemFetch(model.uid);
+
+        _refresh();
+    }
+
+
     SilicaListView {
         id: transfersListView
         model: ListModel { id: transferListModel }
@@ -166,6 +187,7 @@ Page {
 
         CommonPullDownMenu {
             id: pulldown
+            transfersVisible: false
 
             MenuItem {
                 text: qsTr("Refresh")
@@ -243,16 +265,16 @@ Page {
                     MenuItem {
                         text: qsTr("Pause")
                         visible: model.state === "ongoing"
-                        onClicked: elfCloud.pauseDataItemFetch(model.uid)
+                        onClicked: _pause(model)
                     }
                     MenuItem {
                         text: qsTr("Cancel")
-                        onClicked: elfCloud.cancelDataItemFetch(model.uid)
+                        onClicked: _cancel(model)
                     }
                     MenuItem {
                         text: qsTr("Continue")
                         visible: model.state === "paused"
-                        onClicked: elfCloud.resumeDataItemFetch(model.uid)
+                        onClicked: _continue(model)
                     }
                 }
             }
