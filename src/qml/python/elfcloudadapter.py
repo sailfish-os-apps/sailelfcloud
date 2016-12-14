@@ -118,6 +118,18 @@ def storeDataItem(cbObj, parentId, remotename, filename):
                     lambda *args : _uploadCompletedCb(cbObj, parentId, remotename, filename, *args),
                     lambda totalSize, totalSizeStored : _uploadChunkCb(parentId, remotename, filename, totalSize, totalSizeStored))
 
+@handle_exception(cbObjName='cbObj')
+def cancelStoreDataItem(cbObj, uid):
+    uploader.cancel(int(uid))
+
+@handle_exception(cbObjName='cbObj')
+def pauseStoreDataItem(cbObj, uid):
+    uploader.pause(int(uid))
+
+@handle_exception(cbObjName='cbObj')
+def resumeStoreDataItem(cbObj, uid):
+    uploader.resume(int(uid))
+
 def _downloadStartedCb(parentId, remoteName, localName, *args):
     pyotherside.send('fetch-dataitem-started', parentId, remoteName, localName)
 

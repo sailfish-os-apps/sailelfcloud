@@ -118,7 +118,7 @@ def getSubscriptionInfo():
 
 @handle_exception
 @check_connected
-def upload(parentId, remotename, filename, chunkCb=None):
+def upload(parentId, remotename, filename, chunkCb=None, cancelCb=None):
     fileSize = os.path.getsize(filename)
     
     class _FileObj(object):
@@ -130,6 +130,7 @@ def upload(parentId, remotename, filename, chunkCb=None):
             data = self.fileobj.read(size)
             self.totalReadSize += len(data)
             if len(data) and chunkCb and callable(chunkCb): chunkCb(fileSize, self.totalReadSize)
+            if callable(cancelCb) and cancelCb(): data = None
             return data
     
     with open(filename, "rb") as fileobj:

@@ -31,8 +31,9 @@ class UploadTask(tasks.XferTask):
 class UploadCompletedTask(UploadTask):
     
     @classmethod
-    def Create(cls, task, exception=None):
+    def Create(cls, task, running, exception=None):
         o = cls(task.startCb, task.completedCb, task.localPath, task.remoteParentId, task.remoteName, task.key, task.chunkCb)
+        o.running = running
         o.__exc = exception
         return o
 
@@ -41,7 +42,7 @@ class UploadCompletedTask(UploadTask):
         return self.__exc
 
     def __str__(self):
-        return "UploadCompletedTask: %i %s" % (self.uid, str(self.exc) if self.exc else "")
+        return "UploadCompletedTask: %i %s %s" % (self.uid, self.running, str(self.exc) if self.exc else "")
 
 class CancelUploadTask(tasks.CancelTask):
 
@@ -54,6 +55,30 @@ class CancelUploadTask(tasks.CancelTask):
         
     def __str__(self):
         return "CancelTask: %i" % (self.uidOfTaskToCancel)
+
+class PauseUploadTask(tasks.PauseTask):
+
+    @classmethod
+    def Create(cls, uidToPause, cb):
+        return cls(uidToPause, cb)
+    
+    def __init__(self, uidToPause, cb):
+        super().__init__(uidToPause, cb)
+        
+    def __str__(self):
+        return "PauseUploadTask: %i" % (self.uidOfTaskToPause)
+
+class ResumeUploadTask(tasks.ResumeTask):
+
+    @classmethod
+    def Create(cls, uidToResume, cb):
+        return cls(uidToResume, cb)
+    
+    def __init__(self, uidToResume, cb):
+        super().__init__(uidToResume, cb)
+        
+    def __str__(self):
+        return "ResumeUploadTask: %i" % (self.uidToResume)
 
 class ListUploadTask(tasks.ListTask):
 
@@ -84,9 +109,14 @@ class Uploader(threading.Thread):
     def _submitUploadTaskDone(self, task, exception=None):
         self.responseQueue.put(UploadCompletedTask.Create(task, exception))
 
+    @staticmethod
+    def __cancelCb(task, *args):
+        return not task.running
+
     def _handleUploadTask(self, task):
         try:
-            elfcloudclient.upload(task.remoteParentId, task.remoteName, task.localPath, task.chunkCb)
+            elfcloudclient.upload(task.remoteParentId, task.remoteName, task.localPath, task.chunkCb,
+                                  lambda *args : self.__cancelCb(task, *args))
             self._submitUploadTaskDone(task)
         except elfcloudclient.ClientException as e:
             self._submitUploadTaskDone(task, e)
@@ -226,6 +256,12 @@ def upload(localPath, remoteParentId, remoteName, key=None, startCb=None, comple
 
 def cancel(uid, cb=None):
     UPLOADER.submitTask(CancelUploadTask.Create(uid, cb))
+
+def pause(uid, cb=None):
+    UPLOADER.submitTask(PauseUploadTask.Create(uid, cb))
+
+def resume(uid, cb=None):
+    UPLOADER.submitTask(ResumeUploadTask.Create(uid, cb))
 
 def listAll(cb):
     UPLOADER.submitTask(ListUploadTask.Create(cb))
