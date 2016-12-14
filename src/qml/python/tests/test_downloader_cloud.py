@@ -11,14 +11,15 @@ import filecmp
 import elfcloudclient
 import downloader
 
-USERNAME = "unittestuser" # Set proper username
-PASSWORD = "utyghK!!" # Set proper password
+USERNAME = "xxxxx" # Set proper username
+PASSWORD = "xxxxx" # Set proper password
 
 VALID_PARENTID = 687590
 INVALID_PARENTID = -1
 
 @contextmanager
 def uploadTestFile(data):
+    """Uploads a testfile to cloud with given content."""
 
     with tempfile.NamedTemporaryFile('wb') as tf:
         tf.write(data)
@@ -48,7 +49,9 @@ class Test_downloader_cloud(unittest.TestCase):
         with uploadTestFile(DATA) as (localName,remoteName):
             with tempfile.NamedTemporaryFile('wb') as tf:
                 downloader.download(tf.name, VALID_PARENTID, remoteName, key=None,
-                                    cb=lambda : self._assertFilesEqual(tf.name, localName), chunkCb=None)
+                                    startCb=None,
+                                    completedCb=lambda : self._assertFilesEqual(tf.name, localName),
+                                    chunkCb=None)
                 downloader.wait()
 
 

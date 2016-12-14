@@ -15,11 +15,11 @@ import logger
 class DownloadTask(tasks.XferTask):
     
     @classmethod
-    def Create(cls, localPath, remoteParentId, remoteName, key=None, cb=None, chunkCb=None):
-        return cls(cb, localPath, remoteParentId, remoteName, key, chunkCb)
+    def Create(cls, localPath, remoteParentId, remoteName, key=None, startCb=None, completedCb=None, chunkCb=None):
+        return cls(startCb, completedCb, localPath, remoteParentId, remoteName, key, chunkCb)
     
-    def __init__(self, cb, localPath, remoteParentId, remoteName, key, chunkCb):
-        super().__init__(cb)
+    def __init__(self, startCb, completedCb, localPath, remoteParentId, remoteName, key, chunkCb):
+        super().__init__(startCb, completedCb)
         self.localPath = localPath
         self.remoteParentId = remoteParentId
         self.remoteName = remoteName
@@ -36,7 +36,7 @@ class DownloadCompletedTask(DownloadTask):
     
     @classmethod
     def Create(cls, task, running, exception=None):
-        o = cls(task.cb, task.localPath, task.remoteParentId, task.remoteName, task.key, task.chunkCb)
+        o = cls(task.startCb, task.completedCb, task.localPath, task.remoteParentId, task.remoteName, task.key, task.chunkCb)
         o.running = running
         o.__exc = exception
         return o
@@ -181,19 +181,17 @@ class DownloadManager(threading.Thread):
     def _submitTodoTaskToDownloader(self):
         if len(self.todoQueue) and self.submitQueue.unfinished_tasks == 0:
             self.currentDownloaderTask = self.todoQueue.popleft()
+            if callable(self.currentDownloaderTask.startCb): self.currentDownloaderTask.startCb()
             self.submitQueue.put(self.currentDownloaderTask)
 
     def _handleDownloadTask(self, task):
         self.todoQueue.append(task)
         self._submitTodoTaskToDownloader()
 
-    def _callCb(self, task):
-        if callable(task.cb):
-            task.cb() if not task.exception else task.cb(task.exception)
 
     def _handleDownloadCompletedTask(self, task):
         if task.running:
-            self._callCb(task)
+            if callable(task.completedCb): task.completedCb() if not task.exception else task.completedCb(task.exception)
         
         self.currentDownloaderTask = None
         self._submitTodoTaskToDownloader()
@@ -225,7 +223,7 @@ class DownloadManager(threading.Thread):
         if self.currentDownloaderTask and self.currentDownloaderTask.uid == task.uidOfTaskToPause:
             self.currentDownloaderTask.running = False
             self.pausedList.append(self.currentDownloaderTask)            
-        elif self.todoQueue.count(task.uidOfTaskToCancel):        
+        elif self.todoQueue.count(task.uidOfTaskToPause):        
             self._moveTaskOfUid(task.uidOfTaskToPause, self.todoQueue, self.pausedList)
         else:
             logger.error("Task %i not current nor in todo list" % task.uidOfTaskToPause)
@@ -273,7 +271,7 @@ class DownloadManager(threading.Thread):
         for t in self.pausedList:
             downloads.append(self._createTaskInfoDict(t, "paused"))
 
-        if task.cb: task.cb(downloads)
+        if task.completedCb: task.completedCb(downloads)
 
     def _setBusy(self):
         self.idle.clear()
@@ -313,8 +311,9 @@ class DownloadManager(threading.Thread):
                         
 DOWNLOADER = DownloadManager()
 
-def download(localPath, remoteParentId, remoteName, key=None, cb=None, chunkCb=None):
-    return DOWNLOADER.submitTask(DownloadTask.Create(localPath, remoteParentId, remoteName, key, cb, chunkCb))
+def download(localPath, remoteParentId, remoteName, key=None, startCb=None, completedCb=None, chunkCb=None):
+    return DOWNLOADER.submitTask(DownloadTask.Create(localPath, remoteParentId,
+                                                     remoteName, key, startCb, completedCb, chunkCb))
 
 def cancel(uid, cb=None):
     DOWNLOADER.submitTask(CancelDownloadTask.Create(uid, cb))

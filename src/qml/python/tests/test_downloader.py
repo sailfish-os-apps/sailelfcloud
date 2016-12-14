@@ -6,7 +6,6 @@ Created on Dec 12, 2016
 import unittest.mock
 import threading
 import downloader
-import uidgenerator
 
 
 class TestDownloader(unittest.TestCase):

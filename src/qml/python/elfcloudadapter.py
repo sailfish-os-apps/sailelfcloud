@@ -114,7 +114,10 @@ def storeDataItem(cbObj, parentId, remotename, filename):
                         lambda *args : _uploadCb(parentId, remotename, filename, *args),
                         lambda totalSize, totalSizeStored : _uploadChunkCb(parentId, remotename, filename, totalSize, totalSizeStored)))
 
-def _downloadCb(cbObj, parentId, remoteName, localName, *args):
+def _downloadStartedCb(parentId, remoteName, localName, *args):
+    pyotherside.send('fetch-dataitem-started', parentId, remoteName, localName)
+
+def _downloadCompletedCb(cbObj, parentId, remoteName, localName, *args):
     pyotherside.send('fetch-dataitem-completed', parentId, remoteName, localName)
     _sendCompletedSignal(cbObj)
 
@@ -125,7 +128,8 @@ def _downloadChunkCb(parentId, remoteName, localName, totalSize, totalSizeStored
 def fetchDataItem(cbObj, parentId, remotename, filename):
     downloader.download(filename, parentId,
                         remotename, None,
-                        lambda *args : _downloadCb(cbObj, parentId, remotename, filename, *args), # TODO why *args and not like in chunk cb
+                        lambda *args : _downloadStartedCb(parentId, remotename, filename, *args), # TODO why *args and not like in chunk cb
+                        lambda *args : _downloadCompletedCb(cbObj, parentId, remotename, filename, *args), # TODO why *args and not like in chunk cb
                         lambda totalSize, totalSizeFetched : _downloadChunkCb(parentId, remotename, filename, totalSize, totalSizeFetched))
 
 @handle_exception(cbObjName='cbObj')

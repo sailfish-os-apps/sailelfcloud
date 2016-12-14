@@ -7,6 +7,7 @@ Python {
 
     signal readyForUse()
 
+    signal fetchDataItemStarted(int parentId, string remoteName, string localName)
     signal fetchDataItemChunkCompleted(int parentId, string name, int totalSize, int fetchedSize)
     signal fetchDataItemCompleted(int parentId, string remoteName, string localName)
 
@@ -37,6 +38,7 @@ Python {
         setHandler('exception', exceptionOccurred);
         setHandler('completed', _handleCompleted);
         setHandler('failed', _handleFailed);
+        setHandler('fetch-dataitem-started', _fetchDataItemStartedCb)
         setHandler('fetch-dataitem-chunk', _fetchDataItemChunkCb);
         setHandler('fetch-dataitem-completed', _fetchDataItemCompletedCb)
         setHandler('store-dataitem-chunk', _storeDataItemChunkCb);
@@ -188,6 +190,9 @@ Python {
         return _call("getDataItemInfo", callback, parentId, name);
     }
 
+    function _fetchDataItemStartedCb(parentId, remoteName, localName) {
+        fetchDataItemStarted(parentId, remoteName, localName)
+    }
 
     function _fetchDataItemChunkCb(parentId, remoteName, localName, totalSize, sizeFetched) {
         fetchDataItemChunkCompleted(parentId, remoteName, totalSize, sizeFetched)
@@ -201,7 +206,7 @@ Python {
         return _call("fetchDataItem", callback, parentId, name, outputPath);
     }
 
-    function _fetchAndMoveDataItemCb(parentId, name, outputPath, overwrite) {
+    function _fetchAndMoveDataItemCompletedCb(parentId, name, outputPath, overwrite) {
         if (helpers.moveAndRenameFileAccordingToMime(outputPath, name, overwrite)) {
             fetchAndMoveDataItemCompleted(parentId, name, outputPath);
             return true;
@@ -212,11 +217,10 @@ Python {
     }
 
     function fetchAndMoveDataItem(parentId, name, outputPath, overwrite, callback) {
-        fetchAndMoveDataItemStarted(parentId, name, outputPath);
         return fetchDataItem(parentId, name, outputPath, function() {
-            _fetchAndMoveDataItemCb(parentId, name, outputPath, overwrite);
-            _callCbWithArgs(callback, arguments);
-        });
+                                _fetchAndMoveDataItemCompletedCb(parentId, name, outputPath, overwrite);
+                                _callCbWithArgs(callback, arguments);}
+                             );
     }
 
     function cancelDataItemFetch(uid, callback) {

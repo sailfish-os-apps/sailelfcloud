@@ -7,73 +7,47 @@ Page {
     property var _asyncCallRef1: undefined
     property var _asyncCallRef2: undefined
 
-    function _listStoresCb(stores) {
-        for (var i = 0; i < stores.length; i++) {
-            if (stores[i]["state"] === "todo")
-                transferListModel.append({
-                                             "uid":stores[i].uid,
-                                             "remoteName":stores[i].remoteName,
-                                             "parentId":stores[i].parentId,
-                                             "totalSize":stores[i].size,
-                                             "completedSize":0,
-                                             "section":qsTr("Uploads"),
-                                             "state": "todo",
-                                             "type":"store"
-                                         });
-            else if (stores[i]["state"] === "ongoing")
-                transferListModel.append({
-                                             "uid":stores[i].uid,
-                                             "remoteName":stores[i].remoteName,
-                                             "parentId":stores[i].parentId,
-                                             "totalSize":stores[i].size,
-                                             "completedSize":0,
-                                             "section":qsTr("Ongoing"),
-                                             "state": "ongoing",
-                                             "type":"store"
-                                         });
+    signal _updateTransferList(var transfers)
+
+    on_UpdateTransferList: {
+        transferListModel.clear();
+
+        for (var i = 0; i < transfers.length; i++) {
+            console.log("populating", transfers[i]);
+            transferListModel.append(transfers[i]);
         }
+
+    }
+
+    function _createModelDataFromTransfer(transfer, type) {
+        return {
+            "uid":transfer.uid,
+            "remoteName":transfer.remoteName,
+            "parentId":transfer.parentId,
+            "totalSize":transfer.size,
+            "completedSize":0,
+            "state":transfer.state,
+            "type":type
+        };
+    }
+
+    function _listStoresCb(stores) {
+        var transferList = [];
+        for (var i = 0; i < stores.length; i++)
+            transferList.push(_createModelDataFromTransfer(stores[i], "store"));
+
+        _updateTransferList(transferList);
     }
 
     function _listFetchesCb(fetches) {
-        for (var i = 0; i < fetches.length; i++) {
-            if (fetches[i]["state"] === "todo")
-                transferListModel.append({
-                                             "uid":fetches[i].uid,
-                                             "remoteName":fetches[i].remoteName,
-                                             "parentId":fetches[i].parentId,
-                                             "totalSize":fetches[i].size,
-                                             "completedSize":0,
-                                             "section":qsTr("Downloads"),
-                                             "state": "todo",
-                                             "type":"fetch"
-                                         });
-            else if (fetches[i]["state"] === "ongoing")
-                transferListModel.append({
-                                             "uid":fetches[i].uid,
-                                             "remoteName":fetches[i].remoteName,
-                                             "parentId":fetches[i].parentId,
-                                             "totalSize":fetches[i].size,
-                                             "completedSize":0,
-                                             "section":qsTr("Ongoing"),
-                                             "state": "ongoing",
-                                             "type":"fetch"
-                                         });
-            else if (fetches[i]["state"] === "paused")
-                transferListModel.append({
-                                             "uid":fetches[i].uid,
-                                             "remoteName":fetches[i].remoteName,
-                                             "parentId":fetches[i].parentId,
-                                             "totalSize":fetches[i].size,
-                                             "completedSize":0,
-                                             "section":qsTr("Downloads"),
-                                             "state": "paused",
-                                             "type":"fetch"
-                                         });
-        }
+        var transferList = [];
+        for (var i = 0; i < fetches.length; i++)
+            transferList.push(_createModelDataFromTransfer(fetches[i], "fetch"));
+
+        _updateTransferList(transferList);
     }
 
     function _refresh() {
-        transferListModel.clear();
         // Note that we store async call reference so that we can invalidate it
         // if the elfCloud call is still in progress but this page is being closed.
         _asyncCallRef1 = elfCloud.listStores(_listStoresCb);
@@ -98,6 +72,10 @@ Page {
         _update(parentId, remoteName, totalSize, storedSize);
     }
 
+    function _fetchStartedCb(parentId, remoteName, localName) {
+        _refresh();
+    }
+
     function _fetchChunkCompletedCb(parentId, name, totalSize, fetchedSize) {
         _update(parentId, name, totalSize, fetchedSize);
     }
@@ -110,6 +88,8 @@ Page {
     Component.onCompleted: {
         elfCloud.storeDataItemCompleted.connect(_storeCompletedCb);
         elfCloud.storeDataItemChunkCompleted.connect(_storeChunkCompletedCb);
+
+        elfCloud.fetchDataItemStarted.connect(_fetchStartedCb);
         elfCloud.fetchDataItemChunkCompleted.connect(_fetchChunkCompletedCb);
         elfCloud.fetchDataItemCompleted.connect(_fetchCompletedCb);
 
@@ -119,6 +99,8 @@ Page {
     Component.onDestruction: {
         elfCloud.storeDataItemCompleted.disconnect(_storeCompletedCb);
         elfCloud.storeDataItemChunkCompleted.disconnect(_storeChunkCompletedCb);
+
+        elfCloud.fetchDataItemStarted.disconnect(_fetchStartedCb);
         elfCloud.fetchDataItemChunkCompleted.disconnect(_fetchChunkCompletedCb);
         elfCloud.fetchDataItemCompleted.disconnect(_fetchCompletedCb);
 
@@ -197,9 +179,9 @@ Page {
         }
 
         section {
-            property: 'section'
+            property: 'type'
             delegate: SectionHeader {
-                text: section
+                text: type === "store" ? qsTr("Uploads") : qsTr("Downloads")
             }
         }
 
@@ -264,7 +246,7 @@ Page {
                 ContextMenu {
                     MenuItem {
                         text: qsTr("Pause")
-                        visible: model.state === "ongoing"
+                        visible: model.state !== "paused"
                         onClicked: _pause(model)
                     }
                     MenuItem {

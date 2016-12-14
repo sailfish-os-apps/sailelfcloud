@@ -369,7 +369,7 @@
 <context>
     <name>ElfCloudAdapter</name>
     <message>
-        <location filename="../qml/ElfCloudAdapter.qml" line="209"/>
+        <location filename="../qml/ElfCloudAdapter.qml" line="214"/>
         <source>Destination file exists</source>
         <translation type="unfinished"></translation>
     </message>
@@ -780,59 +780,52 @@
 <context>
     <name>TransfersPage</name>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="19"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="184"/>
         <source>Uploads</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="30"/>
-        <location filename="../qml/pages/TransfersPage.qml" line="57"/>
-        <source>Ongoing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="46"/>
-        <location filename="../qml/pages/TransfersPage.qml" line="68"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="184"/>
         <source>Downloads</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="154"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="136"/>
         <source>Size:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="185"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="167"/>
         <source>Transfers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="193"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="175"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="260"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="242"/>
         <source>%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="266"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="248"/>
         <source>Pause</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="271"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="253"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="275"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="257"/>
         <source>Continue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/TransfersPage.qml" line="287"/>
+        <location filename="../qml/pages/TransfersPage.qml" line="269"/>
         <source>No transfers</source>
         <translation type="unfinished"></translation>
     </message>
