@@ -13,7 +13,7 @@ Page {
         transferListModel.clear();
 
         for (var i = 0; i < transfers.length; i++) {
-            console.log("populating", transfers[i]);
+            console.log("populating", transfers[i].remoteName, transfers[i].type);
             transferListModel.append(transfers[i]);
         }
 
@@ -31,30 +31,35 @@ Page {
         };
     }
 
-    function _listStoresCb(stores) {
-        var transferList = [];
-        for (var i = 0; i < stores.length; i++)
-            transferList.push(_createModelDataFromTransfer(stores[i], "store"));
-
-        _updateTransferList(transferList);
-    }
-
-    function _listFetchesCb(fetches) {
-        var transferList = [];
+    function _listFetchesCb(fetches, transferList) {
         for (var i = 0; i < fetches.length; i++)
             transferList.push(_createModelDataFromTransfer(fetches[i], "fetch"));
 
         _updateTransferList(transferList);
     }
 
+    function _listStoresCb(stores) {
+        var transferList = [];
+        for (var i = 0; i < stores.length; i++)
+            transferList.push(_createModelDataFromTransfer(stores[i], "store"));
+
+        // Note that we store async call reference so that we can invalidate it
+        // if the elfCloud call is still in progress but this page is being closed.
+        _asyncCallRef2 = elfCloud.listFetches(function(fetches) { _listFetchesCb(fetches, transferList); });
+    }
+
+
     function _refresh() {
         // Note that we store async call reference so that we can invalidate it
         // if the elfCloud call is still in progress but this page is being closed.
         _asyncCallRef1 = elfCloud.listStores(_listStoresCb);
-        _asyncCallRef2 = elfCloud.listFetches(_listFetchesCb);
     }
 
-    function _storeCompletedCb(parentId, remoteName, localName, dataItemsLeft) {
+    function _storeStartedCb(parentId, remoteName, localName) {
+        _refresh();
+    }
+
+    function _storeCompletedCb(parentId, remoteName, localName) {
         _refresh();
     }
 
@@ -86,8 +91,9 @@ Page {
 
 
     Component.onCompleted: {
-        elfCloud.storeDataItemCompleted.connect(_storeCompletedCb);
+        elfCloud.storeDataItemStarted.connect(_storeStartedCb);
         elfCloud.storeDataItemChunkCompleted.connect(_storeChunkCompletedCb);
+        elfCloud.storeDataItemCompleted.connect(_storeCompletedCb);
 
         elfCloud.fetchDataItemStarted.connect(_fetchStartedCb);
         elfCloud.fetchDataItemChunkCompleted.connect(_fetchChunkCompletedCb);
@@ -97,8 +103,9 @@ Page {
     }
 
     Component.onDestruction: {
-        elfCloud.storeDataItemCompleted.disconnect(_storeCompletedCb);
+        elfCloud.storeDataItemStarted.disconnect(_storeStartedCb);
         elfCloud.storeDataItemChunkCompleted.disconnect(_storeChunkCompletedCb);
+        elfCloud.storeDataItemCompleted.disconnect(_storeCompletedCb);
 
         elfCloud.fetchDataItemStarted.disconnect(_fetchStartedCb);
         elfCloud.fetchDataItemChunkCompleted.disconnect(_fetchChunkCompletedCb);
@@ -139,6 +146,8 @@ Page {
     function _pause(model) {
         if (model.type === "fetch")
             elfCloud.pauseDataItemFetch(model.uid);
+        else
+            elfCloud.pauseDataItemStore(model.uid);
 
         _refresh();
     }
@@ -146,6 +155,8 @@ Page {
     function _cancel(model) {
         if (model.type === "fetch")
             elfCloud.cancelDataItemFetch(model.uid);
+        else
+            elfCloud.cancelDataItemStore(model.uid);
 
         _refresh();
     }
@@ -153,6 +164,8 @@ Page {
     function _continue(model) {
         if (model.type === "fetch")
             elfCloud.resumeDataItemFetch(model.uid);
+        else
+            elfCloud.resumeDataItemStore(model.uid);
 
         _refresh();
     }
@@ -181,7 +194,7 @@ Page {
         section {
             property: 'type'
             delegate: SectionHeader {
-                text: type === "store" ? qsTr("Uploads") : qsTr("Downloads")
+                text: section === "fetch" ? qsTr("Downloads") : qsTr("Uploads")
             }
         }
 

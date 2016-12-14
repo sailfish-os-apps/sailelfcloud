@@ -13,20 +13,28 @@ class TestTasks(unittest.TestCase):
     EXPECTED_UID_FROM_GET_UID = 1234
     
     @staticmethod
-    def _dummyCb():
+    def _dummyCb1():
+        pass
+
+    @staticmethod
+    def _dummyCb2():
         pass
 
     @unittest.mock.patch('tasks.uidgenerator.getUid', return_value = EXPECTED_UID_FROM_GET_UID)
     def test_Task_ShouldGetUid(self, mock_getUid):
-        t = tasks.Task(TestTasks._dummyCb)
+        t = tasks.Task(startCb=TestTasks._dummyCb1, completedCb=TestTasks._dummyCb2)
         self.assertEqual(self.EXPECTED_UID_FROM_GET_UID, t.uid)
-        self.assertEqual(TestTasks._dummyCb, t.cb)
+        self.assertEqual(TestTasks._dummyCb1, t.startCb)
+        self.assertEqual(TestTasks._dummyCb2, t.completedCb)
 
-    def test_Task_UidAndCbShouldBeReadOnly(self):
-        t = tasks.Task(TestTasks._dummyCb)
+    def test_Task_UidAndCbsShouldBeReadOnly(self):
+        t = tasks.Task(TestTasks._dummyCb1)
         
         with self.assertRaises(AttributeError):
-            t.cb = 1
+            t.startCb = 1
+
+        with self.assertRaises(AttributeError):
+            t.completedCb = 1
 
         with self.assertRaises(AttributeError):
             t.uid = 1

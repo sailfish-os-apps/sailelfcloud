@@ -15,8 +15,9 @@ Python {
     signal fetchAndMoveDataItemCompleted(int parentId, string name, string localName)
     signal fetchAndMoveDataItemFailed(int parentId, string name, string localName, string reason)
 
+    signal storeDataItemStarted(int parentId, string remoteName, string localName)
     signal storeDataItemChunkCompleted(int parentId, string remoteName, string localName, int totalSize, int storedSize)
-    signal storeDataItemCompleted(int parentId, string remoteName, string localName, int dataItemsLeft)
+    signal storeDataItemCompleted(int parentId, string remoteName, string localName)
 
     signal contentChanged(int containerId) // emitted when content of a container (containerId) has been changed
     signal exceptionOccurred(int id, string message)
@@ -41,6 +42,7 @@ Python {
         setHandler('fetch-dataitem-started', _fetchDataItemStartedCb)
         setHandler('fetch-dataitem-chunk', _fetchDataItemChunkCb);
         setHandler('fetch-dataitem-completed', _fetchDataItemCompletedCb)
+        setHandler('store-dataitem-started', _storeDataItemStartedCb);
         setHandler('store-dataitem-chunk', _storeDataItemChunkCb);
         setHandler('store-dataitem-completed', _storeDataItemCompletedCb);
     }
@@ -235,12 +237,16 @@ Python {
         return _call("resumeFetchDataItem", callback, uid);
     }
 
+    function _storeDataItemStartedCb(parentId, remoteName, localName) {
+        storeDataItemCompleted(parentId, remoteName, localName);
+    }
+
     function _storeDataItemChunkCb(parentId, remoteName, localName, totalSize, sizeStored) {
         storeDataItemChunkCompleted(parentId, remoteName, localName, totalSize, sizeStored)
     }
 
     function _storeDataItemCompletedCb(parentId, remoteName, localName, exception) {
-        storeDataItemCompleted(parentId, remoteName, localName, 0);
+        storeDataItemCompleted(parentId, remoteName, localName);
         contentChanged(parentId);
     }
 
@@ -251,6 +257,18 @@ Python {
             var remoteName = helpers.getFilenameFromPath(localPaths[i]);
             _call("storeDataItem", undefined, parentId, remoteName, localName);
         }
+    }
+
+    function cancelDataItemStore(uid, callback) {
+        return _call("cancelStoreDataItem", callback, uid);
+    }
+
+    function pauseDataItemStore(uid, callback) {
+        return _call("pauseStoreDataItem", callback, uid);
+    }
+
+    function resumeDataItemStore(uid, callback) {
+        return _call("resumeStoreDataItem", callback, uid);
     }
 
     function listStores(callback) {

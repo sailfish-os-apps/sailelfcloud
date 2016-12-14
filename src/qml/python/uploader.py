@@ -14,11 +14,11 @@ import tasks
 class UploadTask(tasks.XferTask):
     
     @classmethod
-    def Create(cls, localPath, remoteParentId, remoteName, key=None, cb=None, chunkCb=None):
-        return cls(cb, localPath, remoteParentId, remoteName, key, chunkCb)
+    def Create(cls, localPath, remoteParentId, remoteName, key=None, startCb=None, completedCb=None, chunkCb=None):
+        return cls(startCb, completedCb, localPath, remoteParentId, remoteName, key, chunkCb)
     
-    def __init__(self, cb, localPath, remoteParentId, remoteName, key, chunkCb):
-        super().__init__(cb)
+    def __init__(self, startCb, completedCb, localPath, remoteParentId, remoteName, key, chunkCb):
+        super().__init__(startCb, completedCb)
         self.localPath = localPath
         self.remoteParentId = remoteParentId
         self.remoteName = remoteName
@@ -32,7 +32,7 @@ class UploadCompletedTask(UploadTask):
     
     @classmethod
     def Create(cls, task, exception=None):
-        o = cls(task.cb, task.localPath, task.remoteParentId, task.remoteName, task.key, task.chunkCb)
+        o = cls(task.startCb, task.completedCb, task.localPath, task.remoteParentId, task.remoteName, task.key, task.chunkCb)
         o.__exc = exception
         return o
 
@@ -146,12 +146,8 @@ class UploadManager(threading.Thread):
         self.todoQueue.append(task)
         self._submitTodoTaskToUploader()
 
-    def _callCb(self, task):
-        if callable(task.cb):
-            task.cb() if not task.exception else task.cb(task.exception)
-
     def _handleUploadCompletedTask(self, task):
-        self._callCb(task)
+        if callable(task.completedCb): task.completedCb() if not task.exception else task.completedCb(task.exception)
         self.currentUploaderTask = None
         self._submitTodoTaskToUploader()
 
@@ -192,7 +188,7 @@ class UploadManager(threading.Thread):
                             "size":os.path.getsize(t.localPath),
                             "state":"todo"})
             
-        if task.cb: task.cb(uploads)
+        if task.completedCb: task.completedCb(uploads)
 
     def _setBusy(self):
         self.idle.clear()
@@ -225,8 +221,8 @@ class UploadManager(threading.Thread):
                         
 UPLOADER = UploadManager()
 
-def upload(localPath, remoteParentId, remoteName, key=None, cb=None, chunkCb=None):
-    return UPLOADER.submitTask(UploadTask.Create(localPath, remoteParentId, remoteName, key, cb, chunkCb))
+def upload(localPath, remoteParentId, remoteName, key=None, startCb=None, completedCb=None, chunkCb=None):
+    return UPLOADER.submitTask(UploadTask.Create(localPath, remoteParentId, remoteName, key, startCb, completedCb, chunkCb))
 
 def cancel(uid, cb=None):
     UPLOADER.submitTask(CancelUploadTask.Create(uid, cb))

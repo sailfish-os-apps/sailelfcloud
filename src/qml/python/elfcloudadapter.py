@@ -100,19 +100,23 @@ def listVaults(cbObj):
     _sendCompletedSignal(cbObj, elfcloudclient.listVaults())
 
 
-def _uploadCb(parentId, remoteName, localName, *args):
+def _uploadStartedCb(parentId, remoteName, localName, *args):
+    pyotherside.send('store-dataitem-started', parentId, remoteName, localName)
+
+def _uploadCompletedCb(cbObj, parentId, remoteName, localName, *args):
     pyotherside.send('store-dataitem-completed', parentId, remoteName, localName)
+    _sendCompletedSignal(cbObj)
 
 def _uploadChunkCb(parentId, remoteName, localName, totalSize, totalSizeStored):
     pyotherside.send('store-dataitem-chunk', parentId, remoteName, localName, totalSize, totalSizeStored)
 
 @handle_exception(cbObjName='cbObj')    
 def storeDataItem(cbObj, parentId, remotename, filename):
-    _sendCompletedSignal(cbObj,
-        uploader.upload(filename, parentId,
-                        remotename, None,
-                        lambda *args : _uploadCb(parentId, remotename, filename, *args),
-                        lambda totalSize, totalSizeStored : _uploadChunkCb(parentId, remotename, filename, totalSize, totalSizeStored)))
+    uploader.upload(filename, parentId,
+                    remotename, None,
+                    lambda *args : _uploadStartedCb(parentId, remotename, filename, *args),
+                    lambda *args : _uploadCompletedCb(cbObj, parentId, remotename, filename, *args),
+                    lambda totalSize, totalSizeStored : _uploadChunkCb(parentId, remotename, filename, totalSize, totalSizeStored))
 
 def _downloadStartedCb(parentId, remoteName, localName, *args):
     pyotherside.send('fetch-dataitem-started', parentId, remoteName, localName)
