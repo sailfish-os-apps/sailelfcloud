@@ -4,8 +4,8 @@ import QtQuick 2.0
 QtObject {
     id: obj
 
-    function _noop(data) {
-        console.debug("Noop called", Array.prototype.slice.call(data, _noop.length))
+    function _noop() {
+        console.debug("Noop called", Array.prototype.slice.call(arguments))
     }
 
     property var completedCb: _noop    // Callback from user
