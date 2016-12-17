@@ -63,6 +63,14 @@ Page {
         _refresh();
     }
 
+    function _fetchStartedCb(parentId, remoteName, localName) {
+        _refresh();
+    }
+
+    function _fetchCompletedCb(parentId, remoteName, localName) {
+        _refresh();
+    }
+
     function _update(parentId, remoteName, totalSize, transferredSize) {
         for (var i=0; i < transferListModel.count; i++) {
             var item = transferListModel.get(i);
@@ -77,18 +85,9 @@ Page {
         _update(parentId, remoteName, totalSize, storedSize);
     }
 
-    function _fetchStartedCb(parentId, remoteName, localName) {
-        _refresh();
-    }
-
     function _fetchChunkCompletedCb(parentId, name, totalSize, fetchedSize) {
         _update(parentId, name, totalSize, fetchedSize);
     }
-
-    function _fetchCompletedCb(parentId, remoteName, localName) {
-        _refresh();
-    }
-
 
     Component.onCompleted: {
         elfCloud.storeDataItemStarted.connect(_storeStartedCb);

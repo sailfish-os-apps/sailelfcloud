@@ -118,24 +118,30 @@ def getSubscriptionInfo():
 
 @handle_exception
 @check_connected
-def upload(parentId, remotename, filename, chunkCb=None, cancelCb=None):
+def upload(parentId, remotename, filename, chunkCb=None, cancelCb=None, offset=None):
     fileSize = os.path.getsize(filename)
     
     class _FileObj(object):
-        def __init__(self, fileobj):
+        def __init__(self, fileobj, offset_):
             self.fileobj = fileobj
-            self.totalReadSize = 0
+            self.totalReadSize = 0 if not offset_ else offset_
+            self.fileobj.seek(self.totalReadSize)
             
         def read(self, size):
             data = self.fileobj.read(size)
+            if callable(cancelCb) and cancelCb(self.totalReadSize):
+                return None
             self.totalReadSize += len(data)
-            if len(data) and chunkCb and callable(chunkCb): chunkCb(fileSize, self.totalReadSize)
-            if callable(cancelCb) and cancelCb(): data = None
+            if len(data) and callable(chunkCb):
+                chunkCb(fileSize, self.totalReadSize)
             return data
     
     with open(filename, "rb") as fileobj:
-        fo = _FileObj(fileobj)
-        client.store_data(int(parentId), remotename, fo)
+        fo = _FileObj(fileobj, offset)
+        if offset:
+            client.store_data(int(parentId), remotename, fo, method="append")
+        else:
+            client.store_data(int(parentId), remotename, fo)
 
 @handle_exception
 @check_connected

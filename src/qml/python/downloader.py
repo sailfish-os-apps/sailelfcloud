@@ -271,7 +271,7 @@ class DownloadManager(threading.Thread):
         for t in self.pausedList:
             downloads.append(self._createTaskInfoDict(t, "paused"))
 
-        if task.completedCb: task.completedCb(downloads)
+        if callable(task.completedCb): task.completedCb(downloads)
 
     def _setBusy(self):
         self.idle.clear()
@@ -328,7 +328,7 @@ def listAll(cb):
     DOWNLOADER.submitTask(ListDownloadTask.Create(cb))
 
 def wait():
-    """Returns when all running tasks are compeleted."""
+    """Returns when all running tasks are compeleted (paused tasks are ignored)."""
     DOWNLOADER.waitUntilTasksDone()
 
 def terminate():

@@ -19,14 +19,14 @@ import filecmp
 from contextlib import contextmanager
 import elfcloudclient
 
-VALID_USERNAME = "xxxx" # Set proper username
-VALID_PASSWORD = "xxxx" # Set proper password
+VALID_USERNAME = "xxxxx" # Set proper username
+VALID_PASSWORD = "xxxxx" # Set proper password
 
 INVALID_USERNAME = "invalid_username"
 INVALID_PASSWORD = "invalid_password"
 
-TEST_VAULT_NAME = 'unittest'
-TEST_VAULT_ID = 687590
+TEST_VAULT_NAME = 'unittest' # Must exist in cloud
+TEST_VAULT_ID = 687590 # Set according to the vault in cloud
 
 VALID_PARENTID = TEST_VAULT_ID
 INVALID_PARENTID = -1
@@ -83,11 +83,11 @@ class Test_subscription_cloud(unittest.TestCase):
 
 class Test_upload_download_cloud(unittest.TestCase):
 
-    DATA = bytes(range(256)) * 4 * 1000 * 1
+    DATA = bytes(range(256)) * 2 * 1000 * 1
     EXPECTED_CHUNKS = [i_ for i_ in range(elfcloudclient.DEFAULT_REQUEST_SIZE_BYTES, len(DATA), \
                                           elfcloudclient.DEFAULT_REQUEST_SIZE_BYTES)] + [len(DATA)]
     
-    def test_upload_download_DownloadedFileShouldMatchOriginalUploaded(self):
+    def test__upload__download__DownloadedFileShouldMatchOriginalUploaded(self):
         chunkCb = unittest.mock.Mock()
         with tempfile.NamedTemporaryFile('wb') as tf:
             tf.write(self.DATA)
@@ -104,22 +104,46 @@ class Test_upload_download_cloud(unittest.TestCase):
                 self.assertTrue(filecmp.cmp(uploadSourceFileName, downloadSourceFileName, shallow=False))
                 chunkCb.assert_has_calls(EXPECTED_CB_PARAMS)
 
-    def test_upload_InvalidParentIdGiven_ShouldRaiseExcpetion(self):
+    def test__upload__MultipleTimesUsingAppendMode_ShouldUploadCorrectly(self):
+        UPLOAD_ROUNDS = 2
+        currentOffset = 0
+        chunkCb = unittest.mock.Mock()
+
+        with tempfile.NamedTemporaryFile('wb', delete=False) as tf:
+            uploadSourceFileName = tf.name
+            remoteName = basename(tf.name)
+        
+            for _ in range(UPLOAD_ROUNDS):
+                tf.write(self.DATA)
+                tf.flush()
+                elfcloudclient.upload(VALID_PARENTID, remoteName, uploadSourceFileName, chunkCb, None, currentOffset)
+                currentOffset += len(self.DATA)
+                
+            EXPECTED_CB_PARAMS = [call(len(self.DATA),i_) for i_ in self.EXPECTED_CHUNKS]
+            chunkCb.assert_has_calls(EXPECTED_CB_PARAMS)
+            
+            with tempfile.NamedTemporaryFile('wb', delete=False) as tf:
+                downloadSourceFileName = tf.name
+                elfcloudclient.download(VALID_PARENTID, remoteName, downloadSourceFileName, key=None, chunkCb=chunkCb)
+                self.assertTrue(filecmp.cmp(uploadSourceFileName, downloadSourceFileName, shallow=False))
+                chunkCb.assert_has_calls(EXPECTED_CB_PARAMS)
+
+    def test__upload__InvalidParentIdGiven_ShouldRaiseExcpetion(self):
         with tempfile.NamedTemporaryFile('wb') as tf:
             tf.write(self.DATA)
             tf.flush()
             self.assertRaises(elfcloudclient.ClientException,
                               elfcloudclient.upload, INVALID_PARENTID, basename(tf.name), tf.name)
             
-    def test_upload_NoFileGiven_ShouldRaiseExcpetion(self):
+    def test__upload__NoFileGiven_ShouldRaiseExcpetion(self):
             self.assertRaises(elfcloudclient.ClientException,
                               elfcloudclient.upload, VALID_PARENTID, None, "filename")
 
-    def test_upload_InvalidFileGiven_ShouldRaiseExcpetion(self):
+    def test__upload__InvalidFileGiven_ShouldRaiseExcpetion(self):
             self.assertRaises(elfcloudclient.ClientException,
                               elfcloudclient.upload, VALID_PARENTID, "None", "filename")
 
-    def test_upload_EmptyFileGiven_ShouldRaiseExcpetion(self):
+    def test__upload__EmptyFileGiven_ShouldRaiseExcpetion(self):
         with tempfile.NamedTemporaryFile('w+') as tf:
             self.assertRaises(elfcloudclient.ClientException,
                               elfcloudclient.upload, VALID_PARENTID, basename(tf.name), tf.name)
