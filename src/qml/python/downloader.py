@@ -26,6 +26,7 @@ class DownloadTask(tasks.XferTask):
         self.key = key
         self.chunkCb = chunkCb
         self.size = 0
+        self.running = True
         
     def __str__(self):
         return "DownloadTask: %i, %s, %s, %s, %i, %s" % (self.uid, self.localPath,
@@ -35,9 +36,9 @@ class DownloadTask(tasks.XferTask):
 class DownloadCompletedTask(DownloadTask):
     
     @classmethod
-    def Create(cls, task, running, exception=None):
+    def Create(cls, task, exception=None):
         o = cls(task.startCb, task.completedCb, task.localPath, task.remoteParentId, task.remoteName, task.key, task.chunkCb)
-        o.running = running
+        o.running = task.running
         o.__exc = exception
         return o
 
@@ -111,7 +112,7 @@ class Downloader(threading.Thread):
         return self.idle.isSet()
 
     def _submitDownloadTaskDone(self, task, exception=None):
-        self.responseQueue.put(DownloadCompletedTask.Create(task, task.running, exception))
+        self.responseQueue.put(DownloadCompletedTask.Create(task, exception))
     
     @staticmethod
     def _getRemoteSize(remoteParentId, remoteName):
@@ -284,8 +285,8 @@ class DownloadManager(threading.Thread):
             self.idle.set()        
     
     def run(self):
-        try:
-            while self.running:
+        while self.running:
+            try:
                 task = self.commandQueue.get() # blocks until work to do
                 self._setBusy()
                 
@@ -306,8 +307,8 @@ class DownloadManager(threading.Thread):
     
                 self._setIdleIfNothingOngoingOrTodo()
                 self.commandQueue.task_done()
-        except:
-            logger.error("Downloader had unhandled exception: %s" % traceback.format_exc())
+            except:
+                logger.error("DownloaderManager had unhandled exception: %s" % traceback.format_exc())
                         
 DOWNLOADER = DownloadManager()
 

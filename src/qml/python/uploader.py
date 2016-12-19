@@ -7,6 +7,7 @@ Created on Sep 15, 2016
 import os
 import logger
 import threading
+import traceback
 import elfcloudclient
 import queue
 from collections import deque
@@ -18,6 +19,14 @@ class UploadTask(tasks.XferTask):
     def Create(cls, localPath, remoteParentId, remoteName, key=None, startCb=None, completedCb=None, chunkCb=None):
         return cls(startCb, completedCb, localPath, remoteParentId, remoteName, key, chunkCb)
     
+    @classmethod
+    def Copy(cls, o):
+        c = cls.Create(o.localPath, o.remoteParentId, o.remoteName, o.key, o.startCb, o.completedCb, o.chunkCb)
+        c.uploadedSize = o.uploadedSize
+        c.running = o.running
+        c.exception = o.exception
+        return c
+    
     def __init__(self, startCb, completedCb, localPath, remoteParentId, remoteName, key, chunkCb):
         super().__init__(startCb, completedCb)
         self.localPath = localPath
@@ -27,26 +36,28 @@ class UploadTask(tasks.XferTask):
         self.chunkCb = chunkCb
         self.size = os.path.getsize(self.localPath)
         self.uploadedSize = 0
+        self.running = True
+        self.exception = None
         
     def __str__(self):
         return "UploadTask: %i, %s, %s, %s, %i, %i, %s" % (self.uid, self.localPath, self.remoteParentId, 
-                                                       self.remoteName, self.size, self.uploadedSize, self.key)
-        
+                                                           self.remoteName, self.size, self.uploadedSize,
+                                                           self.key)
+
 class UploadCompletedTask(UploadTask):
     
     @classmethod
-    def Create(cls, task, running, exception=None):
-        o = cls(task.startCb, task.completedCb, task.localPath, task.remoteParentId, task.remoteName, task.key, task.chunkCb)
-        o.running = running
-        o.__exc = exception
-        return o
-
-    @property
-    def exception(self):
-        return self.__exc
-
-    def __str__(self):
-        return "UploadCompletedTask: %i %s %s" % (self.uid, self.running, str(self.exc) if self.exc else "")
+    def Create(cls, task, exception):
+        return cls(exception, task)
+    
+    def __init__(self, exception, task):
+        super().__init__(task.startCb, task.completedCb, task.localPath,
+                         task.remoteParentId, task.remoteName, task.key,
+                         task.chunkCb)
+        self.uploadedSize = task.uploadedSize
+        self.running = task.running
+        self.exception = exception  
+        
 
 class CancelUploadTask(tasks.CancelTask):
 
@@ -114,13 +125,15 @@ class Uploader(threading.Thread):
         self.responseQueue.put(UploadCompletedTask.Create(task, exception))
 
     @staticmethod
-    def __cancelCb(task, *args):
+    def __cancelCb(task, totalUploadedSize):
+        task.uploadedSize = totalUploadedSize
         return not task.running
 
     def _handleUploadTask(self, task):
         try:
             elfcloudclient.upload(task.remoteParentId, task.remoteName, task.localPath, task.chunkCb,
-                                  lambda *args : self.__cancelCb(task, *args))
+                                  lambda totalUploadedSize : self.__cancelCb(task, totalUploadedSize),
+                                  task.uploadedSize if task.uploadedSize else None)
             self._submitUploadTaskDone(task)
         except elfcloudclient.ClientException as e:
             logger.error("Upload exception: %s" % str(e))
@@ -134,16 +147,19 @@ class Uploader(threading.Thread):
 
     def run(self):
         while self.running:
-            task = self.commandQueue.get()
-            self._setBusy()
-            
-            if type(task) == UploadTask:
-                self._handleUploadTask(task)
-            elif type(task) == tasks.TerminateTask:
-                self.running = False
-             
-            self._setIdle()
-            self.commandQueue.task_done()
+            try:
+                task = self.commandQueue.get()
+                self._setBusy()
+                
+                if type(task) == UploadTask:
+                    self._handleUploadTask(task)
+                elif type(task) == tasks.TerminateTask:
+                    self.running = False
+                 
+                self._setIdle()
+                self.commandQueue.task_done()
+            except:
+                logger.error("Uploader had unhandled exception: %s" % traceback.format_exc())
 
 
 class UploadManager(threading.Thread):
@@ -215,7 +231,7 @@ class UploadManager(threading.Thread):
         logger.debug("Pausing task %i" % task.uidOfTaskToPause)
         if self.currentUploaderTask and self.currentUploaderTask.uid == task.uidOfTaskToPause:
             self.currentUploaderTask.running = False
-            self.pausedList.append(self.currentUploaderTask)            
+            self.pausedList.append(UploadTask.Copy(self.currentUploaderTask))            
         elif self.todoQueue.count(task.uidOfTaskToPause):        
             self._moveTaskOfUid(task.uidOfTaskToPause, self.todoQueue, self.pausedList)
         else:
@@ -278,26 +294,29 @@ class UploadManager(threading.Thread):
     
     def run(self):
         while self.running:
-            task = self.commandQueue.get() # blocks until work to do
-            self._setBusy()
-            
-            if type(task) == UploadTask:
-                self._handleUploadTask(task)
-            elif type(task) == CancelUploadTask:
-                self._handleCancelTask(task)
-            elif type(task) == PauseUploadTask:
-                self._handlePauseTask(task)
-            elif type(task) == ResumeUploadTask:
-                self._handleResumeTask(task)
-            elif type(task) == UploadCompletedTask:
-                self._handleUploadCompletedTask(task)
-            elif type(task) == tasks.TerminateTask:
-                self._handleTerminateTask(task)
-            elif type(task) == ListUploadTask:
-                self._handleListUploadTask(task)
-
-            self._setIdleIfNothingOngoingOrTodo()
-            self.commandQueue.task_done()
+            try:
+                task = self.commandQueue.get() # blocks until work to do
+                self._setBusy()
+                
+                if type(task) == UploadTask:
+                    self._handleUploadTask(task)
+                elif type(task) == CancelUploadTask:
+                    self._handleCancelTask(task)
+                elif type(task) == PauseUploadTask:
+                    self._handlePauseTask(task)
+                elif type(task) == ResumeUploadTask:
+                    self._handleResumeTask(task)
+                elif type(task) == UploadCompletedTask:
+                    self._handleUploadCompletedTask(task)
+                elif type(task) == tasks.TerminateTask:
+                    self._handleTerminateTask(task)
+                elif type(task) == ListUploadTask:
+                    self._handleListUploadTask(task)
+    
+                self._setIdleIfNothingOngoingOrTodo()
+                self.commandQueue.task_done()
+            except:
+                logger.error("UploadManager had unhandled exception: %s" % traceback.format_exc())
                         
 UPLOADER = UploadManager()
 
