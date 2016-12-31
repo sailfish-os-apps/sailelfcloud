@@ -44,18 +44,15 @@ class UploadTask(tasks.XferTask):
                                                            self.remoteName, self.size, self.uploadedSize,
                                                            self.key)
 
-class UploadCompletedTask(UploadTask):
+class UploadCompletedTask(tasks.Task):
     
     @classmethod
     def Create(cls, task, exception):
         return cls(exception, task)
     
     def __init__(self, exception, task):
-        super().__init__(task.startCb, task.completedCb, task.localPath,
-                         task.remoteParentId, task.remoteName, task.key,
-                         task.chunkCb)
-        self.uploadedSize = task.uploadedSize
-        self.running = task.running
+        super().__init__()
+        self.task = task
         self.exception = exception  
         
 
@@ -200,8 +197,10 @@ class UploadManager(threading.Thread):
         self._submitTodoTaskToUploader()
 
     def _handleUploadCompletedTask(self, task):
-        if task.running:
-            if callable(task.completedCb): task.completedCb() if not task.exception else task.completedCb(task.exception)
+        if task.task.running:
+            if callable(task.task.completedCb): task.task.completedCb() if not task.exception else task.task.completedCb(task.exception)
+        else:
+            self.pausedList.append(task.task)
 
         self.currentUploaderTask = None
         self._submitTodoTaskToUploader()
@@ -231,7 +230,6 @@ class UploadManager(threading.Thread):
         logger.debug("Pausing task %i" % task.uidOfTaskToPause)
         if self.currentUploaderTask and self.currentUploaderTask.uid == task.uidOfTaskToPause:
             self.currentUploaderTask.running = False
-            self.pausedList.append(UploadTask.Copy(self.currentUploaderTask))            
         elif self.todoQueue.count(task.uidOfTaskToPause):        
             self._moveTaskOfUid(task.uidOfTaskToPause, self.todoQueue, self.pausedList)
         else:

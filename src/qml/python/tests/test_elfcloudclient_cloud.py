@@ -83,7 +83,7 @@ class Test_subscription_cloud(unittest.TestCase):
 
 class Test_upload_download_cloud(unittest.TestCase):
 
-    DATA = bytes(range(256)) * 2 * 1000 * 1
+    DATA = bytes(elfcloudclient.DEFAULT_REQUEST_SIZE_BYTES * 3)
     EXPECTED_CHUNKS = [i_ for i_ in range(elfcloudclient.DEFAULT_REQUEST_SIZE_BYTES, len(DATA), \
                                           elfcloudclient.DEFAULT_REQUEST_SIZE_BYTES)] + [len(DATA)]
     
@@ -104,21 +104,29 @@ class Test_upload_download_cloud(unittest.TestCase):
                 self.assertTrue(filecmp.cmp(uploadSourceFileName, downloadSourceFileName, shallow=False))
                 chunkCb.assert_has_calls(EXPECTED_CB_PARAMS)
 
-    def test__upload__MultipleTimesUsingAppendMode_ShouldUploadCorrectly(self):
-        UPLOAD_ROUNDS = 2
+    def test__upload__UseCancelCbToSplitUploadMultipleTimesUsingAppendMode_ShouldUploadCorrectly(self):
+        CANCELCB_RETURN_VALUES = [False, True, False, False, False]
         currentOffset = 0
+        currentRound = 0
         chunkCb = unittest.mock.Mock()
 
+        def cancelCb(completed):
+            nonlocal currentOffset, currentRound, CANCELCB_RETURN_VALUES
+            rv = CANCELCB_RETURN_VALUES[currentRound]
+            currentOffset = completed
+            currentRound += 1
+            return rv
+ 
+
         with tempfile.NamedTemporaryFile('wb', delete=False) as tf:
+            tf.write(self.DATA)
+            tf.flush()
             uploadSourceFileName = tf.name
             remoteName = basename(tf.name)
         
-            for _ in range(UPLOAD_ROUNDS):
-                tf.write(self.DATA)
-                tf.flush()
-                elfcloudclient.upload(VALID_PARENTID, remoteName, uploadSourceFileName, chunkCb, None, currentOffset)
-                currentOffset += len(self.DATA)
-                
+            while currentOffset < len(self.DATA):
+                elfcloudclient.upload(VALID_PARENTID, remoteName, uploadSourceFileName, chunkCb, cancelCb, currentOffset)
+            
             EXPECTED_CB_PARAMS = [call(len(self.DATA),i_) for i_ in self.EXPECTED_CHUNKS]
             chunkCb.assert_has_calls(EXPECTED_CB_PARAMS)
             

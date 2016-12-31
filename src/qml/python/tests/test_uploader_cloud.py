@@ -49,12 +49,12 @@ class Test_uploader_cloud(unittest.TestCase):
 
 
     def test_upload_wait_ShouldUploadFileToServer_ShouldWaitUntilUploadCompleted(self):
-        DATA = bytes(range(256)) * 4 * 1000 * 2
+        DATA = bytes(range(256)) * 4 * 1000 * 1
         with uploadTestFile(DATA):
             uploader.wait() 
 
     def test_upload_ManyFilesGiven_wait_ShouldUploadFileToServer_ShouldWaitUntilUploadCompleted(self):
-        DATA1 = bytes(range(256)) * 4 * 1000 * 2
+        DATA1 = bytes(range(256)) * 4 * 1000 * 1
         with uploadTestFile(DATA1):
             DATA2 = bytes(range(256)) * 4 * 1000 * 1
             with uploadTestFile(DATA2):

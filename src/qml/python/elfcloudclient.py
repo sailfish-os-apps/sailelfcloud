@@ -128,9 +128,9 @@ def upload(parentId, remotename, filename, chunkCb=None, cancelCb=None, offset=N
             self.fileobj.seek(self.totalReadSize)
             
         def read(self, size):
-            data = self.fileobj.read(size)
             if callable(cancelCb) and cancelCb(self.totalReadSize):
                 return None
+            data = self.fileobj.read(size)
             self.totalReadSize += len(data)
             if len(data) and callable(chunkCb):
                 chunkCb(fileSize, self.totalReadSize)
