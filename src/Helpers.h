@@ -78,7 +78,7 @@ private:
     static QString getStandardLocationVideo(void);
     static QString getStandardLocationAudio(void);
     static QString getDataDir(void);
-    static QString getCacheDir(void);
+    static QString getDownloadCacheDir(void);
     static QString getConfigDir(void);
     static QString getOfflineStorageDir(void);
     static QString getSettingsDir(void);

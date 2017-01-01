@@ -209,7 +209,7 @@ QString Helpers::readPlainFile(const QString path) const
 
 QString Helpers::generateLocalPathForRemoteDataItem(int parentId, const QString name) const
 {
-    const QString path = getCacheDir() + QString("/") + QString::number(parentId);
+    const QString path = getDownloadCacheDir() + QString("/") + QString::number(parentId);
     QDir d;
     d.mkpath(path);
     return path + QString("/") + name;
@@ -279,9 +279,9 @@ QString Helpers::getDataDir(void)
     return QStandardPaths::writableLocation(QStandardPaths::DataLocation);
 }
 
-QString Helpers::getCacheDir(void)
+QString Helpers::getDownloadCacheDir(void)
 {
-    return QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+    return QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/downloads";
 }
 
 QString Helpers::getConfigDir(void)
@@ -350,8 +350,8 @@ QString Helpers::generateKey(const QString currentKeyInHexString, const int data
 void Helpers::prepareCache(void)
 {
     QDir dir;
-    dir.mkpath(getCacheDir());
-    QFile::setPermissions(getCacheDir(), QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner);
+    dir.mkpath(getDownloadCacheDir());
+    QFile::setPermissions(getDownloadCacheDir(), QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner);
 }
 
 void Helpers::initConfig(void)
@@ -382,7 +382,7 @@ void Helpers::init(void)
 
 void Helpers::dropCache(void)
 {
-    QDir dir(getCacheDir());
+    QDir dir(getDownloadCacheDir());
     dir.removeRecursively();
 }
 
