@@ -13,7 +13,8 @@ TARGET = harbour-sailelfcloud
 CONFIG += sailfishapp
 
 SOURCES += SailElfCloud.cpp \
-           Helpers.cpp
+           Helpers.cpp \
+    Logger.cpp
 
 HEADERS += Helpers.h
 
