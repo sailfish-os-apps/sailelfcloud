@@ -4,8 +4,8 @@ import "../items"
 
 Page {
 
-    property var _asyncCallRef1: undefined
-    property var _asyncCallRef2: undefined
+    property var _listStoredAsyncCallRef: undefined
+    property var _listFetchesAsyncCallRef: undefined
 
     signal _updateTransferList(var transfers)
 
@@ -45,14 +45,14 @@ Page {
 
         // Note that we store async call reference so that we can invalidate it
         // if the elfCloud call is still in progress but this page is being closed.
-        _asyncCallRef2 = elfCloud.listFetches(function(fetches) { _listFetchesCb(fetches, transferList); });
+        _listFetchesAsyncCallRef = elfCloud.listFetches(function(fetches) { _listFetchesCb(fetches, transferList); });
     }
 
 
     function _refresh() {
         // Note that we store async call reference so that we can invalidate it
         // if the elfCloud call is still in progress but this page is being closed.
-        _asyncCallRef1 = elfCloud.listStores(_listStoresCb);
+        _listStoredAsyncCallRef = elfCloud.listStores(_listStoresCb);
     }
 
     function _storeStartedCb(parentId, remoteName, localName) {
@@ -110,11 +110,11 @@ Page {
         elfCloud.fetchDataItemChunkCompleted.disconnect(_fetchChunkCompletedCb);
         elfCloud.fetchDataItemCompleted.disconnect(_fetchCompletedCb);
 
-        if (_asyncCallRef1 !== undefined)
-            _asyncCallRef1.invalidate();
+        if (_listStoredAsyncCallRef !== undefined)
+            _listStoredAsyncCallRef.invalidate();
 
-        if (_asyncCallRef2 !== undefined)
-            _asyncCallRef2.invalidate();
+        if (_listFetchesAsyncCallRef !== undefined)
+            _listFetchesAsyncCallRef.invalidate();
     }
 
     function _getIconForTransferState(state) {

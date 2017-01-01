@@ -199,13 +199,12 @@ class UploadManager(threading.Thread):
     def _handleUploadCompletedTask(self, task):
         if task.task.running:
             if callable(task.task.completedCb): task.task.completedCb() if not task.exception else task.task.completedCb(task.exception)
-        else:
-            self.pausedList.append(task.task)
 
         self.currentUploaderTask = None
         self._submitTodoTaskToUploader()
 
     def _handleCancelTask(self, task):
+        logger.debug("Cancelling task %i" % task.uidOfTaskToCancel)
         if self.currentUploaderTask and self.currentUploaderTask.uid == task.uidOfTaskToCancel:
             self.currentUploaderTask.running = False
         elif self.todoQueue.count(task.uidOfTaskToCancel):
@@ -230,6 +229,7 @@ class UploadManager(threading.Thread):
         logger.debug("Pausing task %i" % task.uidOfTaskToPause)
         if self.currentUploaderTask and self.currentUploaderTask.uid == task.uidOfTaskToPause:
             self.currentUploaderTask.running = False
+            self.pausedList.append(self.currentUploaderTask)
         elif self.todoQueue.count(task.uidOfTaskToPause):        
             self._moveTaskOfUid(task.uidOfTaskToPause, self.todoQueue, self.pausedList)
         else:
@@ -269,7 +269,7 @@ class UploadManager(threading.Thread):
     def _handleListUploadTask(self, task):
         uploads = []
 
-        if self.currentUploaderTask:
+        if self.currentUploaderTask and self.currentUploaderTask.running:
             uploads.append(self._createTaskInfoDict(self.currentUploaderTask, "ongoing"))
 
         for t in self.todoQueue:

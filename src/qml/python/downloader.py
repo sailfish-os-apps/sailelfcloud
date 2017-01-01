@@ -223,7 +223,7 @@ class DownloadManager(threading.Thread):
         logger.debug("Pausing task %i" % task.uidOfTaskToPause)
         if self.currentDownloaderTask and self.currentDownloaderTask.uid == task.uidOfTaskToPause:
             self.currentDownloaderTask.running = False
-            self.pausedList.append(self.currentDownloaderTask)            
+            self.pausedList.append(self.currentDownloaderTask)
         elif self.todoQueue.count(task.uidOfTaskToPause):        
             self._moveTaskOfUid(task.uidOfTaskToPause, self.todoQueue, self.pausedList)
         else:
