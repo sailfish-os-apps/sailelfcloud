@@ -46,14 +46,24 @@ static void myMessageOutput(QtMsgType type, const QMessageLogContext &context, c
 }
 
 
-void initLogger(void)
+static const QString createLogDir(void)
 {
     const QString logPath = QStandardPaths::standardLocations(QStandardPaths::CacheLocation)[0] + "/logs";
     qDebug() << "log path"<< logPath;
     QDir().mkpath(logPath);
     QFile::setPermissions(logPath, QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner);
+    return logPath;
+}
+
+static void createAndOpenLogFile(void)
+{
+    const QString logPath = createLogDir();
     logFile.setFileName(logPath + "/log.txt");
     logFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text);
+}
 
+void initLogger(void)
+{
+    createAndOpenLogFile();
     qInstallMessageHandler(myMessageOutput);
 }
