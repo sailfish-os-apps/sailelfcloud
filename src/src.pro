@@ -34,11 +34,12 @@ DISTFILES += \
     qml/* \
     qml/pages/* \
     qml/views/* \
-    qml/covers/* \
+    qml/cover/* \
     qml/dialogs/* \
     qml/items/* \
     qml/pyton/* \
-    qml/pages/TransfersPage.qml
+    qml/pages/TransfersPage.qml \
+    qml/items/Notifications.qml
 
 OTHER_FILES = \
     ../rpm/harbour-sailelfcloud.yaml \
