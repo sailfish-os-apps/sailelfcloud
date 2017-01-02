@@ -28,19 +28,9 @@ CoverBackground {
     }
 
     Component.onCompleted: {
-        elfCloud.fetchAndMoveDataItemCompleted.connect(_downloadCompleted);
-        elfCloud.fetchAndMoveDataItemFailed.connect(_downloadCompleted);
-        elfCloud.fetchDataItemChunkCompleted.connect(_downloadChunkCompleted);
-        elfCloud.storeDataItemsCompleted.connect(_uploadCompleted);
-        elfCloud.storeDataItemChunkCompleted.connect(_uploadChunkCompleted);
     }
 
     Component.onDestruction: {
-        elfCloud.fetchAndMoveDataItemCompleted.disconnect(_downloadCompleted);
-        elfCloud.fetchAndMoveDataItemFailed.disconnect(_downloadCompleted);
-        elfCloud.fetchDataItemChunkCompleted.disconnect(_downloadChunkCompleted);
-        elfCloud.storeDataItemsCompleted.disconnect(_uploadCompleted);
-        elfCloud.storeDataItemChunkCompleted.disconnect(_uploadChunkCompleted);
     }
 
     Timer
