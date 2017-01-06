@@ -23,8 +23,11 @@ Download following dependencies to 3rd/ directory:
 Install following dependencies to Sailfish SDK:
  * python3-devel
 
-E.g. 'sb2 -t SailfishOS-i486 -m sdk-install -R zypper in python3-devel' and
-'sb2 -t SailfishOS-armv7hl -m sdk-install -R zypper in python3-devel' in MerSDK.
+E.g. on Mer build engine:
+```
+sb2 -t SailfishOS-i486 -m sdk-install -R zypper in python3-devel' and
+sb2 -t SailfishOS-armv7hl -m sdk-install -R zypper in python3-devel' in MerSDK.
+```
 
 Build SW
 --------
