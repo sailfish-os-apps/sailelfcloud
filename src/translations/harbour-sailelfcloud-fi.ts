@@ -176,12 +176,12 @@
 <context>
     <name>CoverPage</name>
     <message>
-        <location filename="../qml/cover/CoverPage.qml" line="90"/>
+        <location filename="../qml/cover/CoverPage.qml" line="80"/>
         <source>Upload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/cover/CoverPage.qml" line="108"/>
+        <location filename="../qml/cover/CoverPage.qml" line="98"/>
         <source>Download</source>
         <translation type="unfinished"></translation>
     </message>
@@ -716,6 +716,50 @@
     </message>
 </context>
 <context>
+    <name>Notifications</name>
+    <message>
+        <location filename="../qml/items/Notifications.qml" line="9"/>
+        <location filename="../qml/items/Notifications.qml" line="18"/>
+        <source>File upload</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/items/Notifications.qml" line="10"/>
+        <source>On progress</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/items/Notifications.qml" line="19"/>
+        <source>Compeleted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/items/Notifications.qml" line="26"/>
+        <source>File uploaded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/items/Notifications.qml" line="32"/>
+        <source>File download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/items/Notifications.qml" line="40"/>
+        <source>File downloaded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/items/Notifications.qml" line="48"/>
+        <source>File download failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/items/Notifications.qml" line="64"/>
+        <source> uploaded, items left </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ProblemPage</name>
     <message>
         <location filename="../qml/pages/ProblemPage.qml" line="17"/>
@@ -827,50 +871,6 @@
     <message>
         <location filename="../qml/pages/TransfersPage.qml" line="281"/>
         <source>No transfers</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>harbour-sailelfcloud</name>
-    <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="20"/>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="29"/>
-        <source>File upload</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="21"/>
-        <source>On progress</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="30"/>
-        <source>Compeleted</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="37"/>
-        <source>File uploaded</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="43"/>
-        <source>File download</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="51"/>
-        <source>File downloaded</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="59"/>
-        <source>File download failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/harbour-sailelfcloud.qml" line="75"/>
-        <source> uploaded, items left </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
