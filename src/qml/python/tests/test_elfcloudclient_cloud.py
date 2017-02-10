@@ -19,8 +19,8 @@ import filecmp
 from contextlib import contextmanager
 import elfcloudclient
 
-VALID_USERNAME = "xxxxx" # Set proper username
-VALID_PASSWORD = "xxxxx" # Set proper password
+VALID_USERNAME = "xxxx" # Set proper username
+VALID_PASSWORD = "xxxx" # Set proper password
 
 INVALID_USERNAME = "invalid_username"
 INVALID_PASSWORD = "invalid_password"
@@ -66,7 +66,13 @@ class Test_connection_cloud(unittest.TestCase):
         self.assertRaises(elfcloudclient.ClientException, elfcloudclient.connect, INVALID_USERNAME, INVALID_PASSWORD)
         self.assertFalse(elfcloudclient.isConnected())
         self.assertRaises(elfcloudclient.ClientException, elfcloudclient.connect, VALID_USERNAME, INVALID_PASSWORD)
-        self.assertFalse(elfcloudclient.isConnected())       
+        self.assertFalse(elfcloudclient.isConnected())
+
+class Test_connection_failures_cloud(unittest.TestCase):
+
+    @unittest.mock.patch(target='elfcloudclient.elfcloud.utils.SERVER_DEFAULT', new="https://huuuhaa1223.fi/")
+    def test_connect_Failure(self):
+        elfcloudclient.getSubscriptionInfo()
 
 
 class Test_subscription_cloud(unittest.TestCase):

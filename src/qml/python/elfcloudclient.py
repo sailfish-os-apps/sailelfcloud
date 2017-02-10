@@ -4,9 +4,9 @@ Created on Sep 17, 2016
 @author: Teemu Ahola [teemuahola7@gmail.com]
 '''
 
-import os
+import os, time
 import elfcloud
-import worker
+import urllib.error # for excedption from elfcloud
 import binascii
 import logger
 
@@ -35,6 +35,9 @@ class NotConnected(ClientException):
     def __init__(self):
         ClientException.__init__(self, 0, "not connected")
 
+class ConnectionBrokenError(ClientException):
+    pass
+
 class AuthenticationFailure(ClientException):
     pass
 
@@ -53,6 +56,8 @@ def handle_exception(func):
             raise ClientException(0, e.message) from e
         except NotConnected:
             raise
+        except urllib.error.URLError as e:
+            raise ConnectionBrokenError(0, str(e)) from e
         except Exception as e:
             raise ClientException(0, str(e)) from e
             
@@ -84,6 +89,20 @@ def connect(username, password):
     except elfcloud.exceptions.ECAuthException: # this we will handle by ourselves
         client = None
         raise   
+
+def reconnect(retries):
+    global client
+    
+    while True:
+        try:
+            client.auth()
+            logger.info("elfCLOUD client re-connected")
+            break
+        except urllib.error.URLError:
+            time.sleep(1)
+            pass
+        except elfcloud.exceptions.ECAuthException: # this we will handle by ourselves
+            raise    
 
 @handle_exception
 def isConnected():
