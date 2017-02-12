@@ -6,85 +6,96 @@ Item {
     Notification {
         id: uploadStartedNotif
         category: "x-nemo.transfer"
-        summary: qsTr("File upload")
-        body: qsTr("On progress")
+        body: qsTr("Upload to cloud.")
         previewSummary: summary
         previewBody: body
+
+        function publishWithName(name) { summary = name; publish(); }
     }
 
     Notification {
         id: uploadCompletedNotif
         category: "x-nemo.transfer.complete"
-        summary: qsTr("File upload")
-        body: qsTr("Compeleted")
+        body: qsTr("Upload completed.")
         previewSummary: summary
-    }
+        previewBody: body
 
-    Notification {
-        id: uploadFileCompletedNotif
-        category: "x-nemo.transfer.complete"
-        summary: qsTr("File uploaded")
+        function publishWithName(name) { summary = name; publish(); }
     }
 
     Notification {
         id: downloadStartedNotif
         category: "x-nemo.transfer"
-        summary: qsTr("File download")
+        body: qsTr("Download from cloud.")
         previewSummary: summary
         previewBody: body
+
+        function publishWithName(name) { summary = name; publish(); }
     }
 
     Notification {
-        id: downloadFileCompletedNotif
+        id: downloadCompletedNotif
         category: "x-nemo.transfer.complete"
-        summary: qsTr("File downloaded")
+        body: qsTr("Download completed.")
         previewSummary: summary
         previewBody: body
+
+        function publishWithName(name) { summary = name; publish(); }
     }
 
     Notification {
         id: downloadFileFailedNotif
         category: "x-nemo.transfer.error.conf"
-        summary: qsTr("File download failed")
         previewSummary: summary
         previewBody: body
+        urgency: Notification.Critical
+
+        function publishWithNameAndReason(name, reason) {
+            replacesId = 0; // ensure that existing failure notifications do not get replaced
+            summary = name;
+            body = qsTr("File download failed: ") + reason;
+            publish();
+        }
     }
 
-    function _uploadStarted() {
-        uploadStartedNotif.publish();
+    function _uploadStarted(parentId, remoteName, localName) {
+        uploadStartedNotif.publishWithName(remoteName);
     }
 
-    function _uploadCompleted() {
-        uploadCompletedNotif.publish();
-        uploadFileCompletedNotif.close();
+    function _uploadCompleted(parentId, remoteName, localName) {
+        uploadStartedNotif.close();
+        uploadCompletedNotif.publishWithName(remoteName);
     }
 
-    function _uploadFileCompleted(parentId, remoteName, localName, dataItemsLeft) {
-        console.debug("Uploaded", localName, "to", parentId, ":", remoteName, " items left to upload ", dataItemsLeft);
-        uploadFileCompletedNotif.body = helpers.getFilenameFromPath(localName) + qsTr(" uploaded, items left ") + dataItemsLeft;
-        uploadFileCompletedNotif.previewBody  = helpers.getFilenameFromPath(localName);
-        uploadFileCompletedNotif.publish();
+    function _downloadStarted(parentId, remoteName, localName) {
+        downloadStartedNotif.publishWithName(remoteName);
     }
 
-    function _downloadStarted(parentId, dataItemName, localPath) {
-        downloadStartedNotif.body = dataItemName;
-        downloadStartedNotif.publish();
+    function _downloadCompleted(parentId, remoteName, localName) {
+        downloadStartedNotif.close();
+        downloadCompletedNotif.publishWithName(remoteName);
     }
 
-    function _downloadCompleted(parentId, dataItemName, localPath) {
-        downloadFileCompletedNotif.body = dataItemName;
-        downloadFileCompletedNotif.publish();
-    }
-
-    function _downloadFailed(parentId, dataItemName, localPath, reason) {
-        downloadFileFailedNotif.body = reason + " - " + dataItemName;
-        downloadFileFailedNotif.publish();
+    function _downloadFailed(parentId, remoteName, localName, reason) {
+        downloadFileFailedNotif.publishWithNameAndReason(remoteName, reason)
     }
 
     Component.onCompleted: {
+        elfCloud.storeDataItemStarted.connect(_uploadStarted);
+        elfCloud.storeDataItemCompleted.connect(_uploadCompleted);
+        elfCloud.fetchAndMoveDataItemStarted.connect(_downloadStarted);
+        elfCloud.fetchAndMoveDataItemCompleted.connect(_downloadCompleted);
+        elfCloud.fetchAndMoveDataItemFailed.connect(_downloadFailed)
+        elfCloud.fetchDataItemFailed.connect(_downloadFailed)
     }
 
     Component.onDestruction: {
+        elfCloud.storeDataItemStarted.disconnect(_uploadStarted);
+        elfCloud.storeDataItemCompleted.disconnect(_uploadCompleted);
+        elfCloud.fetchAndMoveDataItemStarted.disconnect(_downloadStarted);
+        elfCloud.fetchAndMoveDataItemCompleted.disconnect(_downloadCompleted);
+        elfCloud.fetchAndMoveDataItemFailed.disconnect(_downloadFailed)
+        elfCloud.fetchDataItemFailed.disconnect(_downloadFailed)
     }
 
 }

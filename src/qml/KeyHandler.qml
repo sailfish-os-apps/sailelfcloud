@@ -14,19 +14,6 @@ Python {
         return _ready;
     }
 
-    // Sets up handlers for events and signals from python module
-    function __setHandlers() {
-        setHandler('log-d', function (text) {
-                    console.debug(text);
-                });
-        setHandler('log-i', function (text) {
-                    console.info(text);
-                });
-        setHandler('log-e', function (text) {
-                    console.error(text);
-                });
-    }
-
     function findKeyFiles(path) {
         return py.call_sync("keyhandler.findKeyFiles", [path]);
     }
@@ -90,7 +77,6 @@ Python {
             console.info("keyhandler starting up...");
             console.info("Python version: " + pythonVersion());
             console.info("PyOtherSide version: " + pluginVersion());
-            __setHandlers();
             addImportPath(Qt.resolvedUrl("python/"));
             importModule('keyhandler', function() {
                     call_sync('keyhandler.init', [StandardPaths.data])

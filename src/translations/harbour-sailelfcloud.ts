@@ -176,12 +176,12 @@
 <context>
     <name>CoverPage</name>
     <message>
-        <location filename="../qml/cover/CoverPage.qml" line="80"/>
+        <location filename="../qml/cover/CoverPage.qml" line="70"/>
         <source>Upload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/cover/CoverPage.qml" line="98"/>
+        <location filename="../qml/cover/CoverPage.qml" line="88"/>
         <source>Download</source>
         <translation type="unfinished"></translation>
     </message>
@@ -369,7 +369,7 @@
 <context>
     <name>ElfCloudAdapter</name>
     <message>
-        <location filename="../qml/ElfCloudAdapter.qml" line="216"/>
+        <location filename="../qml/ElfCloudAdapter.qml" line="222"/>
         <source>Destination file exists</source>
         <translation type="unfinished"></translation>
     </message>
@@ -719,43 +719,27 @@
     <name>Notifications</name>
     <message>
         <location filename="../qml/items/Notifications.qml" line="9"/>
-        <location filename="../qml/items/Notifications.qml" line="18"/>
-        <source>File upload</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/items/Notifications.qml" line="10"/>
-        <source>On progress</source>
+        <source>Upload to cloud.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/items/Notifications.qml" line="19"/>
-        <source>Compeleted</source>
+        <source>Upload completed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/items/Notifications.qml" line="26"/>
-        <source>File uploaded</source>
+        <location filename="../qml/items/Notifications.qml" line="29"/>
+        <source>Download from cloud.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/items/Notifications.qml" line="32"/>
-        <source>File download</source>
+        <location filename="../qml/items/Notifications.qml" line="56"/>
+        <source>File download failed: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/items/Notifications.qml" line="40"/>
-        <source>File downloaded</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/items/Notifications.qml" line="48"/>
-        <source>File download failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/items/Notifications.qml" line="64"/>
-        <source> uploaded, items left </source>
+        <location filename="../qml/items/Notifications.qml" line="39"/>
+        <source>Download completed.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

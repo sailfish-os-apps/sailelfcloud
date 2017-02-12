@@ -16,19 +16,11 @@ import tasks
 class UploadTask(tasks.XferTask):
     
     @classmethod
-    def Create(cls, localPath, remoteParentId, remoteName, key=None, startCb=None, completedCb=None, chunkCb=None):
-        return cls(startCb, completedCb, localPath, remoteParentId, remoteName, key, chunkCb)
+    def Create(cls, localPath, remoteParentId, remoteName, key=None, startCb=None, completedCb=None, chunkCb=None, failedCb=None):
+        return cls(startCb, completedCb, localPath, remoteParentId, remoteName, key, chunkCb, failedCb)
     
-    @classmethod
-    def Copy(cls, o):
-        c = cls.Create(o.localPath, o.remoteParentId, o.remoteName, o.key, o.startCb, o.completedCb, o.chunkCb)
-        c.uploadedSize = o.uploadedSize
-        c.running = o.running
-        c.exception = o.exception
-        return c
-    
-    def __init__(self, startCb, completedCb, localPath, remoteParentId, remoteName, key, chunkCb):
-        super().__init__(startCb, completedCb)
+    def __init__(self, startCb, completedCb, localPath, remoteParentId, remoteName, key, chunkCb, failedCb):
+        super().__init__(startCb, completedCb, failedCb)
         self.localPath = localPath
         self.remoteParentId = remoteParentId
         self.remoteName = remoteName
@@ -37,7 +29,6 @@ class UploadTask(tasks.XferTask):
         self.size = os.path.getsize(self.localPath)
         self.uploadedSize = 0
         self.running = True
-        self.exception = None
         
     def __str__(self):
         return "UploadTask: %i, %s, %s, %s, %i, %i, %s" % (self.uid, self.localPath, self.remoteParentId, 
@@ -198,7 +189,10 @@ class UploadManager(threading.Thread):
 
     def _handleUploadCompletedTask(self, task):
         if task.task.running:
-            if callable(task.task.completedCb): task.task.completedCb() if not task.exception else task.task.completedCb(task.exception)
+            if not task.exception:
+                if callable(task.task.completedCb): task.task.completedCb()
+            else:
+                if callable(task.task.failedCb): task.task.failedCb(task.exception)
 
         self.currentUploaderTask = None
         self._submitTodoTaskToUploader()
@@ -318,8 +312,9 @@ class UploadManager(threading.Thread):
                         
 UPLOADER = UploadManager()
 
-def upload(localPath, remoteParentId, remoteName, key=None, startCb=None, completedCb=None, chunkCb=None):
-    return UPLOADER.submitTask(UploadTask.Create(localPath, remoteParentId, remoteName, key, startCb, completedCb, chunkCb))
+def upload(localPath, remoteParentId, remoteName, key=None, startCb=None, completedCb=None, chunkCb=None, failedCb=None):
+    return UPLOADER.submitTask(UploadTask.Create(localPath, remoteParentId, remoteName, key,
+                                                 startCb, completedCb, chunkCb, failedCb))
 
 def cancel(uid, cb=None):
     UPLOADER.submitTask(CancelUploadTask.Create(uid, cb))

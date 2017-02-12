@@ -15,11 +15,11 @@ import logger
 class DownloadTask(tasks.XferTask):
     
     @classmethod
-    def Create(cls, localPath, remoteParentId, remoteName, key=None, startCb=None, completedCb=None, chunkCb=None):
-        return cls(startCb, completedCb, localPath, remoteParentId, remoteName, key, chunkCb)
+    def Create(cls, localPath, remoteParentId, remoteName, key=None, startCb=None, completedCb=None, chunkCb=None, failedCb=None):
+        return cls(startCb, completedCb, localPath, remoteParentId, remoteName, key, chunkCb, failedCb)
     
-    def __init__(self, startCb, completedCb, localPath, remoteParentId, remoteName, key, chunkCb):
-        super().__init__(startCb, completedCb)
+    def __init__(self, startCb, completedCb, localPath, remoteParentId, remoteName, key, chunkCb, failedCb):
+        super().__init__(startCb, completedCb, failedCb)
         self.localPath = localPath
         self.remoteParentId = remoteParentId
         self.remoteName = remoteName
@@ -29,25 +29,25 @@ class DownloadTask(tasks.XferTask):
         self.running = True
         
     def __str__(self):
-        return "DownloadTask: %i, %s, %s, %s, %i, %s" % (self.uid, self.localPath,
+        return "DownloadTask: %i, %s, %s, %s, %i, %s, %s" % (self.uid, self.localPath,
                                                          self.remoteParentId, self.remoteName,
-                                                         self.size, self.key)
+                                                         self.size, self.key, self.running)
         
-class DownloadCompletedTask(DownloadTask):
+class DownloadCompletedTask(tasks.Task):
     
     @classmethod
     def Create(cls, task, exception=None):
-        o = cls(task.startCb, task.completedCb, task.localPath, task.remoteParentId, task.remoteName, task.key, task.chunkCb)
-        o.running = task.running
+        o = cls()
+        o.task = task
         o.__exc = exception
         return o
 
     @property
     def exception(self):
         return self.__exc
-
+    
     def __str__(self):
-        return "DownloadCompletedTask: %i %s %s" % (self.uid, self.running, str(self.exc) if self.exc else "")
+        return "DownloadCompletedTask [exception: %s]: " % (str(self.exception)) + str(self.task)
 
 class CancelDownloadTask(tasks.CancelTask):
 
@@ -191,8 +191,11 @@ class DownloadManager(threading.Thread):
 
 
     def _handleDownloadCompletedTask(self, task):
-        if task.running:
-            if callable(task.completedCb): task.completedCb() if not task.exception else task.completedCb(task.exception)
+        if task.task.running:
+            if not task.exception:
+                if callable(task.task.completedCb): task.task.completedCb() 
+            else:
+                if callable(task.task.failedCb): task.task.failedCb(task.exception)
         
         self.currentDownloaderTask = None
         self._submitTodoTaskToDownloader()
@@ -312,9 +315,9 @@ class DownloadManager(threading.Thread):
                         
 DOWNLOADER = DownloadManager()
 
-def download(localPath, remoteParentId, remoteName, key=None, startCb=None, completedCb=None, chunkCb=None):
-    return DOWNLOADER.submitTask(DownloadTask.Create(localPath, remoteParentId,
-                                                     remoteName, key, startCb, completedCb, chunkCb))
+def download(localPath, remoteParentId, remoteName, key=None, startCb=None, completedCb=None, chunkCb=None, failedCb=None):
+    return DOWNLOADER.submitTask(DownloadTask.Create(localPath, remoteParentId, remoteName, key,
+                                                     startCb, completedCb, chunkCb, failedCb))
 
 def cancel(uid, cb=None):
     DOWNLOADER.submitTask(CancelDownloadTask.Create(uid, cb))

@@ -8,12 +8,13 @@ Python {
     signal readyForUse()
 
     signal fetchDataItemStarted(int parentId, string remoteName, string localName)
-    signal fetchDataItemChunkCompleted(int parentId, string name, int totalSize, int fetchedSize)
+    signal fetchDataItemChunkCompleted(int parentId, string remoteName, int totalSize, int fetchedSize)
     signal fetchDataItemCompleted(int parentId, string remoteName, string localName)
+    signal fetchDataItemFailed(int parentId, string remoteName, string localName, string reason)
 
-    signal fetchAndMoveDataItemStarted(int parentId, string name, string localName)
-    signal fetchAndMoveDataItemCompleted(int parentId, string name, string localName)
-    signal fetchAndMoveDataItemFailed(int parentId, string name, string localName, string reason)
+    signal fetchAndMoveDataItemStarted(int parentId, string remoteName, string localName)
+    signal fetchAndMoveDataItemCompleted(int parentId, string remoteName, string localName)
+    signal fetchAndMoveDataItemFailed(int parentId, string remoteName, string localName, string reason)
 
     signal storeDataItemStarted(int parentId, string remoteName, string localName)
     signal storeDataItemChunkCompleted(int parentId, string remoteName, string localName, int totalSize, int storedSize)
@@ -42,6 +43,7 @@ Python {
         setHandler('fetch-dataitem-started', _fetchDataItemStartedCb)
         setHandler('fetch-dataitem-chunk', _fetchDataItemChunkCb);
         setHandler('fetch-dataitem-completed', _fetchDataItemCompletedCb)
+        setHandler('fetch-dataitem-failed', _fetchDataItemFailedCb);
         setHandler('store-dataitem-started', _storeDataItemStartedCb);
         setHandler('store-dataitem-chunk', _storeDataItemChunkCb);
         setHandler('store-dataitem-completed', _storeDataItemCompletedCb);
@@ -204,6 +206,10 @@ Python {
         fetchDataItemCompleted(parentId, remoteName, localName)
     }
 
+    function _fetchDataItemFailedCb(parentId, remoteName, localName, reason) {
+        fetchDataItemFailed(parentId, remoteName, localName, reason)
+    }
+
     function fetchDataItem(parentId, name, outputPath, callback) {
         return _call("fetchDataItem", callback, parentId, name, outputPath);
     }
@@ -238,7 +244,7 @@ Python {
     }
 
     function _storeDataItemStartedCb(parentId, remoteName, localName) {
-        storeDataItemCompleted(parentId, remoteName, localName);
+        storeDataItemStarted(parentId, remoteName, localName);
     }
 
     function _storeDataItemChunkCb(parentId, remoteName, localName, totalSize, sizeStored) {

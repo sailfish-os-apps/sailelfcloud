@@ -3,7 +3,7 @@ Created on Sep 29, 2016
 
 @author: Teemu Ahola [teemuahola7@gmail.com]
 '''
-import unittest
+import unittest.mock
 from os.path import basename
 from contextlib import contextmanager
 import tempfile
@@ -11,8 +11,8 @@ import filecmp
 import elfcloudclient
 import downloader
 
-USERNAME = "xxxxx" # Set proper username
-PASSWORD = "xxxxx" # Set proper password
+USERNAME = "xxxx" # Set proper username
+PASSWORD = "xxxx" # Set proper password
 
 VALID_PARENTID = 687590
 INVALID_PARENTID = -1
@@ -43,6 +43,7 @@ class Test_downloader_cloud(unittest.TestCase):
     def _assertFilesEqual(self, path1, path2):
         self.assertTrue(filecmp.cmp(path1, path2))
 
+    @unittest.skip("")
     def test_download_ShouldDownloadFileSuccesfully(self):
         DATA = bytes(range(256)) * 4 * 1000 * 1
         
@@ -53,6 +54,17 @@ class Test_downloader_cloud(unittest.TestCase):
                                     completedCb=lambda : self._assertFilesEqual(tf.name, localName),
                                     chunkCb=None)
                 downloader.wait()
+
+    def test_download_FileDoesNotExist_ShouldCallFailedCb(self):
+        NON_EXISTING_REMOTE_FILE="this_file_does_not_exist_on_cloud"
+        failedCb = unittest.mock.Mock()
+        with tempfile.NamedTemporaryFile('wb') as tf:
+            downloader.download(tf.name, VALID_PARENTID, NON_EXISTING_REMOTE_FILE, key=None,
+                                startCb=None, completedCb=None, chunkCb=None,
+                                failedCb=failedCb)
+            downloader.wait()
+        
+        failedCb.assert_called_once_with(unittest.mock.ANY)
 
 
 if __name__ == "__main__":

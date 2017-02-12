@@ -137,6 +137,10 @@ def _downloadCompletedCb(cbObj, parentId, remoteName, localName, *args):
     pyotherside.send('fetch-dataitem-completed', parentId, remoteName, localName)
     _sendCompletedSignal(cbObj)
 
+def _downloadFailedCb(cbObj, parentId, remoteName, localName, exception):
+    pyotherside.send('fetch-dataitem-failed', parentId, remoteName, localName, str(exception))
+    _sendFailedSignal(cbObj)
+
 def _downloadChunkCb(parentId, remoteName, localName, totalSize, totalSizeStored):
     pyotherside.send('fetch-dataitem-chunk', parentId, remoteName, localName, totalSize, totalSizeStored)
 
@@ -144,9 +148,10 @@ def _downloadChunkCb(parentId, remoteName, localName, totalSize, totalSizeStored
 def fetchDataItem(cbObj, parentId, remotename, filename):
     downloader.download(filename, parentId,
                         remotename, None,
-                        lambda *args : _downloadStartedCb(parentId, remotename, filename, *args), # TODO why *args and not like in chunk cb
-                        lambda *args : _downloadCompletedCb(cbObj, parentId, remotename, filename, *args), # TODO why *args and not like in chunk cb
-                        lambda totalSize, totalSizeFetched : _downloadChunkCb(parentId, remotename, filename, totalSize, totalSizeFetched))
+                        lambda *args : _downloadStartedCb(parentId, remotename, filename, *args),
+                        lambda *args : _downloadCompletedCb(cbObj, parentId, remotename, filename, *args),
+                        lambda totalSize, totalSizeFetched : _downloadChunkCb(parentId, remotename, filename, totalSize, totalSizeFetched),
+                        lambda exception : _downloadFailedCb(cbObj, parentId, remotename, filename, exception))
 
 @handle_exception(cbObjName='cbObj')
 def cancelFetchDataItem(cbObj, uid):

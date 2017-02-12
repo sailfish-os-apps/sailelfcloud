@@ -8,10 +8,11 @@ import uidgenerator
 
 class Task(object):
     
-    def __init__(self, startCb=None, completedCb=None):
+    def __init__(self, startCb=None, completedCb=None, failedCb=None):
         self.__uid = uidgenerator.getUid()
         self.__startCb = startCb
         self.__completedCb = completedCb
+        self.__failedCb = failedCb
 
     @property
     def uid(self):
@@ -24,6 +25,10 @@ class Task(object):
     @property
     def completedCb(self):
         return self.__completedCb
+
+    @property
+    def failedCb(self):
+        return self.__failedCb
     
     def __eq__(self, other):
         if isinstance(other, int):
@@ -39,8 +44,8 @@ class TerminateTask(Task):
 
 class XferTask(Task):
     
-    def __init__(self, startCb, completedCb, *args):
-        super().__init__(startCb, completedCb)
+    def __init__(self, startCb, completedCb, failedCb, *args):
+        super().__init__(startCb, completedCb, failedCb)
         self.__running = True
         
     @property
@@ -60,7 +65,7 @@ class WaitCompletionTask(Task):
 class CancelTask(XferTask):
 
     def __init__(self, uidToCancel, cb):
-        super().__init__(startCb=None, completedCb=cb)
+        super().__init__(startCb=None, completedCb=cb, failedCb=None)
         self.__uidOfTaskToCancel = uidToCancel
         
     @property
@@ -70,7 +75,7 @@ class CancelTask(XferTask):
 class PauseTask(XferTask):
 
     def __init__(self, uidToPause, cb):
-        super().__init__(startCb=None, completedCb=cb)
+        super().__init__(startCb=None, completedCb=cb, failedCb=None)
         self.__uidOfTaskToPause = uidToPause
         
     @property
@@ -80,7 +85,7 @@ class PauseTask(XferTask):
 class ResumeTask(XferTask):
 
     def __init__(self, uidToResume, cb):
-        super().__init__(startCb=None, completedCb=cb)
+        super().__init__(startCb=None, completedCb=cb, failedCb=None)
         self.__uidOfTaskToResume = uidToResume
         
     @property

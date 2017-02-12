@@ -11,8 +11,8 @@ from contextlib import contextmanager
 import elfcloudclient
 import uploader
 
-USERNAME = "xxxxx" # Set proper username
-PASSWORD = "xxxxx" # Set proper password
+USERNAME = "unittestuser" # Set proper username
+PASSWORD = "utyghK1!!" # Set proper password
 
 VALID_PARENTID = 687590
 INVALID_PARENTID = -1
@@ -25,17 +25,20 @@ def uploadTestFile(data):
     startCb = unittest.mock.Mock()
     completedCb = unittest.mock.Mock()
     chunkCb = unittest.mock.Mock()
+    failedCb = unittest.mock.Mock()
     
     with tempfile.NamedTemporaryFile('wb') as tf:
         tf.write(data)
         tf.flush()
         remoteName = basename(tf.name)
-        uploader.upload(tf.name, VALID_PARENTID, remoteName, key=None, startCb=startCb, completedCb=completedCb, chunkCb=chunkCb)
+        uploader.upload(tf.name, VALID_PARENTID, remoteName, key=None, startCb=startCb,
+                        completedCb=completedCb, chunkCb=chunkCb, failedCb=failedCb)
         yield
     
-    startCb.assert_not_celled()
+    startCb.assert_called_once_with()
     completedCb.assert_called_once_with()
     chunkCb.assert_has_calls([call(len(data),i_) for i_ in EXPECTED_CHUNKS])
+    failedCb.assert_not_called()
 
 class Test_uploader_cloud(unittest.TestCase):
 

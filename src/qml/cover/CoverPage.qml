@@ -63,16 +63,6 @@ CoverBackground {
         }
 
         Label {
-            id: locationLabel
-            width: parent.width
-            horizontalAlignment: Text.AlignLeft
-            color: Theme.highlightColor
-            font { family: Theme.fontFamily; pixelSize: Theme.fontSizeSmall }
-            truncationMode: TruncationMode.Fade
-            text: location
-        }
-
-        Label {
             width: parent.width
             color: Theme.secondaryColor
             horizontalAlignment: Text.AlignHCenter
