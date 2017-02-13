@@ -11,8 +11,8 @@ from contextlib import contextmanager
 import elfcloudclient
 import uploader
 
-USERNAME = "unittestuser" # Set proper username
-PASSWORD = "utyghK1!!" # Set proper password
+USERNAME = "xxxx" # Set proper username
+PASSWORD = "xxxx" # Set proper password
 
 VALID_PARENTID = 687590
 INVALID_PARENTID = -1
@@ -34,7 +34,8 @@ def uploadTestFile(data):
         uploader.upload(tf.name, VALID_PARENTID, remoteName, key=None, startCb=startCb,
                         completedCb=completedCb, chunkCb=chunkCb, failedCb=failedCb)
         yield
-    
+        elfcloudclient.removeDataItem(VALID_PARENTID, remoteName)
+        
     startCb.assert_called_once_with()
     completedCb.assert_called_once_with()
     chunkCb.assert_has_calls([call(len(data),i_) for i_ in EXPECTED_CHUNKS])

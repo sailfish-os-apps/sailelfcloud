@@ -43,7 +43,6 @@ class Test_downloader_cloud(unittest.TestCase):
     def _assertFilesEqual(self, path1, path2):
         self.assertTrue(filecmp.cmp(path1, path2))
 
-    @unittest.skip("")
     def test_download_ShouldDownloadFileSuccesfully(self):
         DATA = bytes(range(256)) * 4 * 1000 * 1
         

@@ -7,7 +7,6 @@ import unittest.mock
 import threading
 import uploader
 import uidgenerator
-import elfcloudclient
 
 class TestUploader(unittest.TestCase):
 

@@ -19,8 +19,8 @@ import filecmp
 from contextlib import contextmanager
 import elfcloudclient
 
-VALID_USERNAME = "xxxxx" # Set proper username
-VALID_PASSWORD = "xxxxx" # Set proper password
+VALID_USERNAME = "xxxx" # Set proper username
+VALID_PASSWORD = "xxxx" # Set proper password
 
 INVALID_USERNAME = "invalid_username"
 INVALID_PASSWORD = "invalid_password"
