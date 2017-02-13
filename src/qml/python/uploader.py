@@ -38,14 +38,31 @@ class UploadTask(tasks.XferTask):
 class UploadCompletedTask(tasks.Task):
     
     @classmethod
+    def Create(cls, task):
+        return cls(task)
+    
+    def __init__(self, task):
+        super().__init__()
+        self.task = task 
+
+class UploadFailedTask(tasks.Task):
+    
+    @classmethod
     def Create(cls, task, exception):
         return cls(exception, task)
     
     def __init__(self, exception, task):
         super().__init__()
         self.task = task
-        self.exception = exception  
+        self.__exc = exception
         
+    @property
+    def exception(self):
+        return self.__exc
+    
+    def __str__(self):
+        return "UploadFailedTask [exception: %s]: " % (str(self.exception)) + str(self.task)
+          
 
 class CancelUploadTask(tasks.CancelTask):
 
@@ -109,8 +126,11 @@ class Uploader(threading.Thread):
     def isIdling(self):
         return self.idle.isSet()
 
-    def _submitUploadTaskDone(self, task, exception=None):
-        self.responseQueue.put(UploadCompletedTask.Create(task, exception))
+    def _submitUploadTaskDone(self, task):
+        self.responseQueue.put(UploadCompletedTask.Create(task))
+
+    def _submitUploadTaskFailed(self, task, exception=None):
+        self.responseQueue.put(UploadFailedTask.Create(task, exception))
 
     @staticmethod
     def __cancelCb(task, totalUploadedSize):
@@ -125,7 +145,7 @@ class Uploader(threading.Thread):
             self._submitUploadTaskDone(task)
         except elfcloudclient.ClientException as e:
             logger.error("Upload exception: %s" % str(e))
-            self._submitUploadTaskDone(task, e)
+            self._submitUploadTaskFailed(task, e)
 
     def _setBusy(self):
         self.idle.clear()
@@ -188,14 +208,27 @@ class UploadManager(threading.Thread):
         self._submitTodoTaskToUploader()
 
     def _handleUploadCompletedTask(self, task):
-        if task.task.running:
-            if not task.exception:
-                if callable(task.task.completedCb): task.task.completedCb()
-            else:
-                if callable(task.task.failedCb): task.task.failedCb(task.exception)
+        if task.task.running and callable(task.task.completedCb):
+            task.task.completedCb()
 
         self.currentUploaderTask = None
         self._submitTodoTaskToUploader()
+
+    def _pauseTask(self, uid):
+        if self.currentUploaderTask and self.currentUploaderTask.uid == uid:
+            self.currentUploaderTask.running = False
+            self.pausedList.append(self.currentUploaderTask)
+            self.currentUploaderTask = None
+        elif self.todoQueue.count(uid):        
+            self._moveTaskOfUid(uid, self.todoQueue, self.pausedList)
+        else:
+            logger.error("Task %i not current nor in todo list" % uid)
+
+    def _handleUploadFailedTask(self, task):
+        if task.task.running and callable(task.task.failedCb):
+            task.task.failedCb(task.exception)
+
+        self._pauseTask(task.task.uid)
 
     def _handleCancelTask(self, task):
         logger.debug("Cancelling task %i" % task.uidOfTaskToCancel)
@@ -221,13 +254,7 @@ class UploadManager(threading.Thread):
     
     def _handlePauseTask(self, task):
         logger.debug("Pausing task %i" % task.uidOfTaskToPause)
-        if self.currentUploaderTask and self.currentUploaderTask.uid == task.uidOfTaskToPause:
-            self.currentUploaderTask.running = False
-            self.pausedList.append(self.currentUploaderTask)
-        elif self.todoQueue.count(task.uidOfTaskToPause):        
-            self._moveTaskOfUid(task.uidOfTaskToPause, self.todoQueue, self.pausedList)
-        else:
-            logger.error("Task %i not current nor in todo list" % task.uidOfTaskToPause)
+        self._pauseTask(task.uidOfTaskToPause)
 
     def _handleResumeTask(self, task):
         logger.debug("Resuming task %i" % task.uidOfTaskToResume)
@@ -300,6 +327,8 @@ class UploadManager(threading.Thread):
                     self._handleResumeTask(task)
                 elif type(task) == UploadCompletedTask:
                     self._handleUploadCompletedTask(task)
+                elif type(task) == UploadFailedTask:
+                    self._handleUploadFailedTask(task)
                 elif type(task) == tasks.TerminateTask:
                     self._handleTerminateTask(task)
                 elif type(task) == ListUploadTask:

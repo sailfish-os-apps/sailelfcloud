@@ -36,6 +36,17 @@ class DownloadTask(tasks.XferTask):
 class DownloadCompletedTask(tasks.Task):
     
     @classmethod
+    def Create(cls, task):
+        o = cls()
+        o.task = task
+        return o
+
+    def __str__(self):
+        return "DownloadCompletedTask" + str(self.task)
+
+class DownloadFailedTask(tasks.Task):
+    
+    @classmethod
     def Create(cls, task, exception=None):
         o = cls()
         o.task = task
@@ -47,7 +58,7 @@ class DownloadCompletedTask(tasks.Task):
         return self.__exc
     
     def __str__(self):
-        return "DownloadCompletedTask [exception: %s]: " % (str(self.exception)) + str(self.task)
+        return "DownloadFailedTask [exception: %s]: " % (str(self.exception)) + str(self.task)
 
 class CancelDownloadTask(tasks.CancelTask):
 
@@ -111,8 +122,11 @@ class Downloader(threading.Thread):
     def isIdling(self):
         return self.idle.isSet()
 
-    def _submitDownloadTaskDone(self, task, exception=None):
-        self.responseQueue.put(DownloadCompletedTask.Create(task, exception))
+    def _submitDownloadTaskDone(self, task):
+        self.responseQueue.put(DownloadCompletedTask.Create(task))
+
+    def _submitDownloadTaskFailed(self, task, exception=None):
+        self.responseQueue.put(DownloadFailedTask.Create(task, exception))
     
     @staticmethod
     def _getRemoteSize(remoteParentId, remoteName):
@@ -130,7 +144,7 @@ class Downloader(threading.Thread):
             
             self._submitDownloadTaskDone(task)
         except elfcloudclient.ClientException as e:
-            self._submitDownloadTaskDone(task, e)
+            self._submitDownloadTaskFailed(task, e)
 
     def _setBusy(self):
         self.idle.clear()
@@ -191,14 +205,27 @@ class DownloadManager(threading.Thread):
 
 
     def _handleDownloadCompletedTask(self, task):
-        if task.task.running:
-            if not task.exception:
-                if callable(task.task.completedCb): task.task.completedCb() 
-            else:
-                if callable(task.task.failedCb): task.task.failedCb(task.exception)
+        if task.task.running and callable(task.task.completedCb):
+            task.task.completedCb() 
         
         self.currentDownloaderTask = None
         self._submitTodoTaskToDownloader()
+
+    def _pauseTask(self, uid):
+        if self.currentDownloaderTask and self.currentDownloaderTask.uid == uid:
+            self.currentDownloaderTask.running = False
+            self.pausedList.append(self.currentDownloaderTask)
+            self.currentDownloaderTask = None
+        elif self.todoQueue.count(uid):        
+            self._moveTaskOfUid(uid, self.todoQueue, self.pausedList)
+        else:
+            logger.error("Task %i not current nor in todo list" % uid)
+
+    def _handleDownloadFailedTask(self, task):
+        if task.task.running and callable(task.task.failedCb):
+            task.task.failedCb(task.exception)
+        
+        self._pauseTask(task.task.uid)
 
     def _handleCancelTask(self, task):
         logger.debug("Cancelling task %i" % task.uidOfTaskToCancel)
@@ -224,13 +251,7 @@ class DownloadManager(threading.Thread):
 
     def _handlePauseTask(self, task):
         logger.debug("Pausing task %i" % task.uidOfTaskToPause)
-        if self.currentDownloaderTask and self.currentDownloaderTask.uid == task.uidOfTaskToPause:
-            self.currentDownloaderTask.running = False
-            self.pausedList.append(self.currentDownloaderTask)
-        elif self.todoQueue.count(task.uidOfTaskToPause):        
-            self._moveTaskOfUid(task.uidOfTaskToPause, self.todoQueue, self.pausedList)
-        else:
-            logger.error("Task %i not current nor in todo list" % task.uidOfTaskToPause)
+        self._pauseTask(task.uidOfTaskToPause)
 
     def _handleResumeTask(self, task):
         logger.debug("Resuming task %i" % task.uidOfTaskToResume)
@@ -303,6 +324,8 @@ class DownloadManager(threading.Thread):
                     self._handleResumeTask(task)
                 elif type(task) == DownloadCompletedTask:
                     self._handleDownloadCompletedTask(task)
+                elif type(task) == DownloadFailedTask:
+                    self._handleDownloadFailedTask(task)
                 elif type(task) == tasks.TerminateTask:
                     self._handleTerminateTask(task)
                 elif type(task) == ListDownloadTask:

@@ -98,7 +98,7 @@ class TestUploader(unittest.TestCase):
 
     @unittest.mock.patch('uploader.os.path.getsize')
     @unittest.mock.patch('uploader.elfcloudclient.upload')
-    def test__upload__pause__resume__ShouldNotUploadPauses_ShouldContinueOnResume(self, mock_upload, getsize_mock):
+    def test__upload__pause__resume__ShouldNotUploadPaused_ShouldContinueOnResume(self, mock_upload, getsize_mock):
         mock_upload.side_effect = TestUploader._sideEffectAcquire
         uploader.upload("localPath0", "remoteParentId0", "remoteName0", "key0")
         uploader.upload("localPath1", "remoteParentId1", "remoteName1", "key1")
@@ -118,23 +118,36 @@ class TestUploader(unittest.TestCase):
         uploader.wait()
         mock_upload.assert_called_once_with("remoteParentId2", "remoteName2", "localPath2_to_be_paused", unittest.mock.ANY, unittest.mock.ANY, None)
 
-
     @unittest.mock.patch('uploader.os.path.getsize')
     @unittest.mock.patch('uploader.elfcloudclient.upload')
-    def test__upload__WhenFails_ShouldCallFailedCbWithException(self, mock_upload, getsize_mock):
+    def test__upload__WhenFails_ShouldCallFailedCbWithException_ShouldPauseFailed(self, mock_upload, getsize_mock):
         EXPECTED_EXCEPTION = uploader.elfcloudclient.ClientException(msg="test originated exception")
         mock_upload.side_effect = lambda *args : self._raise(EXPECTED_EXCEPTION)
         startCb = unittest.mock.Mock()
         completedCb = unittest.mock.Mock()
-        chunkCb = unittest.mock.Mock()
+        chunkCb = unittest.mock.Mock() # we do not really expect any calls to chunkCb since is is supposed to be called by elfcloudclient.upload() which we actually have mocked
         failedCb = unittest.mock.Mock()
-        uploader.upload("localPath1", "remoteParentId1", "remoteName1", "key1", startCb, completedCb, chunkCb, failedCb)
+        
+        uid = uploader.upload("localPath1", "remoteParentId1", "remoteName1", "key1", startCb, completedCb, chunkCb, failedCb)
         uploader.wait()
+        
         mock_upload.assert_called_with("remoteParentId1", "remoteName1", "localPath1", unittest.mock.ANY, unittest.mock.ANY, None)
         startCb.assert_called_once_with()
         completedCb.assert_not_called()
         chunkCb.assert_not_called()
-        failedCb.assert_called_once_with(EXPECTED_EXCEPTION)
+        failedCb.assert_called_once_with(EXPECTED_EXCEPTION)      
+        
+        mock_upload.side_effect = None
+        startCb.reset_mock()
+        completedCb.reset_mock()
+        failedCb.reset_mock()
+        chunkCb.reset_mock()
+        uploader.resume(uid)
+        uploader.wait()
+        startCb.assert_called_once_with()
+        completedCb.assert_called_once_with()
+        failedCb.assert_not_called()
+        chunkCb.assert_not_called()
 
     
 if __name__ == "__main__":
