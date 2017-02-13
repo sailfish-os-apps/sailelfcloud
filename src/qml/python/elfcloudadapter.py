@@ -107,6 +107,10 @@ def _uploadCompletedCb(cbObj, parentId, remoteName, localName, *args):
     pyotherside.send('store-dataitem-completed', parentId, remoteName, localName)
     _sendCompletedSignal(cbObj)
 
+def _uploadFailedCb(cbObj, parentId, remoteName, localName, exception):
+    pyotherside.send('store-dataitem-failed', parentId, remoteName, localName, str(exception))
+    _sendFailedSignal(cbObj)
+
 def _uploadChunkCb(parentId, remoteName, localName, totalSize, totalSizeStored):
     pyotherside.send('store-dataitem-chunk', parentId, remoteName, localName, totalSize, totalSizeStored)
 
@@ -116,7 +120,8 @@ def storeDataItem(cbObj, parentId, remotename, filename):
                     remotename, None,
                     lambda *args : _uploadStartedCb(parentId, remotename, filename, *args),
                     lambda *args : _uploadCompletedCb(cbObj, parentId, remotename, filename, *args),
-                    lambda totalSize, totalSizeStored : _uploadChunkCb(parentId, remotename, filename, totalSize, totalSizeStored))
+                    lambda totalSize, totalSizeStored : _uploadChunkCb(parentId, remotename, filename, totalSize, totalSizeStored),
+                    lambda exception : _uploadFailedCb(cbObj, parentId, remotename, filename, exception))
 
 @handle_exception(cbObjName='cbObj')
 def cancelStoreDataItem(cbObj, uid):

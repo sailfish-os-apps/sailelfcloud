@@ -24,6 +24,21 @@ Item {
     }
 
     Notification {
+        id: uploadFailedNotif
+        category: "x-nemo.transfer.error.conf"
+        previewSummary: summary
+        previewBody: body
+        urgency: Notification.Critical
+
+        function publishWithNameAndReason(name, reason) {
+            replacesId = 0; // ensure that existing failure notifications do not get replaced
+            summary = name;
+            body = qsTr("File upload failed: ") + reason;
+            publish();
+        }
+    }
+
+    Notification {
         id: downloadStartedNotif
         category: "x-nemo.transfer"
         body: qsTr("Download from cloud.")
@@ -44,7 +59,7 @@ Item {
     }
 
     Notification {
-        id: downloadFileFailedNotif
+        id: downloadFailedNotif
         category: "x-nemo.transfer.error.conf"
         previewSummary: summary
         previewBody: body
@@ -67,6 +82,10 @@ Item {
         uploadCompletedNotif.publishWithName(remoteName);
     }
 
+    function _uploadFailed(parentId, remoteName, localName, reason) {
+        uploadFailedNotif.publishWithNameAndReason(remoteName, reason)
+    }
+
     function _downloadStarted(parentId, remoteName, localName) {
         downloadStartedNotif.publishWithName(remoteName);
     }
@@ -77,12 +96,13 @@ Item {
     }
 
     function _downloadFailed(parentId, remoteName, localName, reason) {
-        downloadFileFailedNotif.publishWithNameAndReason(remoteName, reason)
+        downloadFailedNotif.publishWithNameAndReason(remoteName, reason)
     }
 
     Component.onCompleted: {
         elfCloud.storeDataItemStarted.connect(_uploadStarted);
         elfCloud.storeDataItemCompleted.connect(_uploadCompleted);
+        elfCloud.storeDataItemFailed.connect(_uploadFailed)
         elfCloud.fetchAndMoveDataItemStarted.connect(_downloadStarted);
         elfCloud.fetchAndMoveDataItemCompleted.connect(_downloadCompleted);
         elfCloud.fetchAndMoveDataItemFailed.connect(_downloadFailed)
@@ -92,6 +112,7 @@ Item {
     Component.onDestruction: {
         elfCloud.storeDataItemStarted.disconnect(_uploadStarted);
         elfCloud.storeDataItemCompleted.disconnect(_uploadCompleted);
+        elfCloud.storeDataItemFailed.disconnect(_uploadFailed)
         elfCloud.fetchAndMoveDataItemStarted.disconnect(_downloadStarted);
         elfCloud.fetchAndMoveDataItemCompleted.disconnect(_downloadCompleted);
         elfCloud.fetchAndMoveDataItemFailed.disconnect(_downloadFailed)

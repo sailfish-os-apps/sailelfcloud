@@ -369,7 +369,7 @@
 <context>
     <name>ElfCloudAdapter</name>
     <message>
-        <location filename="../qml/ElfCloudAdapter.qml" line="222"/>
+        <location filename="../qml/ElfCloudAdapter.qml" line="224"/>
         <source>Destination file exists</source>
         <translation type="unfinished"></translation>
     </message>
@@ -728,17 +728,22 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/items/Notifications.qml" line="29"/>
+        <location filename="../qml/items/Notifications.qml" line="36"/>
+        <source>File upload failed: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/items/Notifications.qml" line="44"/>
         <source>Download from cloud.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/items/Notifications.qml" line="56"/>
+        <location filename="../qml/items/Notifications.qml" line="71"/>
         <source>File download failed: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/items/Notifications.qml" line="39"/>
+        <location filename="../qml/items/Notifications.qml" line="54"/>
         <source>Download completed.</source>
         <translation type="unfinished"></translation>
     </message>

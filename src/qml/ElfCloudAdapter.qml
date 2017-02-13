@@ -19,6 +19,7 @@ Python {
     signal storeDataItemStarted(int parentId, string remoteName, string localName)
     signal storeDataItemChunkCompleted(int parentId, string remoteName, string localName, int totalSize, int storedSize)
     signal storeDataItemCompleted(int parentId, string remoteName, string localName)
+    signal storeDataItemFailed(int parentId, string remoteName, string localName, string reason)
 
     signal contentChanged(int containerId) // emitted when content of a container (containerId) has been changed
     signal exceptionOccurred(int id, string message)
@@ -47,6 +48,7 @@ Python {
         setHandler('store-dataitem-started', _storeDataItemStartedCb);
         setHandler('store-dataitem-chunk', _storeDataItemChunkCb);
         setHandler('store-dataitem-completed', _storeDataItemCompletedCb);
+        setHandler('store-dataitem-failed', _storeDataItemFailedCb);
     }
 
     function _callCbWithArgs(cb, args) {
@@ -254,6 +256,10 @@ Python {
     function _storeDataItemCompletedCb(parentId, remoteName, localName, exception) {
         storeDataItemCompleted(parentId, remoteName, localName);
         contentChanged(parentId);
+    }
+
+    function _storeDataItemFailedCb(parentId, remoteName, localName, reason) {
+        storeDataItemFailed(parentId, remoteName, localName, reason)
     }
 
     function storeDataItems(parentId, localPaths, callback) {
