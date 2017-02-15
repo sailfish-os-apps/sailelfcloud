@@ -51,6 +51,17 @@ Python {
         setHandler('store-dataitem-failed', _storeDataItemFailedCb);
     }
 
+    function _mapExceptionToReason(exception) {
+        switch (exception.id) {
+            case 802:
+                return qsTr("File with same name already exists in the cloud");
+            case 101:
+                return qsTr("Session is expired");
+            default:
+                return qsTr("Unknown error: ") + exception.id + exception.msg;
+        }
+    }
+
     function _callCbWithArgs(cb, args) {
         var argArray = Array.prototype.slice.call(args);
 
@@ -258,8 +269,9 @@ Python {
         contentChanged(parentId);
     }
 
-    function _storeDataItemFailedCb(parentId, remoteName, localName, reason) {
-        storeDataItemFailed(parentId, remoteName, localName, reason)
+    function _storeDataItemFailedCb(parentId, remoteName, localName, exception) {
+        var reason = _mapExceptionToReason(exception);
+        storeDataItemFailed(parentId, remoteName, localName, reason);
     }
 
     function storeDataItems(parentId, localPaths, callback) {

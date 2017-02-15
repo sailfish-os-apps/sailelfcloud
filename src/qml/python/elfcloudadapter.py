@@ -108,7 +108,7 @@ def _uploadCompletedCb(cbObj, parentId, remoteName, localName, *args):
     _sendCompletedSignal(cbObj)
 
 def _uploadFailedCb(cbObj, parentId, remoteName, localName, exception):
-    pyotherside.send('store-dataitem-failed', parentId, remoteName, localName, str(exception))
+    pyotherside.send('store-dataitem-failed', parentId, remoteName, localName, {'id':int(exception.id), 'msg':exception.msg})
     _sendFailedSignal(cbObj)
 
 def _uploadChunkCb(parentId, remoteName, localName, totalSize, totalSizeStored):
@@ -143,7 +143,7 @@ def _downloadCompletedCb(cbObj, parentId, remoteName, localName, *args):
     _sendCompletedSignal(cbObj)
 
 def _downloadFailedCb(cbObj, parentId, remoteName, localName, exception):
-    pyotherside.send('fetch-dataitem-failed', parentId, remoteName, localName, str(exception))
+    pyotherside.send('fetch-dataitem-failed', parentId, remoteName, localName, {'id':int(exception.id), 'msg':exception.msg})
     _sendFailedSignal(cbObj)
 
 def _downloadChunkCb(parentId, remoteName, localName, totalSize, totalSizeStored):
