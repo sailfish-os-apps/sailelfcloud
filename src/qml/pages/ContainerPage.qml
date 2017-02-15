@@ -120,11 +120,6 @@ Page {
             _refresh();
     }
 
-    onStatusChanged: {
-        if (status == PageStatus.Activating)
-            setItemNameToCover(containerType == "top" ? qsTr("Vaults") : containerName)
-    }
-
     Component.onCompleted: {
         elfCloud.contentChanged.connect(_handleContentChanged);
         _refresh();

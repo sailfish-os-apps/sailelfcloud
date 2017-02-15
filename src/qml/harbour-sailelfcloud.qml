@@ -11,10 +11,6 @@ ApplicationWindow
     property var keyHandler: KeyHandler { }
     property var notifications: Notifications { }
 
-    function setItemNameToCover(name) {
-        coverPage.location = name
-    }
-
     function _handleException(id, message) {
         pageStack.completeAnimation()
         pageStack.push(Qt.resolvedUrl("pages/ProblemPage.qml"),
