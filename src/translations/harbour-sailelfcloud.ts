@@ -15,7 +15,7 @@
     </message>
     <message>
         <location filename="../qml/pages/AboutPage.qml" line="45"/>
-        <source>Copyright © 2016 Teemu Ahola</source>
+        <source>Copyright © 2017 Teemu Ahola</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

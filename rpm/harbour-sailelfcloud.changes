@@ -8,8 +8,8 @@
 # * date Author's Name <author's email> version-release
 # - Summary of changes
 
-* Sun Dec 11 2016 Teemu Ahola <teemuahola7@gmail.com> 2.1.0-0
-- TBD.
+* Thu Feb 16 2017 Teemu Ahola <teemuahola7@gmail.com> 2.1.0-0
+- Fixed issues #10, #12, #15 and #18.
 
 * Mon Jul 06 2016 Teemu Ahola <teemuahola7@gmail.com> 2.0.1-0
 - Fixed issue #3.

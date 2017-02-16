@@ -42,7 +42,7 @@ Page
         }
         Label
         {
-            text: qsTr("Copyright © 2016 Teemu Ahola")
+            text: qsTr("Copyright © 2017 Teemu Ahola")
             anchors { horizontalCenter: titleLabel.horizontalCenter }
             color: Theme.primaryColor
             font { family: Theme.fontFamily; pixelSize: Theme.fontSizeMedium }
