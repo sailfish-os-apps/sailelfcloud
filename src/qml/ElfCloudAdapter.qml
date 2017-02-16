@@ -11,6 +11,7 @@ Python {
     signal fetchDataItemChunkCompleted(int parentId, string remoteName, int totalSize, int fetchedSize)
     signal fetchDataItemCompleted(int parentId, string remoteName, string localName)
     signal fetchDataItemFailed(int parentId, string remoteName, string localName, string reason)
+    signal fetchDataItemCancelled(int uid)
 
     signal fetchAndMoveDataItemStarted(int parentId, string remoteName, string localName)
     signal fetchAndMoveDataItemCompleted(int parentId, string remoteName, string localName)
@@ -20,6 +21,7 @@ Python {
     signal storeDataItemChunkCompleted(int parentId, string remoteName, string localName, int totalSize, int storedSize)
     signal storeDataItemCompleted(int parentId, string remoteName, string localName)
     signal storeDataItemFailed(int parentId, string remoteName, string localName, string reason)
+    signal storeDataItemCancelled(int uid)
 
     signal contentChanged(int containerId) // emitted when content of a container (containerId) has been changed
     signal exceptionOccurred(int id, string message)
@@ -245,7 +247,10 @@ Python {
     }
 
     function cancelDataItemFetch(uid, callback) {
-        return _call("cancelFetchDataItem", callback, uid);
+        fetchDataItemCancelled(uid); // TODO This signal should be sent from callback.
+        return _call("cancelFetchDataItem", function() {
+            _callCbWithArgs(callback, arguments);
+        }, uid);
     }
 
     function pauseDataItemFetch(uid, callback) {
@@ -284,7 +289,10 @@ Python {
     }
 
     function cancelDataItemStore(uid, callback) {
-        return _call("cancelStoreDataItem", callback, uid);
+        storeDataItemCancelled(uid); // TODO This signal should be sent from callback.
+        return _call("cancelStoreDataItem", function() {
+            _callCbWithArgs(callback, arguments);
+        }, uid);
     }
 
     function pauseDataItemStore(uid, callback) {

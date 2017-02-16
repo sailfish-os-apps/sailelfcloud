@@ -173,19 +173,6 @@
     </message>
 </context>
 <context>
-    <name>CoverPage</name>
-    <message>
-        <location filename="../qml/cover/CoverPage.qml" line="133"/>
-        <source>Upload</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/cover/CoverPage.qml" line="151"/>
-        <source>Download</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>CreateNewKeyDialog</name>
     <message>
         <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="39"/>
@@ -368,22 +355,22 @@
 <context>
     <name>ElfCloudAdapter</name>
     <message>
-        <location filename="../qml/ElfCloudAdapter.qml" line="57"/>
+        <location filename="../qml/ElfCloudAdapter.qml" line="59"/>
         <source>File with same name already exists in the cloud</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/ElfCloudAdapter.qml" line="59"/>
+        <location filename="../qml/ElfCloudAdapter.qml" line="61"/>
         <source>Session is expired</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/ElfCloudAdapter.qml" line="61"/>
+        <location filename="../qml/ElfCloudAdapter.qml" line="63"/>
         <source>Unknown error: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/ElfCloudAdapter.qml" line="235"/>
+        <location filename="../qml/ElfCloudAdapter.qml" line="237"/>
         <source>Destination file exists</source>
         <translation type="unfinished"></translation>
     </message>
