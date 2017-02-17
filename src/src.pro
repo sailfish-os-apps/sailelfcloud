@@ -49,12 +49,12 @@ OTHER_FILES = \
 INCLUDEPATH += $$PWD
 
 pycrypto.target = pycrypto
-pycrypto.commands = CFLAGS="" ; CXXFLAGS="" FFLAGS="" ; tar xzf $$PWD/3rd/pycrypto-2.6.1.tar.gz  && cd pycrypto-2.6.1 && patch setup.py $$PWD/3rd/pycrypto.patch && python3 setup.py bdist_egg
+pycrypto.commands = CFLAGS="" ; CXXFLAGS="" FFLAGS="" ; cp -R $$PWD/3rd/pycrypto pycrypto-2.6.1 && cd pycrypto-2.6.1 && patch setup.py $$PWD/3rd/pycrypto.patch && python3 setup.py bdist_egg
 pycrypto.extra = cp pycrypto-2.6.1/dist/pycrypto-2.6.1-*.egg $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib/
 pycrypto.path = $$DEPLOYMENT_PATH/lib
 
 decorator.target = decorator
-decorator.commands = tar xzf $$PWD/3rd/decorator-4.0.9.tar.gz && cd decorator-4.0.9 && python3 setup.py bdist_egg
+decorator.commands = cp -R $$PWD/3rd/decorator decorator-4.0.9 && cd decorator-4.0.9 && python3 setup.py bdist_egg
 decorator.extra = cp $$OUT_PWD/decorator-4.0.9/dist/decorator-4.0.9-*.egg $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib
 decorator.path = $$DEPLOYMENT_PATH/lib
 
