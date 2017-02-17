@@ -1,0 +1,3 @@
+[submodule "src/3rd/pycrypto"]
+	path = src/3rd/pycrypto
+	url = https://github.com/dlitz/pycrypto.git
