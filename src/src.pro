@@ -14,7 +14,7 @@ CONFIG += sailfishapp
 
 SOURCES += SailElfCloud.cpp \
            Helpers.cpp \
-    Logger.cpp
+           Logger.cpp
 
 HEADERS += Helpers.h
 
@@ -49,17 +49,17 @@ OTHER_FILES = \
 INCLUDEPATH += $$PWD
 
 pycrypto.target = pycrypto
-pycrypto.commands = CFLAGS="" ; CXXFLAGS="" FFLAGS="" ; cd $$PWD/3rd/pycrypto && python3 setup.py bdist_egg --bdist-dir $$OUT_PWD/build --dist-dir $$OUT_PWD/dist
+pycrypto.commands = CFLAGS="" ; CXXFLAGS="" FFLAGS="" ; cd $$PWD/3rd/pycrypto && python3 setup.py bdist_egg --bdist-dir $$OUT_PWD/build/pycrypto --dist-dir $$OUT_PWD/dist
 pycrypto.extra = cp $$OUT_PWD/dist/pycrypto*.egg $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib/
 pycrypto.path = $$DEPLOYMENT_PATH/lib
 
 decorator.target = decorator
-decorator.commands = cd $$PWD/3rd/decorator && python3 setup.py bdist_egg --bdist-dir $$OUT_PWD/build --dist-dir $$OUT_PWD/dist
+decorator.commands = cd $$PWD/3rd/decorator && python3 setup.py bdist_egg --bdist-dir $$OUT_PWD/build/decorator --dist-dir $$OUT_PWD/dist
 decorator.extra = cp $$OUT_PWD/dist/decorator*.egg $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib
 decorator.path = $$DEPLOYMENT_PATH/lib
 
 elfcloud.target = elfcloud
-elfcloud.commands = cd $$PWD/3rd/elfcloud-weasel && python3 setup.py bdist_egg --bdist-dir $$OUT_PWD/build --dist-dir $$OUT_PWD/dist
+elfcloud.commands = cd $$PWD/3rd/elfcloud-weasel && python3 setup.py bdist_egg --bdist-dir $$OUT_PWD/build/elfcloud-weasel --dist-dir $$OUT_PWD/dist
 elfcloud.extra = cp $$OUT_PWD/dist/elfcloud_weasel*.egg $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib
 elfcloud.path = $$DEPLOYMENT_PATH/lib
 
