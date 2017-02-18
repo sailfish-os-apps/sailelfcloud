@@ -49,18 +49,18 @@ OTHER_FILES = \
 INCLUDEPATH += $$PWD
 
 pycrypto.target = pycrypto
-pycrypto.commands = CFLAGS="" ; CXXFLAGS="" FFLAGS="" ; cp -R $$PWD/3rd/pycrypto pycrypto-2.6.1 && cd pycrypto-2.6.1 && patch setup.py $$PWD/3rd/pycrypto.patch && python3 setup.py bdist_egg
-pycrypto.extra = cp pycrypto-2.6.1/dist/pycrypto-2.6.1-*.egg $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib/
+pycrypto.commands = CFLAGS="" ; CXXFLAGS="" FFLAGS="" ; cd $$PWD/3rd/pycrypto && python3 setup.py bdist_egg --bdist-dir $$OUT_PWD/build --dist-dir $$OUT_PWD/dist
+pycrypto.extra = cp $$OUT_PWD/dist/pycrypto*.egg $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib/
 pycrypto.path = $$DEPLOYMENT_PATH/lib
 
 decorator.target = decorator
-decorator.commands = cp -R $$PWD/3rd/decorator decorator-4.0.9 && cd decorator-4.0.9 && python3 setup.py bdist_egg
-decorator.extra = cp $$OUT_PWD/decorator-4.0.9/dist/decorator-4.0.9-*.egg $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib
+decorator.commands = cd $$PWD/3rd/decorator && python3 setup.py bdist_egg --bdist-dir $$OUT_PWD/build --dist-dir $$OUT_PWD/dist
+decorator.extra = cp $$OUT_PWD/dist/decorator*.egg $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib
 decorator.path = $$DEPLOYMENT_PATH/lib
 
 elfcloud.target = elfcloud
-elfcloud.commands = rm -Rf elfcloud-weasel-1.2.2 && tar xzf $$PWD/3rd/elfcloud-weasel-1.2.2.tar.gz && patch -p1 -i $$PWD/3rd/elfcloud.patch && cd elfcloud-weasel-1.2.2 && python3 setup.py bdist_egg
-elfcloud.extra = cp $$OUT_PWD/elfcloud-weasel-1.2.2/dist/elfcloud_weasel-1.2.2-*.egg $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib
+elfcloud.commands = cd $$PWD/3rd/elfcloud-weasel && python3 setup.py bdist_egg --bdist-dir $$OUT_PWD/build --dist-dir $$OUT_PWD/dist
+elfcloud.extra = cp $$OUT_PWD/dist/elfcloud_weasel*.egg $(INSTALL_ROOT)/usr/share/harbour-sailelfcloud/lib
 elfcloud.path = $$DEPLOYMENT_PATH/lib
 
 QMAKE_EXTRA_TARGETS += pycrypto decorator elfcloud
