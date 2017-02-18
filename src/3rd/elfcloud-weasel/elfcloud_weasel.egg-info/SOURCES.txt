@@ -29,6 +29,7 @@ elfcloud/tests/container.py
 elfcloud/tests/dataitem.py
 elfcloud/tests/filecrypt.py
 elfcloud/tests/utils.py
+elfcloud_weasel.egg-info/.gitignore
 elfcloud_weasel.egg-info/PKG-INFO
 elfcloud_weasel.egg-info/SOURCES.txt
 elfcloud_weasel.egg-info/dependency_links.txt

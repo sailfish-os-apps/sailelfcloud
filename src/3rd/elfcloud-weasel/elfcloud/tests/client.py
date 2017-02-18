@@ -251,23 +251,23 @@ class TestClientFunctions(unittest.TestCase):
         conn.auth.assert_called_once_with(self.client.username, self.client._auth_method,
                                           self.client._auth_data, self.client.apikey)
 
-    def _mock_client_make_request(self, checksum=u'0f9aec7fe5ccbc22d4fcfd3bc8427b10',
-                                        modified_date=u'2012-10-15T07:42:28.824216+00:00',
-                                        meta=u'v1:CHA:d8c2eafd90c266e19ab9dcacc479f8af:ENC:AES256:TGS:A,B:KHA:257e3a285b3d6a257e6739ba085ddf2d:DSC:JE::',
+    def _mock_client_make_request(self, checksum='0f9aec7fe5ccbc22d4fcfd3bc8427b10',
+                                        modified_date='2012-10-15T07:42:28.824216+00:00',
+                                        meta='v1:CHA:d8c2eafd90c266e19ab9dcacc479f8af:ENC:AES256:TGS:A,B:KHA:257e3a285b3d6a257e6739ba085ddf2d:DSC:JE::',
                                         length=26246026,
-                                        name=u'Wildlife.wmv',
+                                        name='Wildlife.wmv',
                                         parent_id=392,
-                                        last_accessed_date=u'2012-10-15T09:56:27.505500+00:00'):
+                                        last_accessed_date='2012-10-15T09:56:27.505500+00:00'):
         conn = mock.Mock()
         self.client.connection = conn
         conn.make_request.return_value = [{
-            u'modified_date': modified_date,
-            u'name': name,
-            u'md5sum': str(checksum),
-            u'parent_id': parent_id,
-            u'last_accessed_date': last_accessed_date,
-            u'meta': meta,
-            u'size': length
+            'modified_date': modified_date,
+            'name': name,
+            'md5sum': str(checksum),
+            'parent_id': parent_id,
+            'last_accessed_date': last_accessed_date,
+            'meta': meta,
+            'size': length
         }]
         return conn
 

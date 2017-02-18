@@ -1,4 +1,4 @@
-Metadata-Version: 1.0
+Metadata-Version: 1.1
 Name: elfcloud-weasel
 Version: 1.2.2
 Summary: elfcloud.fi Weasel
@@ -6,7 +6,7 @@ Home-page: http://elfcloud.fi/
 Author: elfcloud
 Author-email: support.dev@elfcloud.fi
 License: 
-Copyright 2010-2013 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure Services
+Copyright 2010-2013 elfCLOUD / elfcloud.fi - SCIS Secure Cloud Infrastructure Services
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.

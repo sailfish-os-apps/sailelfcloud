@@ -57,7 +57,7 @@ class FileCrypt(object):
         Returns CryptIterator that decrypts data in chunks
         """
         self._validate_key_and_iv()
-        decryptor = AES.new(str(self._crypt_key), AES.MODE_CFB, self._crypt_iv).decrypt
+        decryptor = AES.new(self._crypt_key, AES.MODE_CFB, self._crypt_iv).decrypt
         return CryptIterator(data, decryptor, chunksize)
 
     def encrypt(self, data, chunksize=4194304):
@@ -69,7 +69,7 @@ class FileCrypt(object):
         Returns a CryptIterator that encrypts data in chunks
         """
         self._validate_key_and_iv()
-        encryptor = AES.new(str(self._crypt_key), AES.MODE_CFB, self._crypt_iv).encrypt
+        encryptor = AES.new(self._crypt_key, AES.MODE_CFB, self._crypt_iv).encrypt
         return CryptIterator(data, encryptor, chunksize)
 
 
@@ -97,7 +97,7 @@ class CryptIterator(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         """Read a chunk of data, updates md5 and returns encrypted/decrypted chunk
 
         """
@@ -129,7 +129,7 @@ class FileIterator(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         """Reads a chunk of data, updates md5 and returns the chunk
         """
         chunk = self.fileobj.read(self.chunksize)

@@ -14,8 +14,8 @@ Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure 
    See the License for the specific language governing permissions and
    limitations under the License.
 """
-import utils
-import filecrypt
+from . import utils
+from . import filecrypt
 import hashlib
 import base64
 from elfcloud.exceptions import ECDataItemException
@@ -121,10 +121,8 @@ class DataItem(object):
         }
         self.__dict__.update(update_dict)
 
-    def _update(self):
-        if not self._info_retrieved:
-            self._get_item_info()
 
+    def _update(self):
         method = 'update_dataitem'
         params = {
             'parent_id': self.parent_id,
@@ -257,7 +255,7 @@ class DataItem(object):
         url_suffix = "/store"
 
         try:
-            data_chunk = data.next()
+            data_chunk = next(data)
             md5 = hashlib.md5()
             md5.update(data_chunk)
             headers['X-ELFCLOUD-HASH'] = md5.hexdigest()

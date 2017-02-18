@@ -14,10 +14,10 @@ Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure 
    See the License for the specific language governing permissions and
    limitations under the License.
 """
-from client import *
-from cli import *
-from connection import *
-from container import *
-from dataitem import *
-from filecrypt import *
-from utils import *
+from .client import *
+from .cli import *
+from .connection import *
+from .container import *
+from .dataitem import *
+from .filecrypt import *
+from .utils import *

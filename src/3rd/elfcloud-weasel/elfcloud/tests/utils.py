@@ -15,7 +15,7 @@ Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure 
    limitations under the License.
 """
 import os
-import StringIO
+import io
 from elfcloud.exceptions import (
         ClientMetaException,
         ClientKeyFileException,
@@ -36,7 +36,7 @@ class ValidateEncryptionTestCase(unittest.TestCase):
 
 class MetaParserDeserializeTestCase(unittest.TestCase):
     def _makeOne(self, string):
-        print string
+        print(string)
         return MetaParser.deserialize(string)
 
     def _parse_test(self, test_string):
@@ -97,13 +97,13 @@ class MetaParserDeserializeTestCase(unittest.TestCase):
         self.assertRaises(ECCryptException, self._makeOne, test_string)
 
     def test_parse_invalid_utf8_value(self):
-        test_string = 'v1:AVAIN1:DATA\xff\u2200::'
+        test_string = 'v1:AVAIN1:DATA\xff\\u2200::'
         self.assertRaises(ClientMetaException, self._makeOne, test_string)
 
 
 class MetaParserSerializeTestCase(unittest.TestCase):
     def _makeOne(self, meta_dict):
-        print meta_dict
+        print(meta_dict)
         return MetaParser.serialize(meta_dict)
 
     def test_no_version(self):
@@ -123,7 +123,7 @@ class KeyFileParserTestCase(unittest.TestCase):
 
     def generate_key(self, iv_len, key_len):
         iv, key = os.urandom(iv_len), os.urandom(key_len)
-        return StringIO.StringIO(iv + key), iv, key
+        return io.StringIO(iv + key), iv, key
 
     def test_parse_file_aes256(self):
         fh, iv, key = self.generate_key(16, 32)

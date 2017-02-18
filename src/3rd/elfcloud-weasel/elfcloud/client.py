@@ -16,8 +16,8 @@ Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure 
 """
 from decorator import decorator
 
-import utils
-import filecrypt
+from . import utils
+from . import filecrypt
 from .container import Cluster, Vault
 from .dataitem import DataItem
 from .connection import Connection

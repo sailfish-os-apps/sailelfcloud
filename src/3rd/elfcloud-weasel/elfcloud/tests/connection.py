@@ -16,7 +16,7 @@ Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure 
 """
 import unittest
 import mock
-import StringIO
+import io
 
 from elfcloud.exceptions import ECDataItemException
 from elfcloud.connection import Connection
@@ -55,7 +55,7 @@ class TestConnection(unittest.TestCase):
     @mock.patch('json.JSONDecoder')
     def test_connection_make_request(self, MockJSONDecoder, MockUrllib, MockRequest):
         mock_instance1 = mock.Mock()
-        mock_instance1.open.return_value = StringIO.StringIO("Test response")
+        mock_instance1.open.return_value = io.StringIO("Test response")
         MockUrllib.return_value = mock_instance1
 
         mock_instance2 = mock.Mock()

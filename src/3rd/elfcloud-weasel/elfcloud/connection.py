@@ -14,11 +14,11 @@ Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure 
    See the License for the specific language governing permissions and
    limitations under the License.
 """
-import cookielib
-import urllib2
+import http.cookiejar
+import urllib.request, urllib.error, urllib.parse
 import json
 
-from exceptions import ECUnknownException, ECDataItemException
+from .exceptions import ECUnknownException, ECDataItemException
 import elfcloud.exceptions as exceptions
 
 
@@ -35,8 +35,8 @@ class Connection(object):
 
         """
         self._server_url = server_url
-        self._cookies = cookielib.CookieJar()
-        self._opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self._cookies))
+        self._cookies = http.cookiejar.CookieJar()
+        self._opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(self._cookies))
         self._is_authed = False
 
     def auth(self, username, auth_data, auth_method, apikey):
@@ -75,15 +75,17 @@ class Connection(object):
                 }
 
         post_data = json.JSONEncoder().encode(json_request)
+        binary_data = post_data.encode('utf8')
         headers = {'Content-Type': 'application/json; charset=utf-8'}
-        request = urllib2.Request(url, post_data, headers)
-        response = self._opener.open(request).read()
+        request = urllib.request.Request(url, binary_data, headers)
+        response_data = self._opener.open(request).read()
+        response_string = response_data.decode('utf-8')
 
         try:
-            response = json.JSONDecoder().decode(response)
+            response = json.JSONDecoder().decode(response_string)
         except Exception as e:
             raise e
-
+        
         if 'result' in response:
             return response['result']
         else:
@@ -99,12 +101,12 @@ class Connection(object):
         Sends the request with given headers to elfcloud.fi server.
         """
         url = self._server_url + self.__API_VERSION__ + url_suffix
-        request = urllib2.Request(url)
+        request = urllib.request.Request(url)
         self._cookies.add_cookie_header(request)
         for key in headers:
             request.add_header(key, headers[key])
         request.data = data
-        response = urllib2.urlopen(request)
+        response = urllib.request.urlopen(request)
 
         result = response.headers.get('X-ELFCLOUD-RESULT')
         if result == 'OK':
@@ -122,13 +124,13 @@ class Connection(object):
         """
         exception = response.get('error')
         if not exception:
-            raise ECUnknownException()
+            raise ECUnknownException(response)
 
         message = exception.get('message')
         code = exception.get('code')
         data = exception.get('data')
 
-        if type(data) in [unicode, str] and hasattr(exceptions, data):
+        if type(data) in [str, str] and hasattr(exceptions, data):
             raise getattr(exceptions, data)(code, message)
         else:
-            raise ECUnknownException("Unknown exception")
+            raise ECUnknownException("Unknown exception", message, code, data)

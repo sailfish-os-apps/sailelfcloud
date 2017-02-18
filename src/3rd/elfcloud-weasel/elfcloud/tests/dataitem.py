@@ -16,7 +16,7 @@ Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure 
 """
 import unittest
 import mock
-import StringIO
+import io
 import hashlib
 import base64
 
@@ -34,23 +34,23 @@ class TestDataItem(unittest.TestCase):
         self.keyname = "keyname"
         self.parent_id = 1
 
-    def _mock_client_make_request(self, checksum=u'0f9aec7fe5ccbc22d4fcfd3bc8427b10',
-                                        modified_date=u'2012-10-15T07:42:28.824216+00:00',
-                                        meta=u'v1:CHA:d8c2eafd90c266e19ab9dcacc479f8af:ENC:AES256:TGS:A,B:KHA:257e3a285b3d6a257e6739ba085ddf2d:DSC:JE::',
+    def _mock_client_make_request(self, checksum='0f9aec7fe5ccbc22d4fcfd3bc8427b10',
+                                        modified_date='2012-10-15T07:42:28.824216+00:00',
+                                        meta='v1:CHA:d8c2eafd90c266e19ab9dcacc479f8af:ENC:AES256:TGS:A,B:KHA:257e3a285b3d6a257e6739ba085ddf2d:DSC:JE::',
                                         length=26246026,
-                                        name=u'Wildlife.wmv',
+                                        name='Wildlife.wmv',
                                         parent_id=392,
-                                        last_accessed_date=u'2012-10-15T09:56:27.505500+00:00'):
+                                        last_accessed_date='2012-10-15T09:56:27.505500+00:00'):
         conn = mock.Mock()
         self.client.connection = conn
         conn.make_request.return_value = [{
-            u'modified_date': modified_date,
-            u'name': name,
-            u'md5sum': str(checksum),
-            u'parent_id': parent_id,
-            u'last_accessed_date': last_accessed_date,
-            u'meta': meta,
-            u'size': length
+            'modified_date': modified_date,
+            'name': name,
+            'md5sum': str(checksum),
+            'parent_id': parent_id,
+            'last_accessed_date': last_accessed_date,
+            'meta': meta,
+            'size': length
         }]
         return conn
 
@@ -82,7 +82,7 @@ class TestDataItem(unittest.TestCase):
         self.assertEquals(type(response['data']), CryptIterator)
 
     def test_store_data(self):
-        test_data = StringIO.StringIO("Some test data to be sent to server")
+        test_data = io.StringIO("Some test data to be sent to server")
         md5 = hashlib.md5()
         md5.update(test_data.read())
         test_data.seek(0)
@@ -136,7 +136,7 @@ class TestDataItem(unittest.TestCase):
         self.assertEquals(conn.make_transaction.mock_calls[8], mock.call(headers, '/store', 'ver'))
 
     def test_store_data_del_kha_del_cha(self):
-        test_data = StringIO.StringIO("Some test data to be sent to server")
+        test_data = io.StringIO("Some test data to be sent to server")
         md5 = hashlib.md5()
         data = test_data.read()
         md5.update(data)
@@ -155,13 +155,13 @@ class TestDataItem(unittest.TestCase):
 
         conn = mock.Mock()
         conn.make_request.return_value = [{
-            u'modified_date': None,
-            u'name': self.keyname,
-            u'md5sum': "aabbccddeeff1122",
-            u'parent_id': self.parent_id,
-            u'last_accessed_date': None,
+            'modified_date': None,
+            'name': self.keyname,
+            'md5sum': "aabbccddeeff1122",
+            'parent_id': self.parent_id,
+            'last_accessed_date': None,
             'meta': 'v1:TGS:tag1,tag2:ENC:AES128:DSC:NewDescription:KHA:ajsidoasj:CHA:ajsdoijas::',
-            u'size': 999
+            'size': 999
         }]
 
         self.client.connection = conn
@@ -182,12 +182,12 @@ class TestDataItem(unittest.TestCase):
         self.client.connection = conn
         self.client.encryption_mode = ENC_AES256
 
-        test_data = StringIO.StringIO("Some test data to be sent to server")
+        test_data = io.StringIO("Some test data to be sent to server")
         dataitem = DataItem(self.client, parent_id=self.parent_id, name=self.keyname)
         self.assertRaises(ClientException, dataitem.store_data, test_data, "append", 0)
 
     def test_store_with_patch(self):
-        test_data = StringIO.StringIO("Some test data to be sent to server")
+        test_data = io.StringIO("Some test data to be sent to server")
         md5 = hashlib.md5()
         md5.update(test_data.read())
         test_data.seek(0)

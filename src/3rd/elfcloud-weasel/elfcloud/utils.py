@@ -16,6 +16,7 @@ Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure 
 """
 import re
 import hashlib
+import binascii
 
 from .exceptions import ECCryptException
 from .exceptions import ClientMetaException
@@ -42,7 +43,7 @@ def validate_encryption_mode(level, throw_exception=True):
 class MetaParser(object):
     @staticmethod
     def deserialize_tags(tags_string):
-        return [x.decode('ascii') for x in tags_string.split(",")]
+        return tags_string.split(",")
 
     @staticmethod
     def deserialize(meta_string):
@@ -70,9 +71,9 @@ class MetaParser(object):
 
             try:
                 value = parts[i + 1]
-                value = re.sub(r'\\(.)', r'\1', value.decode("ascii"))
+                value = re.sub(r'\\(.)', r'\1', value)
             except:
-                raise ClientMetaException(u"Error while parsing value for key '{0}'".format(key))
+                raise ClientMetaException("Error while parsing value for key '{0}'".format(key))
 
             if key == "TGS":
                 value = MetaParser.deserialize_tags(value)
@@ -104,8 +105,8 @@ class MetaParser(object):
                         raise ClientMetaException("Comma is not allowed in tag")
                 value = ",".join(value)
 
-            ascii_key = key.encode("ascii")
-            ascii_value = value.encode("ascii")
+            ascii_key = key 
+            ascii_value = value
             meta_list.extend([ascii_key, ascii_value])
 
         meta_string = "v{0}:".format(version)
@@ -135,4 +136,4 @@ class KeyFile(object):
             m = hashlib.md5()
             m.update(final_hash)
             final_hash = m.digest()
-        return final_hash.encode("hex")
+        return binascii.hexlify(final_hash).decode("utf-8")

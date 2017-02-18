@@ -17,11 +17,11 @@ Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure 
 import sys
 import os
 import argparse
-import StringIO
+import io
 import elfcloud
 import codecs
 import csv
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 from elfcloud.exceptions import ClientException
 from elfcloud.exceptions import ECException
@@ -183,22 +183,22 @@ def main(argv=sys.argv):
     try:
         call_client_func(user, password, args.apikey, args.server, args.func, args)
     except ECException as e:
-        print >> sys.stderr, e
+        print(e, file=sys.stderr)
         sys.exit(-1)
     except UnicodeError as e:
-        print >> sys.stderr, e
+        print(e, file=sys.stderr)
         sys.exit(-1)
     except ClientException as e:
-        print >> sys.stderr, e
+        print(e, file=sys.stderr)
         sys.exit(-1)
-    except urllib2.URLError as e:
+    except urllib.error.URLError as e:
         if hasattr(e, 'reason'):
-            print >> sys.stderr, e.reason
+            print(e.reason, file=sys.stderr)
         elif hasattr(e, 'code'):
-            print >> sys.stderr, e.code, e.msg
+            print(e.code, e.msg, file=sys.stderr)
         sys.exit(-1)
     except IOError as e:
-        print >> sys.stderr, e.strerror
+        print(e.strerror, file=sys.stderr)
         sys.exit(-1)
 
 
@@ -210,7 +210,7 @@ class UnicodeWriter:
 
     def __init__(self, f, dialect=csv.excel, encoding="utf-8", **kwds):
         # Redirect output to a queue
-        self.queue = StringIO.StringIO()
+        self.queue = io.StringIO()
         self.writer = csv.writer(self.queue, dialect=dialect, **kwds)
         self.stream = f
         self.encoder = codecs.getincrementalencoder(encoding)()
@@ -219,9 +219,6 @@ class UnicodeWriter:
         self.writer.writerow([s.encode("utf-8") for s in row])
         # Fetch UTF-8 output from the queue ...
         data = self.queue.getvalue()
-        data = data.decode("utf-8")
-        # ... and reencode it into the target encoding
-        data = self.encoder.encode(data)
         # write to the target stream
         self.stream.write(data)
         # empty queue
@@ -392,7 +389,7 @@ def store_data(args, client):
     else:
         data = sys.stdin
     if args.verbose:
-        print >> sys.stdout, "Sending data"
+        print("Sending data", file=sys.stdout)
 
     client.store_data(parent_id=args.id,
                       key=args.name,
@@ -402,7 +399,7 @@ def store_data(args, client):
                       description=args.description,
                       tags=args.tags)
     if args.verbose:
-        print >> sys.stdout, 'OK'
+        print('OK', file=sys.stdout)
     data.close()
 
 
@@ -412,7 +409,7 @@ def fetch_data(args, client):
     data = None
     response = None
     if args.verbose:
-        print >> sys.stderr, "Fetching data"
+        print("Fetching data", file=sys.stderr)
     if not args.info:
         response = client.fetch_data(parent_id=args.id, key=args.name)
     else:
@@ -434,13 +431,13 @@ def fetch_data(args, client):
                 sys.stdout.write(data)
         if args.verbose:
             if response['checksum'] == response['data']._md5.hexdigest():
-                print >> sys.stderr, "OK"
+                print("OK", file=sys.stderr)
             else:
-                print >> sys.stderr, "Checksums mismatched"
+                print("Checksums mismatched", file=sys.stderr)
 
 
 def subscription_formater(writer, d, indent=0):
-    for key, value in d.iteritems():
+    for key, value in d.items():
         content = ['' for x in range(indent)]
         content.append(str(key))
 
