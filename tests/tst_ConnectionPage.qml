@@ -13,10 +13,13 @@ ApplicationWindow {
     property var elfCloud: null
     property var helpers: null
 
+    readonly property string username: "name"
+    readonly property string password: "passwd"
+
     function _createConnectionPage() {
-        var c = Qt.createComponent("../harbour-sailelfcloud/qml/pages/ConnectionPage.qml",
+        var c = Qt.createComponent(Qt.resolvedUrl("../harbour-sailelfcloud/qml/pages/ConnectionPage.qml"),
                                    Component.PreferSynchronous)
-        return c.createObject(null, {"username":"name","password":"passwd"});
+        return c.createObject(null, {"username":username,"password":password});
     }
 
     TestCase {
@@ -45,30 +48,26 @@ ApplicationWindow {
     }
 
     TestCase {
+        id: succeedConnectionTest
         name: "Succesfull connection"
 
         when: windowShown
 
         property var elfCloudMock: ElfCloudAdapterMock {
-            onTst_connect: { successCb(); }
+            onTst_connect: {
+                succeedConnectionTest.verify(username);
+                succeedConnectionTest.verify(password);
+                successCb();
+            }
         }
 
         property var pageStackMock: Item {
-            function push() {
-                console.log("pushMock");
-            }
-
-            function replace() {
-                console.log("replaceMock");
-            }
-
-            function replaceAbove() {
-                console.log("replaceAboveMock");
-
+            function replaceAbove(existingPage, newPage) {
+                succeedConnectionTest.verify(newPage === Qt.resolvedUrl("../harbour-sailelfcloud/qml/pages/ContainerPage.qml"));
             }
         }
 
-        function test_LoginSuccessGiven_WhenPageActivates_ShouldMoveToContainerPage() {
+        function test_LoginSuccessGiven_WhenPageActivates_ShouldLoginUsingValidCreditialsAndMoveToContainerPage() {
             root.elfCloud = elfCloudMock;
             root.pageStack = pageStackMock;
             _createConnectionPage().status = PageStatus.Active;
