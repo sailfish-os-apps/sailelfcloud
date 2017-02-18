@@ -7,3 +7,4 @@ moc_*
 .project
 .pydevproject
 **/Makefile
+**/*.egg-info
