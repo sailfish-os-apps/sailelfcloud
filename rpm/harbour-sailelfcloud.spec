@@ -89,6 +89,6 @@ desktop-file-install --delete-original       \
 %defattr(-,root,root,-)
 %{_bindir}/tst-%{name}
 %{_datadir}/tst-%{name}/*.qml
-%{_datadir}/tst-%{name}/*.sh
+%attr(0755, -, -) %{_datadir}/tst-%{name}/*.sh
 # >> files test
 # << files test
