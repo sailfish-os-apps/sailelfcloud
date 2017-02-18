@@ -1,3 +1,0 @@
-      [console_scripts]
-      ecw = elfcloud.cli:main
-      
