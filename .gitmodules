@@ -1,6 +1,6 @@
 [submodule "src/3rd/pycrypto"]
 	path = src/3rd/pycrypto
-	url = https://github.com/dlitz/pycrypto.git
+	url = https://github.com/TeemuAhola/pycrypto.git
 [submodule "src/3rd/decorator"]
 	path = src/3rd/decorator
 	url = https://github.com/micheles/decorator.git
