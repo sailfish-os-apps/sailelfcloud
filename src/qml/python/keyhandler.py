@@ -18,11 +18,12 @@ def _checkIfXmlFileIsKeyFile(file):
     return root.tag == '{https://secure.elfcloud.fi/xml/elfCLOUD}key' 
 
 def _addKeyFileToDatabase(file):
-    tree = et.ElementTree(None, open(file, encoding='utf-8'))
-    hash_ = tree.findtext('{https://secure.elfcloud.fi/xml/elfCLOUD}Hash')
+    with open(file, encoding='utf-8') as fd:
+        tree = et.ElementTree(None, fd)
+        hash_ = tree.findtext('{https://secure.elfcloud.fi/xml/elfCLOUD}Hash')
 
-    if hash not in keyDatabase:
-        keyDatabase[hash_] = file
+        if hash not in keyDatabase:
+            keyDatabase[hash_] = file
 
 def findKeyFiles(path):
     keyFiles = []
