@@ -156,6 +156,40 @@ class Test_upload_download_cloud(unittest.TestCase):
             self.assertRaises(elfcloudclient.ClientException,
                               elfcloudclient.upload, VALID_PARENTID, basename(tf.name), tf.name)
 
+class Test_upload_download_encrypted_cloud(unittest.TestCase):
+
+    DATA = bytes(elfcloudclient.DEFAULT_REQUEST_SIZE_BYTES * 3)
+    EXPECTED_CHUNKS = [i_ for i_ in range(elfcloudclient.DEFAULT_REQUEST_SIZE_BYTES, len(DATA), \
+                                          elfcloudclient.DEFAULT_REQUEST_SIZE_BYTES)] + [len(DATA)]
+    
+    @classmethod
+    def setUpClass(cls):
+        KEY = 'd8b31e395774b3f22d753ce88cc2490f2c625fac0c9a737a5566215fd29ec7c7'
+        INITIALIZATION_VECTOR = '1fa39269dae695ea75d0fc43064ff883'
+        elfcloudclient.setEncryption(KEY, INITIALIZATION_VECTOR)
+    
+    @classmethod
+    def tearDownClass(cls):
+        elfcloudclient.clearEncryption()
+    
+    def test__upload__download__DownloadedFileShouldMatchOriginalUploaded(self):
+        chunkCb = unittest.mock.Mock()
+
+        with tempfile.NamedTemporaryFile('wb') as tf:
+            tf.write(self.DATA)
+            tf.flush()
+            uploadSourceFileName = tf.name
+            remoteName = basename(tf.name)
+            elfcloudclient.upload(VALID_PARENTID, remoteName, uploadSourceFileName, chunkCb)
+            EXPECTED_CB_PARAMS = [call(len(self.DATA),i_) for i_ in self.EXPECTED_CHUNKS]
+            chunkCb.assert_has_calls(EXPECTED_CB_PARAMS)
+            
+            with tempfile.NamedTemporaryFile('wb') as tf:
+                downloadSourceFileName = tf.name
+                elfcloudclient.download(VALID_PARENTID, remoteName, downloadSourceFileName, key=None, chunkCb=chunkCb)
+                self.assertTrue(filecmp.cmp(uploadSourceFileName, downloadSourceFileName, shallow=False))
+                chunkCb.assert_has_calls(EXPECTED_CB_PARAMS)
+
 
 @contextmanager
 def createRemoteTempFile():
