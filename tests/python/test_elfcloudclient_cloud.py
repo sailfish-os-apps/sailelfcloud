@@ -18,9 +18,10 @@ from os.path import basename
 import filecmp
 from contextlib import contextmanager
 import elfcloudclient
+from . import ut_username, ut_password
 
-VALID_USERNAME = "xxxx" # Set proper username
-VALID_PASSWORD = "xxxx" # Set proper password
+VALID_USERNAME = ut_username
+VALID_PASSWORD = ut_password
 
 INVALID_USERNAME = "invalid_username"
 INVALID_PASSWORD = "invalid_password"

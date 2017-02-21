@@ -10,9 +10,10 @@ from os.path import basename
 from contextlib import contextmanager
 import elfcloudclient
 import uploader
+from . import ut_username, ut_password
 
-USERNAME = "xxxx" # Set proper username
-PASSWORD = "xxxx" # Set proper password
+USERNAME = ut_username
+PASSWORD = ut_password
 
 VALID_PARENTID = 687590
 INVALID_PARENTID = -1
