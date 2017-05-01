@@ -111,7 +111,7 @@ Python {
         var callName = "elfcloudadapter." + func;
         var args = [cbObj].concat(_getVarArgs(_callInCb, arguments));
         cbObj.wrapperCb = wrapper;
-        if (py.call_sync(callName, args))
+        if (py.call(callName, args))
             return cbObj;
         else
             return undefined;
@@ -121,7 +121,7 @@ Python {
         var callName = "elfcloudadapter." + func;
         var cbObj = _createCbObj(callback);
         var args = [cbObj].concat(_getVarArgs(_call, arguments));
-        if (py.call_sync(callName, args))
+        if (py.call(callName, args))
             return cbObj;
         else
             return undefined;
@@ -131,7 +131,7 @@ Python {
         var callName = "elfcloudadapter." + func;
         var cbObj = _createCbObj(callback, wrapper);
         var args = [cbObj].concat(_getVarArgs(_callWrap, arguments));
-        if (py.call_sync(callName, args))
+        if (py.call(callName, args))
             return cbObj;
         else
             return undefined;
@@ -157,7 +157,7 @@ Python {
         var callName = "elfcloudadapter." + func;
         var cbObj = _createCbObj2(successCb, failureCb);
         var args = [cbObj].concat(_getVarArgs(_call2, arguments));
-        if (py.call_sync(callName, args))
+        if (py.call(callName, args))
             return cbObj;
         else
             return undefined;
@@ -177,7 +177,7 @@ Python {
     }
 
     function isConnected() {
-        return py.call_sync("elfcloudadapter.isConnected", []);
+        return py.call("elfcloudadapter.isConnected", []);
     }
 
     // This function is needed to make a copy from content list got from python since it seems to vanish and cause null pointer accesses
@@ -336,11 +336,11 @@ Python {
     }
 
     function setEncryptionKey(key, initVector) {
-       return py.call_sync("elfcloudadapter.setEncryption", [key, initVector]);
+       return py.call("elfcloudadapter.setEncryption", [key, initVector]);
     }
 
     function clearEncryption() {
-        return py.call_sync("elfcloudadapter.clearEncryption");
+        return py.call("elfcloudadapter.clearEncryption", []);
     }
 
     Component.onCompleted: {

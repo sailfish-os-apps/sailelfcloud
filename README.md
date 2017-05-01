@@ -39,6 +39,20 @@ or use Sailfish QT Creator to build&deploy the application.
 
 Project layout is based on https://github.com/amarchen/helloworld-pro-sailfish
 
+E.g. login first to Mer build engine and then for i486:
+```
+mkdir build-i486 && cd build-i486
+mb2 -t SailfishOS-i486 -p your_source_dir/ qmake your_source_dir/SailElfCloud.pro
+mb2 -t SailfishOS-i486 -p your_source_dir/ rpm
+```
+
+and for ARM:
+```
+mkdir build-armv7hl && cd build-armv7hl
+mb2 -t SailfishOS-armv7hl -p your_source_dir/ qmake your_source_dir/SailElfCloud.pro
+mb2 -t SailfishOS-armv7hl -p your_source_dir/ rpm
+```
+
 RUN TESTS
 =========
 
