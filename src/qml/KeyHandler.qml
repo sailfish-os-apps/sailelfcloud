@@ -14,32 +14,54 @@ Python {
         return _ready;
     }
 
+    function _syncCallPy(func, args) {
+        var argArray = Array.prototype.slice.call(arguments);
+        var callString = func + "(";
+        var i = 1; // skip first arg since it is python call name 'func'
+
+        while (i < argArray.length) {
+            if (typeof(argArray[i]) === 'number')
+               callString += argArray[i].toString;
+            else if (typeof(argArray[i]) === 'string')
+                callString += '"' + argArray[i] + '"';
+
+            i++;
+
+            if (i < argArray.length)
+                callString += ","
+        }
+
+        callString += ")";
+
+        return py.evaluate(callString);
+    }
+
     function findKeyFiles(path) {
-        return py.call_sync("keyhandler.findKeyFiles", [path]);
+        return _syncCallPy("keyhandler.findKeyFiles", path);
     }
 
     function readKeyInfoFromFile(path) {
-        return py.call_sync("keyhandler.readKeyInfoFromFile", [path]);
+        return _syncCallPy("keyhandler.readKeyInfoFromFile", path);
     }
 
     function storeKey(name, description, key, iv, hash) {
-        py.call_sync("keyhandler.storeKey", [name, description, key, iv, hash]);
+        _syncCallPy("keyhandler.storeKey", name, description, key, iv, hash);
     }
 
     function getKeys() {
-        return py.call_sync("keyhandler.getKeys");
+        return _syncCallPy("keyhandler.getKeys");
     }
 
     function getKey(hash) {
-        return py.call_sync("keyhandler.getKey", [hash]);
+        return _syncCallPy("keyhandler.getKey", hash);
     }
 
     function isKey(hash) {
-        return py.call_sync("keyhandler.isKey", [hash]);
+        return _syncCallPy("keyhandler.isKey", hash);
     }
 
     function isKeyWithName(name) {
-        return py.call_sync("keyhandler.isKeyWithName", [name]);
+        return _syncCallPy("keyhandler.isKeyWithName", name);
     }
 
     function getActiveKeyAndIv() {
@@ -61,15 +83,15 @@ Python {
         if (isActiveKey(hash))
             helpers.clearActiveKey();
 
-        return py.call_sync("keyhandler.removeKey", [hash]);
+        return _syncCallPy("keyhandler.removeKey", hash);
     }
 
     function exportKey(hash, dir) {
-        return py.call_sync("keyhandler.exportKeyToDir", [hash, dir]);
+        return _syncCallPy("keyhandler.exportKeyToDir", hash, dir);
     }
 
     function modifyKey(hash, name, description) {
-        return py.call_sync("keyhandler.modifyKey", [hash, name, description]);
+        return _syncCallPy("keyhandler.modifyKey", hash, name, description);
     }
 
     Component.onCompleted: {
@@ -79,7 +101,7 @@ Python {
             console.info("PyOtherSide version: " + pluginVersion());
             addImportPath(Qt.resolvedUrl("python/"));
             importModule('keyhandler', function() {
-                    call_sync('keyhandler.init', [StandardPaths.data])
+                    _syncCallPy('keyhandler.init', StandardPaths.data);
                     initialized();
                     py._ready = true;
                 });
