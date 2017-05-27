@@ -29,14 +29,14 @@ INSTALLS += target qml extra
 # QML files and folders
 qml.files = *.qml
 
-OTHER_FILES += \
-    tst_NonUiTests.qml
+OTHER_FILES +=
 
 DISTFILES += \
     ElfCloudAdapterMock.qml \
     HelpersMock.qml \
     tst_ConnectionPage.qml \
-    tst_TransfersPage.qml
+    tst_TransfersPage.qml \
+    tst_ContainerPage.qml
 
 
 

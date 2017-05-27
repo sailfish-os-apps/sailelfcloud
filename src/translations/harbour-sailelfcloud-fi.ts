@@ -122,52 +122,52 @@
 <context>
     <name>ContainerPage</name>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="168"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="175"/>
         <source>Vaults</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="67"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="74"/>
         <source>tags: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="71"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="78"/>
         <source>owner: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="72"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="79"/>
         <source>size: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="107"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="114"/>
         <source>Removing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="175"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="182"/>
         <source>Add vault</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="181"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="188"/>
         <source>Remove cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="187"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="194"/>
         <source>Add cluster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="193"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="200"/>
         <source>Upload file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ContainerPage.qml" line="199"/>
+        <location filename="../qml/pages/ContainerPage.qml" line="206"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>

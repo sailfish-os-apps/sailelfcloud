@@ -12,6 +12,13 @@ Page {
     property string containerType: "top" // top, vault or cluster
     property var _asyncCallRef: undefined
 
+    signal _added(int count)
+
+    ListModel {
+        id: listModel
+        onCountChanged: page._added(count)
+    }
+
     function _makeVisible() {
         busyIndication.running = false;
         contentListView.visible = true;
@@ -161,8 +168,8 @@ Page {
     SilicaListView {
         id: contentListView
         visible: false
-        model: ListModel { id: listModel }
-        anchors.fill: parent        
+        model: listModel
+        anchors.fill: parent
 
         header: PageHeader {
             title: containerName !== null ? containerName : qsTr("Vaults")
