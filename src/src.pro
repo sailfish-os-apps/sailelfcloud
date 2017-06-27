@@ -39,7 +39,8 @@ DISTFILES += \
     qml/items/* \
     qml/pyton/* \
     qml/pages/TransfersPage.qml \
-    qml/items/Notifications.qml
+    qml/items/Notifications.qml \
+    qml/pages/CurrentUserPage.qml
 
 OTHER_FILES = \
     ../rpm/harbour-sailelfcloud.yaml \

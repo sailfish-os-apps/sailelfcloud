@@ -182,6 +182,12 @@ class Client(object):
         self.connection.auth(self._username, self._auth_data, self._auth_method, self._apikey)
 
     @require_auth
+    def terminate(self):
+        method = "term"
+        params = {}
+        return self.connection.make_request(method, params)
+
+    @require_auth
     def add_vault(self, name, vault_type=utils.VAULT_TYPE_DEFAULT):
         """Adds a new Vault to elfcloud.fi server.
 
@@ -414,5 +420,11 @@ class Client(object):
     @require_auth
     def get_subscription_info(self):
         method = "subscription_info"
+        params = {}
+        return self.connection.make_request(method, params)
+
+    @require_auth
+    def whoami(self):
+        method = "identity_whoami"
         params = {}
         return self.connection.make_request(method, params)

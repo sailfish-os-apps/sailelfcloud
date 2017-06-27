@@ -75,6 +75,21 @@ class Test_elfcloudadapter(unittest.TestCase):
         mock_pyotherside.send.assert_called_once_with('exception', 123, 'exception description')
 
     @unittest.mock.patch("elfcloudadapter.pyotherside")
+    @unittest.mock.patch("elfcloudadapter.elfcloudclient.getWhoAmI", return_value={'data':'dictionary'})
+    def test_getWhoAmI_Success_ShouldGetWhoAmI_ShouldSendCompletedSignal(self, mock_client, mock_pyotherside):
+        elfcloudadapter.getWhoAmI("my_cbObj")
+        mock_client.assert_called_once_with()
+        mock_pyotherside.send.assert_called_once_with('completed', 'my_cbObj', {'data':'dictionary'})
+
+    @unittest.mock.patch("elfcloudadapter.pyotherside")
+    @unittest.mock.patch("elfcloudadapter.elfcloudclient.getWhoAmI")
+    def test_getWhoAmI_Failure_ShouldGetSubscription_ShouldSendExceptionSignal(self, mock_client, mock_pyotherside):
+        mock_client.side_effect = lambda : _raise(elfcloudclient.ClientException(123, "exception description"))
+        elfcloudadapter.getWhoAmI("my_cbObj")
+        mock_client.assert_called_once_with()
+        mock_pyotherside.send.assert_called_once_with('exception', 123, 'exception description')
+
+    @unittest.mock.patch("elfcloudadapter.pyotherside")
     @unittest.mock.patch("elfcloudadapter.elfcloudclient.listVaults", return_value=[{'valult1':'data'},{'valult2':'data'}])
     def test_listVaults_Success_ShouldGetVaults_ShouldSendCompletedSignal(self, mock_client, mock_pyotherside):
         elfcloudadapter.listVaults("my_cbObj")

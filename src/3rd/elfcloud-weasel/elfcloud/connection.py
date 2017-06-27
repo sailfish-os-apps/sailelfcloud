@@ -26,7 +26,7 @@ class Connection(object):
     """Connection provides methods for communicating with elfcloud.fi server
 
     """
-    __API_VERSION__ = "1.1"
+    __API_VERSION__ = "1.2"
 
     def __init__(self, server_url):
         """Initializer for Connection

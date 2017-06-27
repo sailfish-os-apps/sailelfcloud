@@ -77,36 +77,41 @@
     </message>
     <message>
         <location filename="../qml/pages/ConfigPage.qml" line="27"/>
-        <source>Show subscription</source>
+        <source>Show user</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/pages/ConfigPage.qml" line="34"/>
+        <source>Show subscription</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/ConfigPage.qml" line="41"/>
         <source>Disconnect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="53"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="60"/>
         <source>Configurations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="58"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="65"/>
         <source>Automatic login</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="59"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="66"/>
         <source>Allows automatic login when application starts.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="68"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="75"/>
         <source>Remember login</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/ConfigPage.qml" line="69"/>
+        <location filename="../qml/pages/ConfigPage.qml" line="76"/>
         <source>Remembers login information such as username and password.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -222,6 +227,14 @@
     <message>
         <location filename="../qml/dialogs/CreateNewKeyDialog.qml" line="51"/>
         <source>AES256</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CurrentUserPage</name>
+    <message>
+        <location filename="../qml/pages/CurrentUserPage.qml" line="33"/>
+        <source>Current user</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -370,7 +383,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/ElfCloudAdapter.qml" line="237"/>
+        <location filename="../qml/ElfCloudAdapter.qml" line="240"/>
         <source>Destination file exists</source>
         <translation type="unfinished"></translation>
     </message>
@@ -806,7 +819,7 @@
 <context>
     <name>SubscriptionInfoPage</name>
     <message>
-        <location filename="../qml/pages/SubscriptionInfoPage.qml" line="34"/>
+        <location filename="../qml/pages/SubscriptionInfoPage.qml" line="33"/>
         <source>Subscription Info</source>
         <translation type="unfinished"></translation>
     </message>

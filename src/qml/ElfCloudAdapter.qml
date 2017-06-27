@@ -167,6 +167,9 @@ Python {
         return _call("getSubscription", callback)
     }
 
+    function getWhoAmI(callback) {
+        return _call("getWhoAmI", callback)
+    }
 
     function connect(username, password, successCb, failureCb) {
          return _call2("connect", successCb, failureCb, username, password);

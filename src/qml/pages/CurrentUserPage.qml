@@ -9,7 +9,7 @@ Page {
                                          // when closing the page and call is still in progress.
                                          // This prevent accessing undefined variables.
 
-    function _subscriptionCb(infoItems) {
+    function _whoAmICb(infoItems) {
         for (var i in infoItems) {
             infoModel.append({"fieldName":i, "fieldValue":infoItems[i]});
         }
@@ -18,7 +18,7 @@ Page {
     Component.onCompleted: {
         // Note that we store async call reference so that we can invalidate it
         // if the elcCloud call is still in progress but this page is being closed.
-        _asycCallRef = elfCloud.getSubscriptionInfo(_subscriptionCb);
+        _asycCallRef = elfCloud.getWhoAmI(_whoAmICb);
     }
 
     Component.onDestruction: {
@@ -30,7 +30,7 @@ Page {
         anchors.fill: parent
 
         header: PageHeader {
-            title: qsTr("Subscription Info")
+            title: qsTr("Current user")
         }
 
         model: ListModel {

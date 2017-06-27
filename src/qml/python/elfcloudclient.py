@@ -92,7 +92,11 @@ def isConnected():
 @handle_exception
 def disconnect():
     global client
-    client = None
+    
+    if client:
+        client.terminate()
+        client = None
+    
     logger.info("elfCLOUD client disconnected")
 
 @handle_exception
@@ -115,6 +119,16 @@ def getSubscriptionInfo():
     info = client.get_subscription_info()
     subscr = info['current_subscription']
     return {to_: str(subscr[from_]) for from_,to_ in SUBSCRIPTION_FIELD_MAP.items()}
+
+WHOAMI_FIELD_MAP = {'name':'Name', 'lang':'Language', 'lastname':'Last name', 'firstname':'First name', 'id':'Id',
+                    'email':'E-Mail', 'organization_unit':'Organization unit', 'eula_accepted':'EULA accepted'}
+
+@handle_exception
+@check_connected
+def getWhoAmI():
+    info = client.whoami()
+    user = info['user']
+    return {to_: str(user[from_]) for from_,to_ in WHOAMI_FIELD_MAP.items()}
 
 @handle_exception
 @check_connected

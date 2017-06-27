@@ -82,6 +82,18 @@ class Test_subscription_cloud(unittest.TestCase):
     def test_getSubscriptionInfo_ShouldReturnValidSubscription(self):
         self.assertDictContainsSubset({'Status':'active'}, elfcloudclient.getSubscriptionInfo())
 
+class Test_whoami_cloud(unittest.TestCase):
+
+    def tearDown(self):
+        elfcloudclient.connect(VALID_USERNAME, VALID_PASSWORD) # Leave connected state since one test does disconnect
+    
+    def test_getWhoAmI_NotConnected_ShouldRaiseException(self):
+        elfcloudclient.disconnect()
+        self.assertRaises(Exception, elfcloudclient.getWhoAmI)
+
+    def test_getWhoAmI_ShouldReturnValidActiveUser(self):
+        self.assertDictContainsSubset({'Name':VALID_USERNAME, 'EULA accepted': 'True'}, elfcloudclient.getWhoAmI())
+
 class Test_upload_download_cloud(unittest.TestCase):
 
     DATA = bytes(elfcloudclient.DEFAULT_REQUEST_SIZE_BYTES * 3)

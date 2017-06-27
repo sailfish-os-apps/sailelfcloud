@@ -96,6 +96,11 @@ def getSubscription(cbObj):
 
 @worker.run_async
 @handle_exception(cbObjName='cbObj')    
+def getWhoAmI(cbObj):
+    _sendCompletedSignal(cbObj, elfcloudclient.getWhoAmI())
+
+@worker.run_async
+@handle_exception(cbObjName='cbObj')    
 def listVaults(cbObj):
     _sendCompletedSignal(cbObj, elfcloudclient.listVaults())
 

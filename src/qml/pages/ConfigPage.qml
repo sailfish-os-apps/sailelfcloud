@@ -24,6 +24,13 @@ Page {
             }
 
             MenuItem {
+                text: qsTr("Show user")
+                enabled: elfCloud.isConnected()
+                onClicked: pageStack.push(Qt.resolvedUrl("CurrentUserPage.qml"),
+                                          {"elfCloud":elfCloud});
+            }
+
+            MenuItem {
                 text: qsTr("Show subscription")
                 enabled: elfCloud.isConnected()
                 onClicked: pageStack.push(Qt.resolvedUrl("SubscriptionInfoPage.qml"),
