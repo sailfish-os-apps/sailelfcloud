@@ -278,3 +278,14 @@ def removeCluster(clusterId):
 @check_connected
 def renameCluster(clusterId, newName):
     client.rename_cluster(clusterId, newName)
+
+@handle_exception
+@check_connected
+def setProperty(name, data):
+    client.set_property(name, data)
+    
+@handle_exception
+@check_connected
+def getProperty(name):
+    return client.get_property(name)
+

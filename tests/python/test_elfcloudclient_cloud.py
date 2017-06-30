@@ -4,7 +4,11 @@ Created on Sep 18, 2016
 @author: Teemu Ahola [teemuahola7@gmail.com]
 
 Tests are done in real elfCLOUD server so they expect to have
-valid username and password. Also in the server there must be
+valid username and password. Username and password are got via import
+and are expected to be given via environment variables UT_USERNAME
+and UT_PASSWORD. See __init__.py. 
+
+Also in the server there must be
 one vault given in `TEST_VAULT_NAME` variable which is used
 by many testcases. The vault ID must be set to `TEST_VAULT_ID`
 variable.
@@ -12,10 +16,12 @@ variable.
 '''
 
 import unittest.mock
-from unittest.mock import call
 import tempfile
-from os.path import basename
 import filecmp
+import random
+import string
+from unittest.mock import call
+from os.path import basename
 from contextlib import contextmanager
 import elfcloudclient
 from . import ut_username, ut_password
@@ -279,6 +285,16 @@ class Test_vaults_and_clusters_cloud(unittest.TestCase):
                              for i in elfcloudclient.listContent(TEST_VAULT_ID)))
         self.assertFalse(any(i['name'] == "renamed cluster name" and i['type'] == "cluster" \
                              for i in elfcloudclient.listContent(TEST_VAULT_ID)))
+
+class Test_properties_cloud(unittest.TestCase):
+
+    def randomString(self,length):
+        return ''.join(random.choice(string.ascii_lowercase) for _ in range(length))
+
+    def test_setGetPropery(self):
+        data = self.randomString(10)
+        elfcloudclient.setProperty('my property', data.encode())
+        self.assertEqual(data, elfcloudclient.getProperty('my property').decode('utf-8'))
         
     
 if __name__ == "__main__":

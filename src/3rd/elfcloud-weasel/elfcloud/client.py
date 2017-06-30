@@ -15,6 +15,7 @@ Copyright 2010-2012 elfCLOUD / elfcloud.fi – SCIS Secure Cloud Infrastructure 
    limitations under the License.
 """
 from decorator import decorator
+import base64
 
 from . import utils
 from . import filecrypt
@@ -428,3 +429,17 @@ class Client(object):
         method = "identity_whoami"
         params = {}
         return self.connection.make_request(method, params)
+
+    @require_auth
+    def set_property(self, name, data):
+        method = 'set_property'
+        params = {'name':name,
+                  'data':base64.b64encode(data).decode('utf-8')}
+        return self.connection.make_request(method, params)
+
+    @require_auth
+    def get_property(self, name):
+        method = 'get_property'
+        params = {'name':name}
+        resp = self.connection.make_request(method, params)
+        return base64.b64decode(resp['data'], validate=True)

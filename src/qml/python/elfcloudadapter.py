@@ -223,4 +223,12 @@ def addCluster(cbObj, parentId, name):
 def removeCluster(cbObj, clusterId):
     _sendCompletedSignal(cbObj, elfcloudclient.removeCluster(clusterId))
 
+@worker.run_async
+@handle_exception(cbObjName='cbObj')
+def setProperty(cbObj, name, data):
+    _sendCompletedSignal(cbObj, elfcloudclient.setProperty(name, data))
     
+@worker.run_async
+@handle_exception(cbObjName='cbObj')
+def getProperty(cbObj, name):
+    _sendCompletedSignal(cbObj, elfcloudclient.getProperty(name))

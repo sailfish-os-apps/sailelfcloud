@@ -112,6 +112,12 @@ class Test_elfcloudadapter(unittest.TestCase):
         time.sleep(1)
         print(mock_client.mock_calls)
         
+    @unittest.mock.patch("elfcloudadapter.pyotherside")
+    @unittest.mock.patch("elfcloudadapter.elfcloudclient.setProperty")
+    def test_setProperty(self, mock_client, mock_pyotherside):
+        elfcloudadapter.setProperty("cbObj", "name", "data")
+        mock_client.assert_called_once_with("name", "data")
+        mock_pyotherside.send.assert_called_once_with('completed', 'cbObj', unittest.mock.ANY)
 
 
 if __name__ == "__main__":
