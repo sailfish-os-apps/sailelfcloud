@@ -58,6 +58,19 @@ class Test(unittest.TestCase):
         self.assertTrue(keyhandler.isKeyWithName(key["name"]))
         self.assertFalse(keyhandler.isKeyWithName("this key should not exist"))
 
+    def test_convertKeyInfo2Json_convertJson2KeyInfo__GivenListOfKeys_WhenConvertedToJsonAndBack_ThenResultIsIdenticalToOriginal(self):
+        keys = [{"name": "test name 1", "description": "test descr 1",
+               "key": "111223334444512345CDEF", "iv": "ABCD23456789",
+               "hash": "1234567891122332111220ABCDEF", "mode": "CFB8", "type": "AES128"},
+                {"name": "test name 2", "description": "test descr 2",
+                 "key": "111223334444512345CDEF", "iv": "ABCD23456789",
+                 "hash": "1234567891122332111220ABCDEF", "mode": "CFB8", "type": "AES128"}
+                ]
+
+        convertedKeys = keyhandler.convertJson2KeyInfo(keyhandler.convertKeyInfo2Json(keys))
+        pairs = zip(keys, convertedKeys)
+        self.assertTrue(any(x != y for x, y in pairs))
+
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

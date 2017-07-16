@@ -6,16 +6,20 @@ Created on Jun 21, 2016
 
 import os
 import pathlib
-import xml.etree.ElementTree as et 
+import xml.etree.ElementTree as et
+import json
+import datetime
 import fileHelpers
 
 keyStoreDir = None
 keyDatabase = {}
 
+
 def _checkIfXmlFileIsKeyFile(file):
     tree = et.ElementTree(None, file)
     root = tree.getroot()
     return root.tag == '{https://secure.elfcloud.fi/xml/elfCLOUD}key' 
+
 
 def _addKeyFileToDatabase(file):
     with open(file, encoding='utf-8') as fd:
@@ -24,6 +28,7 @@ def _addKeyFileToDatabase(file):
 
         if hash not in keyDatabase:
             keyDatabase[hash_] = file
+
 
 def findKeyFiles(path):
     keyFiles = []
@@ -35,10 +40,12 @@ def findKeyFiles(path):
     
     return keyFiles
 
+
 def _findAndAddKeyFiles(path):
     keyFiles = findKeyFiles(path)
     for k in keyFiles:
         _addKeyFileToDatabase(k)
+
 
 def _createKeyStore(configLocation):
     global keyStoreDir
@@ -47,8 +54,10 @@ def _createKeyStore(configLocation):
     fileHelpers.setDirAccessRights(keyStoreDir)
     _findAndAddKeyFiles(keyStoreDir)
 
+
 def init(configLocation):
     _createKeyStore(configLocation)
+
 
 def readKeyInfoFromFile(file):
     
@@ -70,11 +79,14 @@ def readKeyInfoFromFile(file):
     return {'name':name, 'description':descr, 'key':data, 'iv':iv,
             'hash':hash, 'mode':mode, 'type':type, 'file': file}
 
+
 def getKey(hash):
     return readKeyInfoFromFile(keyDatabase.get(hash, None))
 
+
 def isKey(hash):
     return keyDatabase.get(hash, None) != None
+
 
 def getKeys():
     keys = []
@@ -84,6 +96,7 @@ def getKeys():
     
     return keys
 
+
 def isKeyWithName(name):
     keys = getKeys()
     
@@ -92,6 +105,7 @@ def isKeyWithName(name):
             return True
         
     return False
+
 
 def _buildKeyXmlTree(name, description, key, iv, hash, mode, type):
     root = et.Element('ec:key', {'xmlns:ec': 'https://secure.elfcloud.fi/xml/elfCLOUD'})
@@ -106,11 +120,13 @@ def _buildKeyXmlTree(name, description, key, iv, hash, mode, type):
     et.SubElement(cipher, 'ec:Type').text=type
     
     return et.ElementTree(root)
-    
+
+
 def _createKeyFilePath():
     path = fileHelpers.uniqueFile(keyStoreDir + os.sep + "key.xml")
     fileHelpers.setFileAccessRights(path)
     return path   
+
 
 def storeKey(name, description, key, iv, hash, mode='CFB8', type='AES128'):
     tree = _buildKeyXmlTree(name, description, key, iv, hash, mode, type)
@@ -118,7 +134,8 @@ def storeKey(name, description, key, iv, hash, mode='CFB8', type='AES128'):
     tree.write(keyFilePath, encoding='utf-8', xml_declaration=True,short_empty_elements=False)
     _addKeyFileToDatabase(keyFilePath)
     return True
-    
+
+
 def removeKey(hash_):
     keyFile = keyDatabase.get(hash_, None)
     
@@ -129,6 +146,7 @@ def removeKey(hash_):
     
     return False
 
+
 def exportKeyToDir(hash, outputDir):
     key = getKey(hash)
     path = fileHelpers.uniqueFile(outputDir + os.sep + "exported_key.xml")
@@ -136,6 +154,7 @@ def exportKeyToDir(hash, outputDir):
     tree = _buildKeyXmlTree(key['name'], key['description'], key['key'], key['iv'], key['hash'], key['mode'], key['type'])
     tree.write(path, encoding='utf-8', xml_declaration=True,short_empty_elements=False)
     return path
+
 
 def modifyKey(hash_, name, description):
     key = getKey(hash_)
@@ -152,3 +171,59 @@ def modifyKey(hash_, name, description):
         return False
     finally:
         os.remove(backupPath)
+
+
+def convertKeyInfo2Json(keyInfo):
+    """
+      JSON document structure for key info:
+          {
+            "timestamp": "<ts>", // local timestamp <ts> when backup was created
+            "keys": [            // array of keys in backup
+                "<name>": {      // object for key , where <name> is unique name of a key
+                    "description": "<descr>",
+                    "type": "<type>",
+                    "mode": "<mode>",
+                    "iv": "<iv>",
+                    "key": "<key>"
+                    "hash": "<hash>"
+                },
+                ...
+            ]
+          }
+    """
+    
+    keys = {}
+
+    for keyToConvert in keyInfo:
+        keyData = {
+            "description": keyToConvert["description"],
+            "type": keyToConvert["type"],
+            "mode": keyToConvert["mode"],
+            "iv": keyToConvert["iv"],
+            "key": keyToConvert["key"],
+            "hash": keyToConvert["hash"]
+            }
+        keys[keyToConvert["name"]] = keyData
+
+    jsonObject = {"timestamp": datetime.datetime.utcnow().isoformat(),
+                  "keys": keys}
+
+    return json.dumps(jsonObject, indent=4)
+
+
+def convertJson2KeyInfo(jsonDocument):
+    keyInfo = []
+    jsonObject = json.loads(jsonDocument)
+    keys = jsonObject["keys"]
+
+    for keyName,keyData in keys.items():
+        key = {"name":keyName,
+               "description":keyData["description"],
+               "type":keyData["type"],
+               "mode": keyData["mode"],
+               "iv": keyData["iv"],
+               "key": keyData["key"],
+               "hash": keyData["hash"]}
+        keyInfo.append(key)
+
+    return keyInfo
