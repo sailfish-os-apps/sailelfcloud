@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import org.nemomobile.notifications 1.0
+import "../helpers/keyBackup.js" as KeyBackup
 
 Page {
     id: page
@@ -50,6 +51,7 @@ Page {
     }
 
     Component.onCompleted: {
+        KeyBackup.elfCloud = elfCloud;
         _populateKeyListAndSelectActive();
     }
 
@@ -119,6 +121,14 @@ Page {
                 text: qsTr("Encryption help")
                 onClicked: Qt.openUrlExternally("https://github.com/TeemuAhola/sailelfcloud/wiki/SailElfCloud-encryption")
             }
+            MenuItem {
+                text: qsTr("Backup to cloud")
+                onClicked: KeyBackup.BackupKeysToCloud(keyHandler.getKeys())
+            }
+            MenuItem {
+                text: qsTr("Restore from cloud")
+                //onClicked:
+            }
         }
 
         // Place our content in a Column.  The PageHeader is always placed at the top
@@ -179,7 +189,7 @@ Page {
                     width: ListView.view.width
                     contentHeight: Theme.itemSizeExtraLarge
 
-                    onClicked: _showKeyInfo(model.key["hash"])
+                    onClicked: _showKeyInfo(model.key.hash)
 
                     IconButton {
                         id: favoriteImage
@@ -190,7 +200,7 @@ Page {
                     Label {
                         id:name
                         anchors { left: favoriteImage.right; leftMargin: Theme.paddingSmall }
-                        text: model.key["name"]
+                        text: model.key.name
                     }
                     Label {
                         id:description
@@ -199,12 +209,12 @@ Page {
                         wrapMode: Text.WordWrap
                         truncationMode: TruncationMode.Fade
                         maximumLineCount: 2
-                        text: model.key["description"]
+                        text: model.key.description
                     }
                     Label {
                         id: hash
                         anchors { left: favoriteImage.right; top: description.bottom; topMargin: Theme.paddingSmall }
-                        text: model.key["hash"]
+                        text: model.key.hash
                         font { weight: Font.Light; pixelSize: Theme.fontSizeTiny }
                     }
 
@@ -213,11 +223,11 @@ Page {
                             ContextMenu {
                                 MenuItem {
                                     text: qsTr("Edit key")
-                                    onClicked: _editKey(model.key["hash"])
+                                    onClicked: _editKey(model.key.hash)
                                 }
                                 MenuItem {
                                     text: qsTr("Export key")
-                                    onClicked: _exportKey(model.key["hash"])
+                                    onClicked: _exportKey(model.key.hash)
                                 }
                             }
                     }

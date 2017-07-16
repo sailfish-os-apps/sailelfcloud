@@ -325,7 +325,7 @@ Python {
     }
 
     function addVault(name, callback) {
-        return _call("addVault", callback, name)
+        return _call("addVault", callback, name);
     }
 
     function addCluster(parentId, name, callback) {
@@ -345,6 +345,15 @@ Python {
     function clearEncryption() {
         return py.call("elfcloudadapter.clearEncryption", []);
     }
+
+    function setProperty(name, data, callback) {
+        return _call("setProperty", callback, name, data);
+    }
+
+    function getProperty(name, callback) {
+        return _call("getProperty", callback, name);
+    }
+
 
     Component.onCompleted: {
         if (!py.ready) {

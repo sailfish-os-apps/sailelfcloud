@@ -391,62 +391,72 @@
 <context>
     <name>EncryptionConfigPage</name>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="80"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="82"/>
         <source>Key exported to documents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="119"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="121"/>
         <source>Encryption help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="133"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="125"/>
+        <source>Backup to cloud</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="129"/>
+        <source>Restore from cloud</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="143"/>
         <source>Encryption configurations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="138"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="148"/>
         <source>Encryption key creation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="146"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="156"/>
         <source>Create</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="155"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="165"/>
         <source>New</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="156"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="166"/>
         <source>From file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="157"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="167"/>
         <source>From clip-board</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="163"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="173"/>
         <source>Available encryption keys</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="215"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="225"/>
         <source>Edit key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="94"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="96"/>
         <source>Key %1 exported to %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="219"/>
+        <location filename="../qml/pages/EncryptionConfigPage.qml" line="229"/>
         <source>Export key</source>
         <translation type="unfinished"></translation>
     </message>
