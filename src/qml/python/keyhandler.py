@@ -9,6 +9,8 @@ import pathlib
 import xml.etree.ElementTree as et
 import json
 import datetime
+import itertools
+import copy
 import fileHelpers
 
 keyStoreDir = None
@@ -172,10 +174,12 @@ def modifyKey(hash_, name, description):
     finally:
         os.remove(backupPath)
 
+def _getTimestamp():
+    return datetime.datetime.utcnow().isoformat()
 
 def convertKeyInfo2Json(keyInfo):
     """
-      JSON document structure for key info:
+      JSON document structure for keyring backup:
           {
             "timestamp": "<ts>", // local timestamp <ts> when backup was created
             "keys": [            // array of keys in backup
@@ -205,7 +209,7 @@ def convertKeyInfo2Json(keyInfo):
             }
         keys[keyToConvert["name"]] = keyData
 
-    jsonObject = {"timestamp": datetime.datetime.utcnow().isoformat(),
+    jsonObject = {"timestamp": _getTimestamp(),
                   "keys": keys}
 
     return json.dumps(jsonObject, indent=4)
@@ -227,3 +231,25 @@ def convertJson2KeyInfo(jsonDocument):
         keyInfo.append(key)
 
     return keyInfo
+
+def mergeKeyrings(keyring1, keyring2):
+
+    combinedKeyrings = keyring1 + keyring2
+    mergedKeyrings = []
+
+    for index,key1 in enumerate(combinedKeyrings):
+        keyToAppend = copy.deepcopy(key1)
+
+        for key2 in itertools.islice(combinedKeyrings, index+1, None):
+
+            if keyToAppend == key2:
+                keyToAppend = None
+                break
+            elif keyToAppend["name"] == key2["name"]:
+                keyToAppend["name"] += " (%s)" % _getTimestamp()
+                break
+
+        if keyToAppend:
+            mergedKeyrings.append(keyToAppend)
+
+    return mergedKeyrings
