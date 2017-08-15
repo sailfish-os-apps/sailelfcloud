@@ -236,6 +236,7 @@ def mergeKeyrings(keyring1, keyring2):
 
     combinedKeyrings = keyring1 + keyring2
     mergedKeyrings = []
+    operationMade = []
 
     for index,key1 in enumerate(combinedKeyrings):
         keyToAppend = copy.deepcopy(key1)
@@ -243,13 +244,16 @@ def mergeKeyrings(keyring1, keyring2):
         for key2 in itertools.islice(combinedKeyrings, index+1, None):
 
             if keyToAppend == key2:
+                operationMade.append(("skipped", keyToAppend["name"]))
                 keyToAppend = None
                 break
             elif keyToAppend["name"] == key2["name"]:
                 keyToAppend["name"] += " (%s)" % _getTimestamp()
+                operationMade.append(("renamed", keyToAppend["name"]))
                 break
 
         if keyToAppend:
             mergedKeyrings.append(keyToAppend)
+            operationMade.append(("append", keyToAppend["name"]))
 
-    return mergedKeyrings
+    return mergedKeyrings,operationMade
