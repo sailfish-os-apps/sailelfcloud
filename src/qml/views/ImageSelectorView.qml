@@ -10,9 +10,15 @@ SilicaFlickable {
 
     function populate() {
         imageModel.clear();
-        var files = helpers.getListOfFilesRecursively(StandardPaths.pictures);
-        for(var fileIdx = 0; fileIdx < files.length; fileIdx++) {
-            imageModel.append({"path":files[fileIdx], "selected":false});
+
+        var paths = helpers.getStandardLocationPictures();
+
+        for (var pathIdx = 0; pathIdx < paths.length; pathIdx++) {
+            var files = helpers.getListOfFilesRecursively(paths[pathIdx]);
+
+            for(var fileIdx = 0; fileIdx < files.length; fileIdx++) {
+                imageModel.append({"path":files[fileIdx], "selected":false});
+            }
         }
     }
 

@@ -21,16 +21,16 @@ Dialog {
     }
 
     Component.onCompleted: {
-        fileSelectorModel.append({"path":StandardPaths.documents,
+        fileSelectorModel.append({"type":"document",
                                      "text":qsTr("Documents"),
                                      "title":qsTr("Choose documents")});
-        fileSelectorModel.append({"path":StandardPaths.music,
+        fileSelectorModel.append({"type":"music",
                                      "text":qsTr("Music"),
                                      "title":qsTr("Choose music")});
-        fileSelectorModel.append({"path":StandardPaths.videos,
+        fileSelectorModel.append({"type":"video",
                                      "text":qsTr("Videos"),
                                      "title":qsTr("Choose videos")});
-        fileSelectorModel.append({"path":helpers.getStandardLocationDownloads(),
+        fileSelectorModel.append({"type":"downloads",
                                      "text":qsTr("Downloads"),
                                      "title":qsTr("Choose files")});
 
@@ -52,6 +52,22 @@ Dialog {
         if (_activeFileSelector) {
             _activeFileSelector.clearSelection();
         }
+    }
+
+    function _getRootPathsForType(type) {
+
+        switch(type) {
+        case "document":
+            return helpers.getStandardLocationDocuments();
+        case "music":
+            return helpers.getStandardLocationMusic();
+        case "video":
+            return helpers.getStandardLocationVideo();
+        case "download":
+            return helpers.getStandardLocationDownloads();
+        }
+
+        return undefined;
     }
 
     SilicaFlickable {
@@ -124,7 +140,7 @@ Dialog {
             id: fileSelectorRepeater
             model: fileSelectorModel
             delegate: FileSelectorView {
-                rootPath: model.path
+                rootPaths: _getRootPathsForType(model.type)
                 anchors.fill: parent
                 visible: false
                 onSelected: { selectedPaths = paths; }

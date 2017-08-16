@@ -215,32 +215,107 @@ QString Helpers::generateLocalPathForRemoteDataItem(int parentId, const QString 
     return path + QString("/") + name;
 }
 
-QString Helpers::getStandardLocationPictures(void)
+QStringList Helpers::getSdcardPaths(void) const
+{
+    QDir dir("/media/sdcard");
+    if (!dir.exists())
+        return QStringList();
+    dir.setFilter(QDir::AllDirs | QDir::NoDotAndDotDot);
+
+    QStringListIterator i(dir.entryList());
+    QStringList sdcardPaths;
+
+    while (i.hasNext()) {
+        const QString abspath = dir.absoluteFilePath(i.next());
+        sdcardPaths.append(abspath);
+    }
+
+    return sdcardPaths;
+}
+
+QStringList Helpers::getValidLocations(const QStringList & dirnames, const QString & subdir) const
+{
+    QStringList validLocations;
+    QStringListIterator i(dirnames);
+
+    while (i.hasNext()) {
+        const QString dirname = i.next() + "/" + subdir;
+        QDir dir(dirname);
+
+        if (dir.exists())
+            validLocations.append(dirname);
+    }
+
+    return validLocations;
+}
+
+QStringList Helpers::getStandardLocationPictures(void) const
+{
+    QStringList locations = QStandardPaths::standardLocations(QStandardPaths::PicturesLocation);
+    locations.append(getValidLocations(getSdcardPaths(), "Pictures"));
+
+    return locations;
+}
+
+QStringList Helpers::getStandardLocationDocuments(void) const
+{
+    QStringList locations = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
+    locations.append(getValidLocations(getSdcardPaths(), "Documents"));
+
+    return locations;
+}
+
+QStringList Helpers::getStandardLocationDownloads(void) const
+{
+    QStringList locations = QStandardPaths::standardLocations(QStandardPaths::DownloadLocation);
+    locations.append(getValidLocations(getSdcardPaths(), "Downloads"));
+
+    return locations;
+}
+
+QStringList Helpers::getStandardLocationVideo(void) const
+{
+    QStringList locations = QStandardPaths::standardLocations(QStandardPaths::MoviesLocation);
+    locations.append(getValidLocations(getSdcardPaths(), "Videos"));
+
+    return locations;
+}
+
+QStringList Helpers::getStandardLocationMusic(void) const
+{
+    QStringList locations = QStandardPaths::standardLocations(QStandardPaths::MusicLocation);
+    locations.append(getValidLocations(getSdcardPaths(), "Music"));
+
+    return locations;
+}
+
+
+QString Helpers::getStandardWritableLocationPictures(void)
 {
     return QStandardPaths::standardLocations(QStandardPaths::PicturesLocation)[0];
 }
 
-QString Helpers::getStandardLocationCamera(void)
+QString Helpers::getStandardWritableLocationCamera(void)
 {
     return QStandardPaths::standardLocations(QStandardPaths::PicturesLocation)[0] + "/Camera";
 }
 
-QString Helpers::getStandardLocationDocuments(void) const
+QString Helpers::getStandardWritableLocationDocuments(void) const
 {
     return QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation)[0];
 }
 
-QString Helpers::getStandardLocationDownloads(void) const
+QString Helpers::getStandardWritableLocationDownloads(void) const
 {
     return QStandardPaths::standardLocations(QStandardPaths::DownloadLocation)[0];
 }
 
-QString Helpers::getStandardLocationAudio(void)
+QString Helpers::getStandardWritableLocationAudio(void)
 {
     return QStandardPaths::standardLocations(QStandardPaths::MusicLocation)[0];
 }
 
-QString Helpers::getStandardLocationVideo(void)
+QString Helpers::getStandardWritableLocationVideo(void)
 {
     return QStandardPaths::standardLocations(QStandardPaths::MoviesLocation)[0];
 }
@@ -251,15 +326,15 @@ bool Helpers::moveAndRenameFileAccordingToMime(const QString path, const QString
     QString standardLocation;
 
     if (mime.contains("text/plain"))
-        standardLocation = getStandardLocationDocuments();
+        standardLocation = getStandardWritableLocationDocuments();
     else if (mime.contains("image/"))
-        standardLocation = getStandardLocationPictures();
+        standardLocation = getStandardWritableLocationPictures();
     else if (mime.contains("audio/"))
-        standardLocation = getStandardLocationAudio();
+        standardLocation = getStandardWritableLocationAudio();
     else if (mime.contains("video/"))
-        standardLocation = getStandardLocationVideo();
+        standardLocation = getStandardWritableLocationVideo();
     else
-        standardLocation = getStandardLocationDownloads();
+        standardLocation = getStandardWritableLocationDownloads();
 
     QString destination = standardLocation + "/"+ destFilename;
 

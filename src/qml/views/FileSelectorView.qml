@@ -5,17 +5,22 @@ SilicaFlickable {
     id: viewer
     clip: true
 
-    property var rootPath: null
+    property var rootPaths: undefined
 
     signal selected(var paths)
 
     function populate() {
         fileModel.clear();
-        var files = helpers.getListOfFilesRecursively(rootPath);
-        for(var fileIdx = 0; fileIdx < files.length; fileIdx++) {
-            fileModel.append({"path":files[fileIdx],
-                              "filename":helpers.getFilenameFromPath(files[fileIdx]),
-                              "selected":false});
+
+        for (var pathIdx = 0; pathIdx < rootPaths.length; pathIdx++) {
+            console.log("Path:", rootPaths[pathIdx]);
+            var files = helpers.getListOfFilesRecursively(rootPaths[pathIdx]);
+
+            for(var fileIdx = 0; fileIdx < files.length; fileIdx++) {
+                fileModel.append({"path":files[fileIdx],
+                                  "filename":helpers.getFilenameFromPath(files[fileIdx]),
+                                  "selected":false});
+            }
         }
     }
 

@@ -469,12 +469,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="67"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="83"/>
         <source>Images</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="70"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="86"/>
         <source>Choose images</source>
         <translation type="unfinished"></translation>
     </message>
@@ -519,17 +519,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="99"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="115"/>
         <source>Select all</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="104"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="120"/>
         <source>Clear selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FileChooserDialog.qml" line="113"/>
+        <location filename="../qml/dialogs/FileChooserDialog.qml" line="129"/>
         <source>Pull down to choose source</source>
         <translation type="unfinished"></translation>
     </message>
@@ -537,7 +537,7 @@
 <context>
     <name>FileSelectorView</name>
     <message>
-        <location filename="../qml/views/FileSelectorView.qml" line="111"/>
+        <location filename="../qml/views/FileSelectorView.qml" line="116"/>
         <source>Size: </source>
         <translation type="unfinished"></translation>
     </message>

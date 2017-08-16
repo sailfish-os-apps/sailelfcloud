@@ -13,9 +13,14 @@ public:
     void init(void);
     void uninit(void);
 
-    Q_INVOKABLE QString getStandardLocationDocuments(void) const;
-    Q_INVOKABLE QString getStandardLocationDownloads(void) const;
+    Q_INVOKABLE QString getStandardWritableLocationDocuments(void) const;
+    Q_INVOKABLE QString getStandardWritableLocationDownloads(void) const;
 
+    Q_INVOKABLE QStringList getStandardLocationPictures(void) const;
+    Q_INVOKABLE QStringList getStandardLocationDocuments(void) const;
+    Q_INVOKABLE QStringList getStandardLocationDownloads(void) const;
+    Q_INVOKABLE QStringList getStandardLocationVideo(void) const;
+    Q_INVOKABLE QStringList getStandardLocationMusic(void) const;
 
     Q_INVOKABLE bool isRememberLogin(void) const;
     Q_INVOKABLE void setRememberLogin(void) const;
@@ -73,10 +78,13 @@ private slots:
 private:
     QProcess *m_process;
 
-    static QString getStandardLocationPictures(void);
-    static QString getStandardLocationCamera(void);
-    static QString getStandardLocationVideo(void);
-    static QString getStandardLocationAudio(void);
+    QStringList getSdcardPaths(void) const;
+    QStringList getValidLocations(const QStringList & dirnames, const QString & subdir) const;
+
+    static QString getStandardWritableLocationPictures(void);
+    static QString getStandardWritableLocationCamera(void);
+    static QString getStandardWritableLocationVideo(void);
+    static QString getStandardWritableLocationAudio(void);
     static QString getDataDir(void);
     static QString getDownloadCacheDir(void);
     static QString getConfigDir(void);
