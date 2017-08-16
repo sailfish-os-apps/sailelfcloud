@@ -13,7 +13,7 @@ Name:       harbour-sailelfcloud
 %{!?qtc_make:%define qtc_make make}
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 Summary:    Sailfish elfCLOUD client
-Version:    2.2
+Version:    2.3
 Release:    0
 Group:      Qt/Qt
 License:    LICENSE
@@ -89,6 +89,6 @@ desktop-file-install --delete-original       \
 %defattr(-,root,root,-)
 %{_bindir}/tst-%{name}
 %{_datadir}/tst-%{name}/*.qml
-%attr(0755, -, -) %{_datadir}/tst-%{name}/*.sh
+%{_datadir}/tst-%{name}/*.sh
 # >> files test
 # << files test
