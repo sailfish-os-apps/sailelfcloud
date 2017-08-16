@@ -346,12 +346,12 @@ Python {
         return py.call("elfcloudadapter.clearEncryption", []);
     }
 
-    function setProperty(name, data, callback) {
-        return _call("setProperty", callback, name, data);
+    function setProperty(name, data, successCb, failureCb) {
+        return _call2("setProperty", successCb, failureCb, name, data);
     }
 
-    function getProperty(name, callback) {
-        return _call("getProperty", callback, name);
+    function getProperty(name, successCb, failureCb) {
+        return _call2("getProperty", successCb, failureCb, name);
     }
 
 

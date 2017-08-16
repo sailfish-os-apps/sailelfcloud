@@ -81,10 +81,10 @@ class Test(unittest.TestCase):
                  {"name": "test name 3", "description": "test descr 3", "key": "111", "iv": "ABCD", "hash": "12345", "mode": "CFB8", "type": "AES128"}]
 
         expectedRing = [
-            {'description': 'test descr 1', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD', 'name': 'test name 1'},
-            {'description': 'test descr 2', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD', 'name': 'test name 2'},
-            {'description': 'different key 3', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD', 'name': 'test name 3 (ts)'},
-            {'description': 'test descr 3', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD', 'name': 'test name 3'}]
+            {'name': 'test name 1', 'description': 'test descr 1', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'},
+            {'name': 'test name 2', 'description': 'test descr 2', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'},
+            {'name': 'test name 3 (ts)', 'description': 'different key 3', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'},
+            {'name': 'test name 3', 'description': 'test descr 3', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'}]
         expectedOperations = [
             ('skipped', 'test name 1'),
             ('append',  'test name 2'),

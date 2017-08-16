@@ -291,11 +291,13 @@ class Test_properties_cloud(unittest.TestCase):
     def randomString(self,length):
         return ''.join(random.choice(string.ascii_lowercase) for _ in range(length))
 
-    def test_setGetPropery(self):
+    def test_setGetPropery__GivenPropertySet_WhenPropertyGet_ThenReturnSetProperty(self):
         data = self.randomString(10)
         elfcloudclient.setProperty('my property', data.encode())
         self.assertEqual(data, elfcloudclient.getProperty('my property').decode('utf-8'))
         
+    def test_getPropery__GivenNonExistentProperty_WhenGetProperty_ThenRaiseException(self):
+        self.assertRaises(elfcloudclient.ClientException, elfcloudclient.getProperty, 'my property which does not exist')
     
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

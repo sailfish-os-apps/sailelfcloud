@@ -24,6 +24,8 @@ Python {
                callString += argArray[i].toString;
             else if (typeof(argArray[i]) === 'string')
                 callString += '"' + argArray[i] + '"';
+            else
+                console.debug("unknown type:", typeof(argArray[i]), argArray[i]);
 
             i++;
 
@@ -93,6 +95,19 @@ Python {
     function modifyKey(hash, name, description) {
         return _syncCallPy("keyhandler.modifyKey", hash, name, description);
     }
+
+    function convertKeyInfo2Json(keyinfo) {
+        return _syncCallPy("keyhandler.convertKeyInfo2Json", keyinfo);
+    }
+
+    function convertJson2KeyInfo(jsonDocument) {
+        return _syncCallPy("keyhandler.convertJson2KeyInfo", jsonDocument);
+    }
+
+    function mergeKeyrings(keyring1, keyring2) {
+        return _syncCallPy("keyhandler.mergeKeyrings", keyring1, keyring2);
+    }
+
 
     Component.onCompleted: {
         if (!py._ready) {
