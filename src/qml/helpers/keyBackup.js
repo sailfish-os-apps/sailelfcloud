@@ -1,5 +1,14 @@
 .pragma library
 
+var _elfCloud = undefined;
+var _keyHandler = undefined;
+var _stateCb = undefined;
+var _passwd = undefined
+
+var CLOUD_KEYRING_1 = "com.ahola.sailelfcloud.keyring.user.1";
+var CLOUD_KEYRING_2 = "com.ahola.sailelfcloud.keyring.user.2";
+var CLOUD_KEYRING_ACTIVE = "com.ahola.sailelfcloud.keyring.user.active";
+
 /*
   JSON document structure for key backup:
 
@@ -19,8 +28,6 @@
   }
 
   */
-
-var elfCloud = undefined;
 
 /// This function converts keyring object to JSON source object (which can be marshalled to JSON)
 // Argumenty keyRing object must be type returned by python
@@ -62,13 +69,87 @@ function convertJsonObject2KeyRingObject(jsonObject) {
     return keyRing;
 }
 
-// Argumenty keysToBackup must be type returned by python
-// keyhandler.getKeys()
-function BackupKeysToCloud(keysToBackup) {
+function _failedCb(reasonId, reasonMsg) {
+    console.error("Failed to backup keyring:", reasonId, reasonMsg);
+    _stateCb("failed");
+}
 
-    var jsonObject = convertKeyRingObject2JsonObject(keysToBackup);
-    var orig = convertJsonObject2KeyRingObject(jsonObject);
-    var jsonDocument = JSON.stringify(jsonObject);
-    console.debug("Backing up keys", jsonDocument);
+function _gotKeyringContentForVerify(content, expectedKeyringContent) {
 
+    if (content === expectedKeyringContent)
+        _stateCb("done");
+    else {
+        console.error("Failed to backup keyring: content verify failed");
+        _stateCb("failed");
+    }
+}
+
+function _setActiveKeyring(keyring, expectedKeyringContent) {
+    _stateCb("verify");
+    _elfCloud.getProperty(keyring,
+                          function(content) { _gotKeyringContentForVerify(content, expectedKeyringContent); },
+                          _failedCb);
+}
+
+function _setKeyringContent(keyring, keyringContent) {
+    _elfCloud.setProperty(CLOUD_KEYRING_ACTIVE, keyring,
+                          function() { _setActiveKeyring(keyring, keyringContent); },
+                          _failedCb);
+}
+
+function _gotKeyringContent(activeKeyring, keyringContent) {
+    var keyInfo = _keyHandler.getKeys();
+
+    if (keyringContent === undefined) {
+    } else {
+    }
+
+    _stateCb("merge");
+    var jsonObject = convertKeyRingObject2JsonObject(keyInfo);
+    var jsonString = JSON.stringify(jsonObject);
+    console.debug("JSON:", jsonString);
+
+
+    _stateCb("store");
+    var keyring = undefined;
+
+    if (activeKeyring === CLOUD_KEYRING_1) {
+        keyring = CLOUD_KEYRING_2;
+    } else {
+        keyring = CLOUD_KEYRING_1;
+    }
+
+    _elfCloud.setProperty(keyring, jsonString,
+                          function() { _setKeyringContent(keyring, jsonString); },
+                          _failedCb);
+}
+
+function _gotActiveKeyring(activeKeyring) {
+    console.debug("Currently active keyring is:", activeKeyring);
+
+    if (activeKeyring === undefined) {
+        activeKeyring = CLOUD_KEYRING_1;
+    }
+
+    _elfCloud.getProperty(activeKeyring,
+                          function(content) { _gotKeyringContent(activeKeyring, content); },
+                          _failedCb);
+}
+
+function _init() {
+    _stateCb("fetch");
+    _elfCloud.getProperty(CLOUD_KEYRING_ACTIVE, _gotActiveKeyring, _failedCb);
+}
+
+function BackupKeyringToCloud(elfCloud, keyHandler, stateCb, passwd) {
+
+    console.debug("Backing up keyring to cloud...");
+
+    _elfCloud = elfCloud;
+    _keyHandler = keyHandler;
+    _stateCb = stateCb;
+    _passwd = passwd
+
+    _stateCb("init");
+    _init();
 }

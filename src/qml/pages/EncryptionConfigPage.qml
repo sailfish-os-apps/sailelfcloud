@@ -1,7 +1,6 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import org.nemomobile.notifications 1.0
-import "../helpers/keyBackup.js" as KeyBackup
 
 Page {
     id: page
@@ -51,7 +50,6 @@ Page {
     }
 
     Component.onCompleted: {
-        KeyBackup.elfCloud = elfCloud;
         _populateKeyListAndSelectActive();
     }
 
@@ -123,11 +121,11 @@ Page {
             }
             MenuItem {
                 text: qsTr("Backup to cloud")
-                onClicked: KeyBackup.BackupKeysToCloud(keyHandler.getKeys())
+                onClicked: pageStack.push(Qt.resolvedUrl("KeychainBackupPage.qml"));
             }
             MenuItem {
                 text: qsTr("Restore from cloud")
-                //onClicked:
+                onClicked:pageStack.push(Qt.resolvedUrl("KeychainRestorePage.qml"));
             }
         }
 

@@ -224,11 +224,17 @@ def removeCluster(cbObj, clusterId):
     _sendCompletedSignal(cbObj, elfcloudclient.removeCluster(clusterId))
 
 @worker.run_async
-@handle_exception(cbObjName='cbObj')
 def setProperty(cbObj, name, data):
-    _sendCompletedSignal(cbObj, elfcloudclient.setProperty(name, data))
+    try:
+        _sendCompletedSignal(cbObj, elfcloudclient.setProperty(name, data.encode()))
+    except elfcloudclient.ClientException as e:
+        _sendFailedSignal(cbObj, e.id, e.msg)
     
 @worker.run_async
-@handle_exception(cbObjName='cbObj')
 def getProperty(cbObj, name):
-    _sendCompletedSignal(cbObj, elfcloudclient.getProperty(name))
+    try:
+        _sendCompletedSignal(cbObj, elfcloudclient.getProperty(name).decode('utf-8'))
+    except elfcloudclient.NotConnected as e:
+        _sendFailedSignal(cbObj, e.id, e.msg)
+    except elfcloudclient.ClientException as e:
+        _sendCompletedSignal(cbObj, None)
