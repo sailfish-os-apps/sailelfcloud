@@ -9,22 +9,31 @@ Page {
     id: page
     backNavigation: false
 
-    function _stateCb(state) {
+    function _stateCb(state, reason) {
         switch (state) {
         case 'init':
             page.state = 'initial';
+            break;
         case 'fetch':
             page.state = 'fetch';
+            break;
         case 'merge':
             page.state = 'merge';
+            break;
         case 'store':
             page.state = 'store';
+            break;
         case 'verify':
             page.state = 'verify';
+            break;
         case 'done':
             page.state = 'done';
+            break;
         case 'failed':
+            if (reason !== undefined)
+                failedReason.reason = reason;
             page.state = 'failed';
+            break;
         }
     }
 
@@ -81,7 +90,7 @@ Page {
         Column {
             id: column
             width: parent.width
-            spacing: Theme.paddingLarge
+            spacing: Theme.paddingMedium
 
             PageHeader {
                 title: qsTr("Keychain backup")
@@ -90,7 +99,7 @@ Page {
             Label {
                 id: fetchingFromCloud
                 font.family: Theme.fontFamilyHeading
-                anchors { leftMargin: Theme.paddingMedium; rightMargin: Theme.paddingMedium }
+                x: Theme.horizontalPageMargin
                 visible: false
                 text: qsTr("Fetching from cloud")
             }
@@ -98,7 +107,7 @@ Page {
             Label {
                 id: mergingKeychains
                 font.family: Theme.fontFamilyHeading
-                anchors { leftMargin: Theme.paddingMedium; rightMargin: Theme.paddingMedium }
+                x: Theme.horizontalPageMargin
                 visible: false
                 text: qsTr("Merging keychains")
             }
@@ -106,7 +115,7 @@ Page {
             Label {
                 id: storeToCloud
                 font.family: Theme.fontFamilyHeading
-                anchors { leftMargin: Theme.paddingMedium; rightMargin: Theme.paddingMedium }
+                x: Theme.horizontalPageMargin
                 visible: false
                 text: qsTr("Store to cloud")
             }
@@ -114,7 +123,7 @@ Page {
             Label {
                 id: verify
                 font.family: Theme.fontFamilyHeading
-                anchors { leftMargin: Theme.paddingMedium; rightMargin: Theme.paddingMedium }
+                x: Theme.horizontalPageMargin
                 visible: false
                 text: qsTr("Verify")
             }
@@ -122,17 +131,31 @@ Page {
             Label {
                 id: done
                 font.family: Theme.fontFamilyHeading
-                anchors { leftMargin: Theme.paddingMedium; rightMargin: Theme.paddingMedium }
+                x: Theme.horizontalPageMargin
                 visible: false
                 text: qsTr("Done")
             }
 
             Label {
                 id: failed
+                property string reason: ""
                 font.family: Theme.fontFamilyHeading
-                anchors { leftMargin: Theme.paddingMedium; rightMargin: Theme.paddingMedium }
+                x: Theme.horizontalPageMargin
                 visible: false
                 text: qsTr("Failed")
+            }
+
+            TextEdit {
+                id: failedReason
+                property string reason: ""
+                x: Theme.horizontalPageMargin * 2
+                width: parent.width - x
+                color: Theme.secondaryColor
+                font.pixelSize: Theme.fontSizeSmall
+                visible: reason !== ""
+                wrapMode: TextEdit.WordWrap
+                readOnly: true
+                text: reason
             }
 
             Button {

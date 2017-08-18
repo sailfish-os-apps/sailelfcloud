@@ -15,6 +15,7 @@ be cleared if the owner of the `callback object` goes out of scope.
 
 @author: Teemu Ahola [teemuahola7@gmail.com]
 '''
+from time import sleep
 
 import elfcloudclient
 import uploader
@@ -233,6 +234,7 @@ def setProperty(cbObj, name, data):
 @worker.run_async
 def getProperty(cbObj, name):
     try:
+        sleep(1)
         _sendCompletedSignal(cbObj, elfcloudclient.getProperty(name).decode('utf-8'))
     except elfcloudclient.NotConnected as e:
         _sendFailedSignal(cbObj, e.id, e.msg)
