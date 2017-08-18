@@ -53,6 +53,13 @@ For python code:
  - cd src/qml/python/tests
  - PYTHONPATH=../:../../../3rd/elfcloud-weasel/:../../../3rd/decorator/build/lib/ py.test-3
 
+For QML:
+ - Login to Sailfish emulator SSH
+ - To run all tests:
+     bash /usr/share/tst-harbour-sailelfcloud/runTestsOnDevice.sh
+ - To run single test e.g.
+     /usr/bin/tst-harbour-sailelfcloud -import /usr/share/harbour-sailelfcloud/qml/pages/ \
+       -input /usr/share/tst-harbour-sailelfcloud/tst_KeychainBackupPage.qml
 
 TODO
 ====

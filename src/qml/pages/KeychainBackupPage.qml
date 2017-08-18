@@ -149,7 +149,7 @@ Page {
                 id: failedReason
                 property string reason: ""
                 x: Theme.horizontalPageMargin * 2
-                width: parent.width - x
+                width: parent.width - x - Theme.horizontalPageMargin
                 color: Theme.secondaryColor
                 font.pixelSize: Theme.fontSizeSmall
                 visible: reason !== ""

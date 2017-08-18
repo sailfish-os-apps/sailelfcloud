@@ -36,7 +36,8 @@ DISTFILES += \
     HelpersMock.qml \
     tst_ConnectionPage.qml \
     tst_TransfersPage.qml \
-    tst_ContainerPage.qml
+    tst_ContainerPage.qml \
+    tst_KeychainBackupPage.qml
 
 
 
