@@ -933,13 +933,13 @@
 <context>
     <name>keyBackup</name>
     <message>
-        <location filename="../qml/helpers/keyBackup.js" line="114"/>
-        <source>Verification failed. Backup in cloud corrupted. Try again.</source>
+        <location filename="../qml/helpers/keyBackup.js" line="121"/>
+        <source>Verification failed. Try again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../qml/helpers/keyBackup.js" line="145"/>
-        <source>Backup version %1 in cloud is unsupported</source>
+        <source>Backup version %1 in cloud is unsupported.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

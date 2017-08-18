@@ -105,26 +105,27 @@ function _failedCb(reasonId, reasonMsg) {
     _stateCb("failed");
 }
 
-function _gotKeyringBackupContentForVerify(content, expectedKeyringBackupContent) {
+function _setActiveKeyring() {
+    _stateCb("done");
+}
 
-    if (content === expectedKeyringBackupContent)
-        _stateCb("done");
+function _gotKeyringBackupContentForVerify(content, keyringToActive, expectedKeyringBackupContent) {
+
+    if (content === expectedKeyringBackupContent) {
+        console.debug("Activating keyring:", keyringToActive);
+        _elfCloud.setProperty(CLOUD_KEYRING_ACTIVE, keyringToActive,
+                              _setActiveKeyring, _failedCb);
+    }
     else {
         console.error("Failed to backup keyring: content verify failed");
-        _stateCb("failed", qsTr("Verification failed. Backup in cloud corrupted. Try again."));
+        _stateCb("failed", qsTr("Verification failed. Try again."));
     }
 }
 
-function _setActiveKeyring(keyring, expectedKeyringBackupContent) {
+function _setKeyringBackupContent(keyring, expectedKeyringBackupContent) {
     _stateCb("verify");
     _elfCloud.getProperty(keyring,
-                          function(content) { _gotKeyringBackupContentForVerify(content, expectedKeyringBackupContent); },
-                          _failedCb);
-}
-
-function _setKeyringBackupContent(keyring, keyringBackupContent) {
-    _elfCloud.setProperty(CLOUD_KEYRING_ACTIVE, keyring,
-                          function() { _setActiveKeyring(keyring, keyringBackupContent); },
+                          function(content) { _gotKeyringBackupContentForVerify(content, keyring, expectedKeyringBackupContent); },
                           _failedCb);
 }
 
@@ -133,7 +134,6 @@ function _isBackupVersionSupported(versionString) {
 }
 
 function _gotKeyringBackupContent(activeKeyring, keyringBackupContent) {
-    var keyInfo = _keyHandler.getKeys();
 
     if (keyringBackupContent !== undefined) {
         var currentBackupJsonObject = convertKeyBackupJsonStringToJsonObject(keyringBackupContent);
@@ -142,16 +142,15 @@ function _gotKeyringBackupContent(activeKeyring, keyringBackupContent) {
         if ( ! _isBackupVersionSupported(backupVersionStringInCloud) ) {
             console.error("Cannot backup. Version of backup in cloud is", backupVersionStringInCloud,
                           "but application supports", KEY_BACKUP_VERSION);
-            _stateCb("failed", qsTr("Backup version %1 in cloud is unsupported").arg(backupVersionStringInCloud));
+            _stateCb("failed", qsTr("Backup version %1 in cloud is unsupported.").arg(backupVersionStringInCloud));
             return;
         }
     }
 
     _stateCb("merge");
+    var keyInfo = _keyHandler.getKeys();
     var keyringJsonString = convertKeyRingObject2JsonString(keyInfo);
     var backupJsonString = createJsonObjectForKeyBackup(keyringJsonString);
-    console.debug("JSON:", backupJsonString);
-
 
     _stateCb("store");
     var keyring = undefined;
