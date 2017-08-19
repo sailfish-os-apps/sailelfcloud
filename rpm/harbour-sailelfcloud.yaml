@@ -64,6 +64,7 @@ SubPackages:
         - '%{_bindir}/tst-%{name}'
         - '%{_datadir}/tst-%{name}/*.qml'
         - '%{_datadir}/tst-%{name}/*.sh'
+        - '%{_datadir}/tst-%{name}/*.js'
 
 # For more information about yaml and what's supported in Sailfish OS
 # build system, please see https://wiki.merproject.org/wiki/Spectacle

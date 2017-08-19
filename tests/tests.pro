@@ -12,7 +12,7 @@ DEPLOYMENT_PATH = /usr/share/$$TARGET
 qml.path = $$DEPLOYMENT_PATH
 
 extra.path = $$DEPLOYMENT_PATH
-extra.files = runTestsOnDevice.sh
+extra.files = runTestsOnDevice.sh 3rd/js-mock/dist/*.js
 
 # defining QUICK_TEST_SOURCE_DIR here doesn't work QtCreator keeps injecting another definition to command line (from CONFIG += qmltestcase ?)
 #DEFINES += QUICK_TEST_SOURCE_DIR=\"\\\"\"$${DEPLOYMENT_PATH}/\"\\\"\"
@@ -37,7 +37,9 @@ DISTFILES += \
     tst_ConnectionPage.qml \
     tst_TransfersPage.qml \
     tst_ContainerPage.qml \
-    tst_KeychainBackupPage.qml
+    tst_KeychainBackupPage.qml \
+    tst_keyBackup.qml \
+    3rd/js-mock/dist/*.js
 
 
 

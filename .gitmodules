@@ -4,3 +4,6 @@
 [submodule "src/3rd/pycrypto"]
 	path = src/3rd/pycrypto
 	url = https://github.com/TeemuAhola/pycrypto.git
+[submodule "tests/3rd/js-mock"]
+	path = tests/3rd/js-mock
+	url = https://github.com/j-fischer/js-mock.git

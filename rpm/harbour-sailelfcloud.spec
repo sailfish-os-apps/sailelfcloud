@@ -90,5 +90,6 @@ desktop-file-install --delete-original       \
 %{_bindir}/tst-%{name}
 %{_datadir}/tst-%{name}/*.qml
 %{_datadir}/tst-%{name}/*.sh
+%{_datadir}/tst-%{name}/*.js
 # >> files test
 # << files test

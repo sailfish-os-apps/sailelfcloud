@@ -101,7 +101,7 @@ function convertJsonObject2KeyRingObject(jsonObject) {
 }
 
 function _failedCb(reasonId, reasonMsg) {
-    console.error("Failed to backup keyring:", reasonId, reasonMsg);
+    console.error("Failed to backup keyring due to:", reasonId, reasonMsg);
     _stateCb("failed");
 }
 
@@ -191,7 +191,6 @@ function BackupKeyringToCloud(elfCloud, keyHandler, stateCb, passwd) {
     _keyHandler = keyHandler;
     _stateCb = stateCb;
     _passwd = passwd
-
     _stateCb("init");
     _init();
 }
