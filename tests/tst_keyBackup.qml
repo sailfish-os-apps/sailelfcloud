@@ -18,18 +18,14 @@ TestCase {
         function getKeys() {}
     }
 
-    property var elfCloudMock: JsMock.API.mock("elfCloud", elfCloud)
-    property var keyHandlerMock: JsMock.API.mock("keyHandler", keyHandler)
-    property var stateCbMock: JsMock.API.mock("stateCb")
-
     function test_GivenConnectionFailures_WhenBackup_ThenFinalStateIsFailed() {
 
         var elfCloudMock, keyHandlerMock, stateCbMock;
 
-        JsMock.API.watch(function() {
-            elfCloudMock = JsMock.API.mock("elfCloud", elfCloud);
-            keyHandlerMock = JsMock.API.mock("keyHandler", keyHandler);
-            stateCbMock = JsMock.API.mock("stateCb");
+        JsMock.JsMock.watch(function() {
+            elfCloudMock = JsMock.JsMock.mock("elfCloud", elfCloud);
+            keyHandlerMock = JsMock.JsMock.mock("keyHandler", keyHandler);
+            stateCbMock = JsMock.JsMock.mock("stateCb");
         });
 
         stateCbMock.exactly(3);
@@ -40,7 +36,7 @@ TestCase {
 
         try {
             KeyBackup.BackupKeyringToCloud(elfCloudMock, keyHandlerMock, stateCbMock, passwd);
-            JsMock.API.assertWatched();
+            JsMock.JsMock.assertWatched();
         } catch (err) {
             fail("%1 %2".arg(err.message).arg(err.stack));
         }

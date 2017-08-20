@@ -10,7 +10,6 @@ var CLOUD_KEYRING_1 = "com.ahola.sailelfcloud.keyring.user.1";
 var CLOUD_KEYRING_2 = "com.ahola.sailelfcloud.keyring.user.2";
 var CLOUD_KEYRING_ACTIVE = "com.ahola.sailelfcloud.keyring.user.active";
 
-
 /*
   JSON document structure for key backup:
 
