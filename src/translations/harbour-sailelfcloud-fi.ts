@@ -401,16 +401,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="125"/>
-        <source>Backup to cloud</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/pages/EncryptionConfigPage.qml" line="129"/>
-        <source>Restore from cloud</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../qml/pages/EncryptionConfigPage.qml" line="143"/>
         <source>Encryption configurations</source>
         <translation type="unfinished"></translation>

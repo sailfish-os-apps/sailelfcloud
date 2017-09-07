@@ -121,14 +121,14 @@ Page {
                 text: qsTr("Encryption help")
                 onClicked: Qt.openUrlExternally("https://github.com/TeemuAhola/sailelfcloud/wiki/SailElfCloud-encryption")
             }
-            MenuItem {
+/*            MenuItem {
                 text: qsTr("Backup to cloud")
                 onClicked: KeyBackup.BackupKeysToCloud(keyHandler.getKeys())
             }
             MenuItem {
                 text: qsTr("Restore from cloud")
                 //onClicked:
-            }
+            }*/
         }
 
         // Place our content in a Column.  The PageHeader is always placed at the top
