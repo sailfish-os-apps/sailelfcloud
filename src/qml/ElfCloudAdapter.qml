@@ -163,6 +163,30 @@ Python {
             return undefined;
     }
 
+    function _syncCall(func, args) {
+        var argArray = Array.prototype.slice.call(arguments);
+        var callString = func + "(";
+        var i = 1; // skip first arg since it is python call name 'func'
+
+        while (i < argArray.length) {
+            if (typeof(argArray[i]) === 'number')
+               callString += argArray[i].toString;
+            else if (typeof(argArray[i]) === 'string')
+                callString += '"' + argArray[i] + '"';
+            else
+                console.debug("unknown type:", typeof(argArray[i]), argArray[i]);
+
+            i++;
+
+            if (i < argArray.length)
+                callString += ","
+        }
+
+        callString += ")";
+
+        return py.evaluate(callString);
+    }
+
     function getSubscriptionInfo(callback) {
         return _call("getSubscription", callback)
     }
@@ -180,7 +204,7 @@ Python {
     }
 
     function isConnected() {
-        return py.call("elfcloudadapter.isConnected", []);
+        return _syncCall("elfcloudadapter.isConnected");
     }
 
     // This function is needed to make a copy from content list got from python since it seems to vanish and cause null pointer accesses
@@ -339,11 +363,11 @@ Python {
     }
 
     function setEncryptionKey(key, initVector) {
-       return py.call("elfcloudadapter.setEncryption", [key, initVector]);
+       return _syncCall("elfcloudadapter.setEncryption", key, initVector);
     }
 
     function clearEncryption() {
-        return py.call("elfcloudadapter.clearEncryption", []);
+        return _syncCall("elfcloudadapter.clearEncryption");
     }
 
     function setProperty(name, data, callback) {
