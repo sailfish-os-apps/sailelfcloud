@@ -42,7 +42,9 @@ DISTFILES += \
     qml/items/Notifications.qml \
     qml/pages/CurrentUserPage.qml \
     qml/helpers/keyBackup.js \
-    qml/pages/KeychainBackupPage.qml
+    qml/pages/KeychainBackupPage.qml \
+    qml/pages/KeychainRestorePage.qml \
+    qml/helpers/keyRestore.js
 
 OTHER_FILES = \
     ../rpm/harbour-sailelfcloud.yaml \

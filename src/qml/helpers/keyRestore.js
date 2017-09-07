@@ -108,26 +108,6 @@ function _setActiveKeyring() {
     _stateCb("done");
 }
 
-function _gotKeyringBackupContentForVerify(content, keyringToActive, expectedKeyringBackupContent) {
-
-    if (content === expectedKeyringBackupContent) {
-        console.debug("Activating keyring:", keyringToActive);
-        _elfCloud.setProperty(CLOUD_KEYRING_ACTIVE, keyringToActive,
-                              _setActiveKeyring, _failedCb);
-    }
-    else {
-        console.error("Failed to backup keyring: content verify failed");
-        _stateCb("failed", qsTr("Verification failed. Try again."));
-    }
-}
-
-function _setKeyringBackupContent(keyring, expectedKeyringBackupContent) {
-    _stateCb("verify");
-    _elfCloud.getProperty(keyring,
-                          function(content) { _gotKeyringBackupContentForVerify(content, keyring, expectedKeyringBackupContent); },
-                          _failedCb);
-}
-
 function _isBackupVersionSupported(versionString) {
     return KEY_BACKUP_VERSION === versionString;
 }
@@ -139,7 +119,7 @@ function _gotKeyringBackupContent(activeKeyring, keyringBackupContent) {
         var backupVersionStringInCloud = currentBackupJsonObject["version"];
 
         if ( ! _isBackupVersionSupported(backupVersionStringInCloud) ) {
-            console.error("Cannot backup. Version of backup in cloud is", backupVersionStringInCloud,
+            console.error("Cannot restore. Version of backup in cloud is", backupVersionStringInCloud,
                           "but application supports", KEY_BACKUP_VERSION);
             _stateCb("failed", qsTr("Backup version %1 in cloud is unsupported.").arg(backupVersionStringInCloud));
             return;
@@ -152,17 +132,7 @@ function _gotKeyringBackupContent(activeKeyring, keyringBackupContent) {
     var backupJsonString = createJsonObjectForKeyBackup(keyringJsonString);
 
     _stateCb("store");
-    var keyring = undefined;
-
-    if (activeKeyring === CLOUD_KEYRING_1) {
-        keyring = CLOUD_KEYRING_2;
-    } else {
-        keyring = CLOUD_KEYRING_1;
-    }
-
-    _elfCloud.setProperty(keyring, backupJsonString,
-                          function() { _setKeyringBackupContent(keyring, backupJsonString); },
-                          _failedCb);
+    _stateCb("done");
 }
 
 function _gotActiveKeyring(activeKeyring) {
@@ -182,9 +152,9 @@ function _init() {
     _elfCloud.getProperty(CLOUD_KEYRING_ACTIVE, _gotActiveKeyring, _failedCb);
 }
 
-function BackupKeyringToCloud(elfCloud, keyHandler, stateCb, passwd) {
+function RestoreKeyringFromCloud(elfCloud, keyHandler, stateCb, passwd) {
 
-    console.debug("Backing up keyring to cloud...");
+    console.debug("Restoring keyring from cloud...");
 
     _elfCloud = elfCloud;
     _keyHandler = keyHandler;

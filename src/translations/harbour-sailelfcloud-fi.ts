@@ -383,7 +383,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/ElfCloudAdapter.qml" line="240"/>
+        <location filename="../qml/ElfCloudAdapter.qml" line="264"/>
         <source>Destination file exists</source>
         <translation type="unfinished"></translation>
     </message>
@@ -715,6 +715,44 @@
     </message>
 </context>
 <context>
+    <name>KeychainRestorePage</name>
+    <message>
+        <location filename="../qml/pages/KeychainRestorePage.qml" line="91"/>
+        <source>Keychain restore</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/KeychainRestorePage.qml" line="99"/>
+        <source>Fetching from cloud</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/KeychainRestorePage.qml" line="107"/>
+        <source>Merging keychains</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/KeychainRestorePage.qml" line="115"/>
+        <source>Store to local</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/KeychainRestorePage.qml" line="123"/>
+        <source>Done</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/KeychainRestorePage.qml" line="132"/>
+        <source>Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/KeychainRestorePage.qml" line="150"/>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>LoginPage</name>
     <message>
         <location filename="../qml/pages/LoginPage.qml" line="12"/>
@@ -939,6 +977,14 @@
     </message>
     <message>
         <location filename="../qml/helpers/keyBackup.js" line="144"/>
+        <source>Backup version %1 in cloud is unsupported.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>keyRestore</name>
+    <message>
+        <location filename="../qml/helpers/keyRestore.js" line="124"/>
         <source>Backup version %1 in cloud is unsupported.</source>
         <translation type="unfinished"></translation>
     </message>
