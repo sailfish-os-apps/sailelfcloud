@@ -98,7 +98,6 @@ def getKeys():
     
     return keys
 
-
 def isKeyWithName(name):
     keys = getKeys()
     
@@ -182,7 +181,7 @@ def convertKeyInfo2Json(keyInfo):
       JSON document structure for keyring backup:
           {
             "timestamp": "<ts>", // local timestamp <ts> when backup was created
-            "keys": [            // array of keys in backup
+            "keys": {            // object for keys in backup, every key is a member of this object
                 "<name>": {      // object for key , where <name> is unique name of a key
                     "description": "<descr>",
                     "type": "<type>",
@@ -192,7 +191,7 @@ def convertKeyInfo2Json(keyInfo):
                     "hash": "<hash>"
                 },
                 ...
-            ]
+            }
           }
     """
     
@@ -212,7 +211,7 @@ def convertKeyInfo2Json(keyInfo):
     jsonObject = {"timestamp": _getTimestamp(),
                   "keys": keys}
 
-    return json.dumps(jsonObject, indent=4)
+    return json.dumps(jsonObject)
 
 
 def convertJson2KeyInfo(jsonDocument):
@@ -232,28 +231,47 @@ def convertJson2KeyInfo(jsonDocument):
 
     return keyInfo
 
+def getKeysAsJsonString():
+    return convertKeyInfo2Json(getKeys())
+
+
 def mergeKeyrings(keyring1, keyring2):
 
-    combinedKeyrings = keyring1 + keyring2
-    mergedKeyrings = []
+    mergedKeyrings = keyring2
     operationsMade = []
 
-    for index,key1 in enumerate(combinedKeyrings):
-        keyToAppend = copy.deepcopy(key1)
+    for key1 in keyring1:
+        keyToAdd = key1
+        keyToKeep = None
+        for key2 in mergedKeyrings:
+            keyToKeep = key2
 
-        for key2 in itertools.islice(combinedKeyrings, index+1, None):
-
-            if keyToAppend == key2:
-                operationsMade.append(("skipped", keyToAppend["name"]))
-                keyToAppend = None
+            if key1 == key2:
+                operationsMade.append(("keep", key2["name"]))
+                keyToAdd = None
                 break
-            elif keyToAppend["name"] == key2["name"]:
-                keyToAppend["name"] += " (%s)" % _getTimestamp()
-                operationsMade.append(("renamed", keyToAppend["name"]))
+            elif key1["name"] == key2["name"]:
+                oldName = key1["name"]
+                newName = oldName + " (%s)" % _getTimestamp()
+                newKey = copy.deepcopy(key1)
+                newKey["name"] = newName
+                mergedKeyrings.append(newKey)
+                operationsMade.append(("rename", (oldName,newName)))
+                keyToAdd = None
                 break
 
-        if keyToAppend:
-            mergedKeyrings.append(keyToAppend)
-            operationsMade.append(("append", keyToAppend["name"]))
+        if keyToAdd:
+            operationsMade.append(("add", keyToAdd["name"]))
+            mergedKeyrings.append(keyToAdd)
+
+        if keyToKeep:
+            operationsMade.append(("keep", keyToKeep["name"]))
 
     return mergedKeyrings,operationsMade
+
+def mergeJsonKeyrings(keyringJson1, keyringJson2):
+    keyring1 = convertJson2KeyInfo(keyringJson1)
+    keyring2 = convertJson2KeyInfo(keyringJson2)
+    mergedKeyring,operations = mergeKeyrings(keyring1, keyring2)
+
+    return convertKeyInfo2Json(mergedKeyring),operations

@@ -68,11 +68,61 @@ class Test(unittest.TestCase):
                 ]
 
         convertedKeys = keyhandler.convertJson2KeyInfo(keyhandler.convertKeyInfo2Json(keys))
-        pairs = zip(keys, convertedKeys)
-        self.assertTrue(any(x != y for x, y in pairs))
+        # In oder to ensure that keys are in the same order in both lists, they are sorted according to key name field
+        pairs = zip(sorted(keys, key=lambda _k : _k["name"]), sorted(convertedKeys, key=lambda _k : _k["name"]))
+        self.assertTrue(any(x == y for x, y in pairs))
+
+    @unittest.mock.patch('keyhandler._getTimestamp')
+    def test_mergeKeyrings__GivenOneIdenticalKey_WhenMerged_ThenTheKeyOnlyOnceInMergedKeyring(self, getTimestamp_mock):
+        ring1 = [{"name": "test name 1", "description": "test descr 1", "key": "111", "iv": "ABCD", "hash": "12345",
+                  "mode": "CFB8", "type": "AES128"}]
+        ring2 = [{"name": "test name 1", "description": "test descr 1", "key": "111", "iv": "ABCD", "hash": "12345",
+                  "mode": "CFB8", "type": "AES128"}]
+
+        expectedRing = [
+            {'name': 'test name 1', 'description': 'test descr 1', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'}]
+        expectedOperations = [
+            ('keep', 'test name 1')]
+
+        getTimestamp_mock.return_value = "ts" # mock timestamp query so that we can do easy validity check
+        mergedRing,operations = keyhandler.mergeKeyrings(ring1, ring2)
+
+        self.assertCountEqual(expectedRing, mergedRing)
+        self.assertListEqual(expectedOperations, operations)
 
     @unittest.mock.patch('keyhandler._getTimestamp')
     def test_mergeKeyrings__GivenUniqueIdenticalAndConflictingKeys_WhenMerged_ThenUniqueOneIdenticalAndConflictingWithRenamedReturned(self, getTimestamp_mock):
+        ring1 = [{"name": "test name 1", "description": "test descr 1", "key": "111", "iv": "ABCD", "hash": "12345", "mode": "CFB8", "type": "AES128"},
+                 {"name": "test name 2", "description": "test descr 2", "key": "111", "iv": "ABCD", "hash": "12345", "mode": "CFB8", "type": "AES128"},
+                 {"name": "test name 3", "description": "different key 3", "key": "111", "iv": "ABCD", "hash": "12345", "mode": "CFB8", "type": "AES128"}]
+
+        ring2 = [{"name": "test name 1", "description": "test descr 1", "key": "111", "iv": "ABCD", "hash": "12345", "mode": "CFB8", "type": "AES128"},
+                 {"name": "test name 3", "description": "test descr 3", "key": "111", "iv": "ABCD", "hash": "12345", "mode": "CFB8", "type": "AES128"}]
+
+        expectedRing = [
+            {'name': 'test name 1', 'description': 'test descr 1', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'},
+            {'name': 'test name 2', 'description': 'test descr 2', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'},
+            {'name': 'test name 3 (ts)', 'description': 'different key 3', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'},
+            {'name': 'test name 3', 'description': 'test descr 3', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'}]
+        expectedOperations = [
+            ('keep', 'test name 1'),
+            ('add',  'test name 2'),
+            ('rename', ('test name 3', 'test name 3 (ts)')),
+            ('add',  'test name 3')]
+
+        getTimestamp_mock.return_value = "ts" # mock timestamp query so that we can do easy validity check
+        mergedRing,operations = keyhandler.mergeKeyrings(ring1, ring2)
+
+        self.assertCountEqual(expectedRing, mergedRing)
+        self.assertListEqual(expectedOperations, operations)
+
+    @unittest.mock.patch('keyhandler._getTimestamp')
+    def test_mergeJsonKeyrings__GivenUniqueIdenticalAndConflictingKeys_WhenMerged_ThenUniqueOneIdenticalAndConflictingWithRenamedReturned(self, getTimestamp_mock):
+
+        #
+        # Note! Testdata is in keyring object (keyinfo) format for convince. It is easier to write than JSON string.
+        #
+
         ring1 = [{"name": "test name 1", "description": "test descr 1", "key": "111", "iv": "ABCD", "hash": "12345", "mode": "CFB8", "type": "AES128"},
                  {"name": "test name 2", "description": "test descr 2", "key": "111", "iv": "ABCD", "hash": "12345", "mode": "CFB8", "type": "AES128"},
                  {"name": "test name 3", "description": "different key 3", "key": "111", "iv": "ABCD", "hash": "12345", "mode": "CFB8", "type": "AES128"}]
@@ -94,10 +144,28 @@ class Test(unittest.TestCase):
             ('append',  'test name 3')]
 
         getTimestamp_mock.return_value = "ts" # mock timestamp query so that we can do easy validity check
-        mergedRing,operations = keyhandler.mergeKeyrings(ring1, ring2)
+        jsonRing1 = keyhandler.convertKeyInfo2Json(ring1)
+        jsonRing2 = keyhandler.convertKeyInfo2Json(ring2)
+
+        mergedJsonRing,operations = keyhandler.mergeJsonKeyrings(jsonRing1, jsonRing2)
+
+        expectedRing = [
+            {'name': 'test name 1', 'description': 'test descr 1', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'},
+            {'name': 'test name 2', 'description': 'test descr 2', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'},
+            {'name': 'test name 3 (ts)', 'description': 'different key 3', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'},
+            {'name': 'test name 3', 'description': 'test descr 3', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'}]
+        expectedOperations = [
+            ('skipped', 'test name 1'),
+            ('append',  'test name 2'),
+            ('renamed', 'test name 3 (ts)'),
+            ('append',  'test name 3 (ts)'),
+            ('append',  'test name 1'),
+            ('append',  'test name 3')]
+
+        mergedRing = keyhandler.convertJson2KeyInfo(mergedJsonRing)
 
         self.assertCountEqual(expectedRing, mergedRing)
-        self.assertListEqual(expectedOperations, operations)
+        self.assertCountEqual(expectedOperations, operations)
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

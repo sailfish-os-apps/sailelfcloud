@@ -674,42 +674,42 @@
 <context>
     <name>KeychainBackupPage</name>
     <message>
-        <location filename="../qml/pages/KeychainBackupPage.qml" line="96"/>
+        <location filename="../qml/pages/KeychainBackupPage.qml" line="99"/>
         <source>Keychain backup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/KeychainBackupPage.qml" line="104"/>
+        <location filename="../qml/pages/KeychainBackupPage.qml" line="107"/>
         <source>Fetching from cloud</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/KeychainBackupPage.qml" line="112"/>
+        <location filename="../qml/pages/KeychainBackupPage.qml" line="115"/>
         <source>Merging keychains</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/KeychainBackupPage.qml" line="120"/>
+        <location filename="../qml/pages/KeychainBackupPage.qml" line="123"/>
         <source>Store to cloud</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/KeychainBackupPage.qml" line="128"/>
+        <location filename="../qml/pages/KeychainBackupPage.qml" line="131"/>
         <source>Verify</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/KeychainBackupPage.qml" line="136"/>
+        <location filename="../qml/pages/KeychainBackupPage.qml" line="139"/>
         <source>Done</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/KeychainBackupPage.qml" line="145"/>
+        <location filename="../qml/pages/KeychainBackupPage.qml" line="148"/>
         <source>Failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/KeychainBackupPage.qml" line="163"/>
+        <location filename="../qml/pages/KeychainBackupPage.qml" line="192"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -971,12 +971,12 @@
 <context>
     <name>keyBackup</name>
     <message>
-        <location filename="../qml/helpers/keyBackup.js" line="120"/>
+        <location filename="../qml/helpers/keyBackup.js" line="61"/>
         <source>Verification failed. Try again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/helpers/keyBackup.js" line="144"/>
+        <location filename="../qml/helpers/keyBackup.js" line="86"/>
         <source>Backup version %1 in cloud is unsupported.</source>
         <translation type="unfinished"></translation>
     </message>

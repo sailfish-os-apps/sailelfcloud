@@ -23,7 +23,7 @@ Python {
             if (typeof(argArray[i]) === 'number')
                callString += argArray[i].toString;
             else if (typeof(argArray[i]) === 'string')
-                callString += '"' + argArray[i] + '"';
+                callString += '\'' + argArray[i] + '\'';
             else
                 console.debug("unknown type:", typeof(argArray[i]), argArray[i]);
 
@@ -52,6 +52,10 @@ Python {
 
     function getKeys() {
         return _syncCallPy("keyhandler.getKeys");
+    }
+
+    function getKeysAsJsonString() {
+        return _syncCallPy("keyhandler.getKeysAsJsonString");
     }
 
     function getKey(hash) {
@@ -108,6 +112,9 @@ Python {
         return _syncCallPy("keyhandler.mergeKeyrings", keyring1, keyring2);
     }
 
+    function mergeJsonKeyrings(keyring1, keyring2) {
+        return _syncCallPy("keyhandler.mergeJsonKeyrings", keyring1, keyring2);
+    }
 
     Component.onCompleted: {
         if (!py._ready) {

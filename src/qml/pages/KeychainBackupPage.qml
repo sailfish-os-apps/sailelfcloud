@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import Sailfish.Silica 1.0
 import "../helpers/keyBackup.js" as KeyBackup
+import "../helpers/keyBackupCleaner.js" as KeyPrune
 
 Page {
 
@@ -28,6 +29,8 @@ Page {
             break;
         case 'done':
             page.state = 'done';
+            if (reason !== undefined)
+                mergeOperations.operations = reason;
             break;
         case 'failed':
             if (reason !== undefined)
@@ -156,6 +159,32 @@ Page {
                 wrapMode: TextEdit.WordWrap
                 readOnly: true
                 text: reason
+            }
+
+            Repeater {
+                id: mergeOperations
+                property var operations: undefined
+                x: Theme.horizontalPageMargin * 2
+                width: parent.width - x - Theme.horizontalPageMargin
+                visible: false
+
+                model: ListModel {
+                    id: mergeListModel
+                }
+
+                delegate: DetailItem {
+                    label: model.key
+                    value: model.op
+                }
+
+                onOperationsChanged: {
+                    for (var i = 0; i < operations.length; i++) {
+                        var op = operations[i][0];
+                        var key = operations[i][1];
+                        mergeListModel.append({"op":op, "key":key});
+                    }
+                    visible = true;
+                }
             }
 
             Button {

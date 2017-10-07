@@ -3,7 +3,9 @@
 var _elfCloud = undefined;
 var _keyHandler = undefined;
 var _stateCb = undefined;
-var _passwd = undefined
+var _passwd = undefined;
+
+var _mergeOperations = undefined;
 
 var KEY_BACKUP_VERSION = "1.0"
 var CLOUD_KEYRING_1 = "com.ahola.sailelfcloud.keyring.user.1";
@@ -18,9 +20,9 @@ var CLOUD_KEYRING_ACTIVE = "com.ahola.sailelfcloud.keyring.user.active";
     "timestamp": "<ts>", // local timestamp <ts> when backup was created
     "keyring": ""        // encrypted base64 encoded keyring JSON string
   }
-
 */
-function createJsonObjectForKeyBackup(keyringJsonString) {
+
+function createBackupJsonString(keyringJsonString) {
 
     var jsonObject = {
         "version": KEY_BACKUP_VERSION,
@@ -31,72 +33,11 @@ function createJsonObjectForKeyBackup(keyringJsonString) {
     return JSON.stringify(jsonObject);
 }
 
-function convertKeyBackupJsonStringToJsonObject(keyBackupJsonString) {
-    var jsonObject = JSON.parse(keyBackupJsonString);
+function convertKeyringBackupJsonStringToJsonObject(jsonString) {
+    var jsonObject = JSON.parse(jsonString);
     jsonObject["keyring"] = Qt.atob(jsonObject["keyring"]);
 
     return jsonObject;
-}
-
-/*
-  JSON document structure for keyring:
-
-  {
-    "timestamp": "<ts>", // local timestamp <ts> when key chain was created
-    "keys": [            // array of keys in backup
-        "<name>": {      // object for key , where <name> is unique name of a key
-            "description": "<descr>",
-            "type": "<type>",
-            "mode": "<mode>",
-            "iv": "<iv>",
-            "key": "<key>"
-            "hash": "<hash>"
-        },
-        ...
-    ]
-  }
-
-*/
-
-/// This function converts keyring object to JSON string (marshalled)
-// Argumenty keyRing object must be type returned by python
-// keyhandler.getKeys()
-function convertKeyRingObject2JsonString(keyRingObject) {
-
-    var keys = []
-
-    for (var i = 0; i < keyRingObject.length; i++) {
-        var keyToConvert = keyRingObject[i];
-        var keyData = { description: keyToConvert.description,
-                        type: keyToConvert.type,
-                        mode: keyToConvert.mode,
-                        iv: keyToConvert.iv,
-                        key: keyToConvert.key,
-                        hash: keyToConvert.hash };
-        var key = {};
-        key[keyToConvert.name] = keyData;
-        keys.push(key);
-    }
-
-    var jsonObject = { timestamp: (new Date()).toUTCString(), keys: keys };
-    return JSON.stringify(jsonObject);
-}
-
-function convertJsonObject2KeyRingObject(jsonObject) {
-    var keyRing = []
-    var ts = jsonObject.timestamp
-
-    for (var i = 0; i < jsonObject.keys.length; i++) {
-        var keyToConvert = jsonObject.keys[i];
-        var keyData = { description: keyToConvert.description,
-                        type: keyToConvert.type,
-                        mode: keyToConvert.mode,
-                        iv: keyToConvert.iv,
-                        key: keyToConvert.key,
-                        hash: keyToConvert.hash };
-        keyRing.push(keyData);
-    }
-    return keyRing;
 }
 
 function _failedCb(reasonId, reasonMsg) {
@@ -105,10 +46,10 @@ function _failedCb(reasonId, reasonMsg) {
 }
 
 function _setActiveKeyring() {
-    _stateCb("done");
+    _stateCb("done", _mergeOperations);
 }
 
-function _gotKeyringBackupContentForVerify(content, keyringToActive, expectedKeyringBackupContent) {
+function _gotKeyringBackupInCloudForVerify(content, keyringToActive, expectedKeyringBackupContent) {
 
     if (content === expectedKeyringBackupContent) {
         console.debug("Activating keyring:", keyringToActive);
@@ -121,10 +62,10 @@ function _gotKeyringBackupContentForVerify(content, keyringToActive, expectedKey
     }
 }
 
-function _setKeyringBackupContent(keyring, expectedKeyringBackupContent) {
+function _setKeyringBackupToCloud(keyring, expectedKeyringBackupContent) {
     _stateCb("verify");
     _elfCloud.getProperty(keyring,
-                          function(content) { _gotKeyringBackupContentForVerify(content, keyring, expectedKeyringBackupContent); },
+                          function(content) { _gotKeyringBackupInCloudForVerify(content, keyring, expectedKeyringBackupContent); },
                           _failedCb);
 }
 
@@ -132,24 +73,34 @@ function _isBackupVersionSupported(versionString) {
     return KEY_BACKUP_VERSION === versionString;
 }
 
-function _gotKeyringBackupContent(activeKeyring, keyringBackupContent) {
+function _gotKeyringBackupJsonStringInCloud(activeKeyring, cloudJsonString) {
+    var cloudKeyringJsonString = undefined;
 
-    if (keyringBackupContent !== undefined) {
-        var currentBackupJsonObject = convertKeyBackupJsonStringToJsonObject(keyringBackupContent);
-        var backupVersionStringInCloud = currentBackupJsonObject["version"];
+    if (cloudJsonString !== undefined) {
+        var cloudJsonObject = convertKeyringBackupJsonStringToJsonObject(cloudJsonString);
+        var cloudBackupVersion = cloudJsonObject["version"];
 
-        if ( ! _isBackupVersionSupported(backupVersionStringInCloud) ) {
-            console.error("Cannot backup. Version of backup in cloud is", backupVersionStringInCloud,
+        if ( ! _isBackupVersionSupported(cloudBackupVersion) ) {
+            console.error("Cannot backup. Version of backup in cloud is", cloudBackupVersion,
                           "but application supports", KEY_BACKUP_VERSION);
-            _stateCb("failed", qsTr("Backup version %1 in cloud is unsupported.").arg(backupVersionStringInCloud));
+            _stateCb("failed", qsTr("Backup version %1 in cloud is unsupported.").arg(cloudBackupVersion));
             return;
         }
+
+        cloudKeyringJsonString = cloudJsonObject["keyring"];
     }
 
     _stateCb("merge");
-    var keyInfo = _keyHandler.getKeys();
-    var keyringJsonString = convertKeyRingObject2JsonString(keyInfo);
-    var backupJsonString = createJsonObjectForKeyBackup(keyringJsonString);
+    var localKeyringJsonString = _keyHandler.getKeysAsJsonString();
+    var mergedKeyringJSonString = localKeyringJsonString; // will be overwritted if there is keyring in cloud
+
+    if (cloudKeyringJsonString !== undefined) {
+        var result = _keyHandler.mergeJsonKeyrings(cloudKeyringJsonString, localKeyringJsonString);
+        mergedKeyringJSonString = result[0];
+        _mergeOperations = result[1];
+    }
+
+    var backupJsonString = createBackupJsonString(mergedKeyringJSonString);
 
     _stateCb("store");
     var keyring = undefined;
@@ -161,7 +112,7 @@ function _gotKeyringBackupContent(activeKeyring, keyringBackupContent) {
     }
 
     _elfCloud.setProperty(keyring, backupJsonString,
-                          function() { _setKeyringBackupContent(keyring, backupJsonString); },
+                          function() { _setKeyringBackupToCloud(keyring, backupJsonString); },
                           _failedCb);
 }
 
@@ -173,7 +124,7 @@ function _gotActiveKeyring(activeKeyring) {
     }
 
     _elfCloud.getProperty(activeKeyring,
-                          function(content) { _gotKeyringBackupContent(activeKeyring, content); },
+                          function(jsonString) { _gotKeyringBackupJsonStringInCloud(activeKeyring, jsonString); },
                           _failedCb);
 }
 

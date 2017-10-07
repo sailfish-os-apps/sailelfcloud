@@ -44,7 +44,8 @@ DISTFILES += \
     qml/helpers/keyBackup.js \
     qml/pages/KeychainBackupPage.qml \
     qml/pages/KeychainRestorePage.qml \
-    qml/helpers/keyRestore.js
+    qml/helpers/keyRestore.js \
+    qml/helpers/keyBackupCleaner.js
 
 OTHER_FILES = \
     ../rpm/harbour-sailelfcloud.yaml \
