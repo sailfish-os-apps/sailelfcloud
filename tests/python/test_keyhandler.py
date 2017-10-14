@@ -125,23 +125,11 @@ class Test(unittest.TestCase):
 
         ring1 = [{"name": "test name 1", "description": "test descr 1", "key": "111", "iv": "ABCD", "hash": "12345", "mode": "CFB8", "type": "AES128"},
                  {"name": "test name 2", "description": "test descr 2", "key": "111", "iv": "ABCD", "hash": "12345", "mode": "CFB8", "type": "AES128"},
-                 {"name": "test name 3", "description": "different key 3", "key": "111", "iv": "ABCD", "hash": "12345", "mode": "CFB8", "type": "AES128"}]
-
-        ring2 = [{"name": "test name 1", "description": "test descr 1", "key": "111", "iv": "ABCD", "hash": "12345", "mode": "CFB8", "type": "AES128"},
                  {"name": "test name 3", "description": "test descr 3", "key": "111", "iv": "ABCD", "hash": "12345", "mode": "CFB8", "type": "AES128"}]
 
-        expectedRing = [
-            {'name': 'test name 1', 'description': 'test descr 1', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'},
-            {'name': 'test name 2', 'description': 'test descr 2', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'},
-            {'name': 'test name 3 (ts)', 'description': 'different key 3', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'},
-            {'name': 'test name 3', 'description': 'test descr 3', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'}]
-        expectedOperations = [
-            ('skipped', 'test name 1'),
-            ('append',  'test name 2'),
-            ('renamed', 'test name 3 (ts)'),
-            ('append',  'test name 3 (ts)'),
-            ('append',  'test name 1'),
-            ('append',  'test name 3')]
+        ring2 = [{"name": "test name 1", "description": "test descr 1", "key": "111", "iv": "ABCD", "hash": "12345", "mode": "CFB8", "type": "AES128"},
+                 {"name": "test name 3", "description": "different test descr 3", "key": "111", "iv": "ABCD", "hash": "12345", "mode": "CFB8", "type": "AES128"},
+                 {"name": "test name 4", "description": "test descr 4", "key": "111", "iv": "ABCD", "hash": "12345", "mode": "CFB8", "type": "AES128"}]
 
         getTimestamp_mock.return_value = "ts" # mock timestamp query so that we can do easy validity check
         jsonRing1 = keyhandler.convertKeyInfo2Json(ring1)
@@ -152,20 +140,37 @@ class Test(unittest.TestCase):
         expectedRing = [
             {'name': 'test name 1', 'description': 'test descr 1', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'},
             {'name': 'test name 2', 'description': 'test descr 2', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'},
-            {'name': 'test name 3 (ts)', 'description': 'different key 3', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'},
-            {'name': 'test name 3', 'description': 'test descr 3', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'}]
+            {'name': 'test name 3', 'description': 'different test descr 3', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'},
+            {'name': 'test name 3 (ts)', 'description': 'test descr 3', 'type': 'AES128', 'hash': '12345', 'key': '111', 'mode': 'CFB8', 'iv': 'ABCD'},
+            {"name": "test name 4", "description": "test descr 4", "type": "AES128", "hash": "12345", "key": "111", "mode": "CFB8", "iv": "ABCD"}]
         expectedOperations = [
-            ('skipped', 'test name 1'),
-            ('append',  'test name 2'),
-            ('renamed', 'test name 3 (ts)'),
-            ('append',  'test name 3 (ts)'),
-            ('append',  'test name 1'),
-            ('append',  'test name 3')]
+            ('add',  'test name 2'),
+            ('rename', ('test name 3', 'test name 3 (ts)')),
+            ('keep',  'test name 1'),
+            ('keep',  'test name 3'),
+            ('keep', 'test name 4')]
 
         mergedRing = keyhandler.convertJson2KeyInfo(mergedJsonRing)
 
         self.assertCountEqual(expectedRing, mergedRing)
         self.assertCountEqual(expectedOperations, operations)
+
+    def test_CryptedFile(self):
+
+        KEY = 'd8b31e395774b3f22d753ce88cc2490f2c625fac0c9a737a5566215fd29ec7c7'
+        INITIALIZATION_VECTOR = '1fa39269dae695ea75d0fc43064ff883'
+        DATA = bytes(range(256))
+
+        f1 = keyhandler.CryptedFile("/tmp/test.bin", KEY, INITIALIZATION_VECTOR, "w")
+        f1.write(DATA)
+        f1.close()
+
+        f2 = keyhandler.CryptedFile("/tmp/test.bin", KEY, INITIALIZATION_VECTOR, "r")
+        data = f2.read(256)
+
+        self.assertEqual(DATA, data)
+
+
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

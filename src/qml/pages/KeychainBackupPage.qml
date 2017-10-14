@@ -163,7 +163,7 @@ Page {
 
             Repeater {
                 id: mergeOperations
-                property var operations: undefined
+                property var operations: []
                 x: Theme.horizontalPageMargin * 2
                 width: parent.width - x - Theme.horizontalPageMargin
                 visible: false

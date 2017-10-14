@@ -9,12 +9,30 @@ import pathlib
 import xml.etree.ElementTree as et
 import json
 import datetime
-import itertools
 import copy
 import fileHelpers
+import binascii
+from Crypto.Cipher import AES
 
 keyStoreDir = None
 keyDatabase = {}
+
+class CryptedFile(object):
+
+    def __init__(self, name, key, iv, mode='r'):
+        self.__fd = open(name, mode='%sb' % mode)
+        self.__aes = AES.new(binascii.unhexlify(key), AES.MODE_CFB, binascii.unhexlify(iv))
+
+    def read(self, size):
+        raw = self.__fd.read(size)
+        return self.__aes.decrypt(raw)
+
+    def write(self, data):
+        raw = self.__aes.encrypt(data)
+        return self.__fd.write(raw)
+
+    def close(self):
+        self.__fd.close()
 
 
 def _checkIfXmlFileIsKeyFile(file):
@@ -234,20 +252,28 @@ def convertJson2KeyInfo(jsonDocument):
 def getKeysAsJsonString():
     return convertKeyInfo2Json(getKeys())
 
+class Keyring(dict):
+
+    def __eq__(self, other):
+        return self["name"] == other["name"]
+
+    def __hash__(self):
+        return hash((self["name"], self["hash"]))
 
 def mergeKeyrings(keyring1, keyring2):
+    """Merges two keyrings and returns merged keyring and applied operation per key.
+    In case of conflicts, keys in keyring 2 has priority over keyring 1.
+    This means that conflicting key in keyring 1 will be renamed.
+    """
 
-    mergedKeyrings = keyring2
+    mergedKeyrings = []
     operationsMade = []
 
     for key1 in keyring1:
         keyToAdd = key1
-        keyToKeep = None
-        for key2 in mergedKeyrings:
-            keyToKeep = key2
 
+        for key2 in keyring2:
             if key1 == key2:
-                operationsMade.append(("keep", key2["name"]))
                 keyToAdd = None
                 break
             elif key1["name"] == key2["name"]:
@@ -261,11 +287,21 @@ def mergeKeyrings(keyring1, keyring2):
                 break
 
         if keyToAdd:
-            operationsMade.append(("add", keyToAdd["name"]))
             mergedKeyrings.append(keyToAdd)
+            operationsMade.append(("add", key1["name"]))
 
-        if keyToKeep:
-            operationsMade.append(("keep", keyToKeep["name"]))
+    for key2 in keyring2:
+        keyToAdd = key2
+        for key1 in mergedKeyrings:
+            if key1 == key2:
+                break
+            elif key2["name"] == key1["name"]:
+                keyToAdd = None
+                break
+
+        if keyToAdd:
+            mergedKeyrings.append(keyToAdd)
+            operationsMade.append(("keep", keyToAdd["name"]))
 
     return mergedKeyrings,operationsMade
 

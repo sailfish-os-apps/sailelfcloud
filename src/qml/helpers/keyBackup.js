@@ -95,7 +95,7 @@ function _gotKeyringBackupJsonStringInCloud(activeKeyring, cloudJsonString) {
     var mergedKeyringJSonString = localKeyringJsonString; // will be overwritted if there is keyring in cloud
 
     if (cloudKeyringJsonString !== undefined) {
-        var result = _keyHandler.mergeJsonKeyrings(cloudKeyringJsonString, localKeyringJsonString);
+        var result = _keyHandler.mergeJsonKeyrings(cloudKeyringJsonString, localKeyringJsonString); // local keyring has priority over cloud version
         mergedKeyringJSonString = result[0];
         _mergeOperations = result[1];
     }
