@@ -7,7 +7,9 @@ Page {
     property bool autologinDisabled: false; // allows overriding autologin from settings
 
     function _connect() {
-        if (helpers.isAutoLoginAllowed() && !autologinDisabled) {
+        if (!helpers.isFirstTimeDone())
+            pageStack.push(Qt.resolvedUrl("../dialogs/FirstTimeDialog.qml"));
+        else if (helpers.isAutoLoginAllowed() && !autologinDisabled) {
             var username = helpers.getSettingsUserName();
             var password = helpers.getSettingsPassword();
             pageStack.push(Qt.resolvedUrl("ConnectionPage.qml"),

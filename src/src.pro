@@ -45,7 +45,9 @@ DISTFILES += \
     qml/pages/KeychainBackupPage.qml \
     qml/pages/KeychainRestorePage.qml \
     qml/helpers/keyRestore.js \
-    qml/helpers/keyBackupCleaner.js
+    qml/helpers/keyBackupCleaner.js \
+    qml/dialogs/FirstTimeDialog.qml \
+    qml/pages/KeyringEncryptionPage.qml
 
 OTHER_FILES = \
     ../rpm/harbour-sailelfcloud.yaml \

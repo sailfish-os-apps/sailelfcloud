@@ -86,7 +86,7 @@ Page {
                 onClicked: {
                     helpers.clearLoginInformation();
                     autologin.checked = false;
-                    PageStack.pop();
+                    pageStack.pop();
                 }
             }
         }

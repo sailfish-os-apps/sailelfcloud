@@ -13,6 +13,24 @@
 
 #include "Helpers.h"
 
+bool Helpers::isFirstTimeDone(void) const
+{
+    QSettings s;
+    return s.value("config/firsttimedone", false).toBool();
+}
+
+void Helpers::setFirstTimeDone(void) const
+{
+    QSettings s;
+    s.setValue("config/firsttimedone", true);
+}
+
+void Helpers::clearFirstTimeDone(void) const
+{
+    QSettings s;
+    s.setValue("config/firsttimedone", false);
+}
+
 bool Helpers::containsRememberLogin(void) const
 {
     QSettings s;
@@ -67,6 +85,18 @@ void Helpers::setSettingsUserNamePassword(const QString name, const QString pw) 
     setSettingsPassword(pw);
 }
 
+QString Helpers::getSettingsKeyringPassword(void) const
+{
+    QSettings s;
+    return s.value("user/keyringpassw").toString();
+}
+
+void Helpers::setSettingsKeyringPassword(const QString pw) const
+{
+    QSettings s;
+    s.setValue("user/keyringpassw", pw);
+}
+
 void Helpers::setActiveKey(const QString keyHash) const
 {
     QSettings s;
@@ -96,7 +126,9 @@ void Helpers::clearSettingsUserNamePassword(void) const
     QSettings s;
     s.remove("user/name");
     s.remove("user/passw");
+    s.remove("user/keyringpassw");
     clearActiveKey();
+    clearFirstTimeDone();
 }
 
 bool Helpers::isAutoLogin(void) const

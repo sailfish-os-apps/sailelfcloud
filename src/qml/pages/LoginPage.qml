@@ -101,9 +101,30 @@ Page {
                 placeholderText: qsTr("Enter Password")
                 label: qsTr("Password")
                 text: helpers.getSettingsPassword()
-                //inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText
-                //echoMode: TextInput.PasswordEchoOnEdit
                 showEchoModeToggle: true
+
+                // Only allow Enter key to be pressed when text has been entered
+                EnterKey.enabled: text.length > 0
+
+                // Show 'next' icon to indicate pressing Enter will move the
+                // keyboard focus to the next text field in the page
+                EnterKey.iconSource: "image://theme/icon-m-enter-next"
+
+                // When Enter key is pressed, move the keyboard focus to the
+                // next field
+                EnterKey.onClicked: keyringPasswordField.focus = true
+            }
+
+            PasswordField {
+                id: keyringPasswordField
+                width: parent.width
+                placeholderText: qsTr("Enter Keyring Password")
+                label: qsTr("Keyring Password")
+                text: helpers.getSettingsKeyringPassword()
+                showEchoModeToggle: true
+
+                // Only allow Enter key to be pressed when text has been entered
+                EnterKey.enabled: text.length > 0
 
                 // Close the on-screen keyboard when enter is clicked
                 EnterKey.iconSource: "image://theme/icon-m-enter-close"
@@ -151,7 +172,7 @@ Page {
             TextSwitch {
                 id: autologin
                 text: qsTr("Automatic login")
-                description: qsTr("Allows automatic login when application starts. Can be disabled from Configuration.")
+                description: qsTr("Login automatically when application starts.")
                 checked: helpers.isAutoLogin()
             }
 

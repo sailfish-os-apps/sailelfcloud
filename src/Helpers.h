@@ -22,6 +22,10 @@ public:
     Q_INVOKABLE QStringList getStandardLocationVideo(void) const;
     Q_INVOKABLE QStringList getStandardLocationMusic(void) const;
 
+    Q_INVOKABLE bool isFirstTimeDone(void) const;
+    Q_INVOKABLE void setFirstTimeDone(void) const;
+    Q_INVOKABLE void clearFirstTimeDone(void) const;
+
     Q_INVOKABLE bool isRememberLogin(void) const;
     Q_INVOKABLE void setRememberLogin(void) const;
     Q_INVOKABLE void clearRememberLogin(void) const;
@@ -35,6 +39,9 @@ public:
 
     Q_INVOKABLE void setSettingsUserNamePassword(const QString name, const QString pw) const;
     Q_INVOKABLE void clearSettingsUserNamePassword(void) const;
+
+    Q_INVOKABLE QString getSettingsKeyringPassword(void) const;
+    Q_INVOKABLE void setSettingsKeyringPassword(const QString pw) const;
 
     Q_INVOKABLE bool isAutoLogin(void) const;
     Q_INVOKABLE void setAutoLogin(void) const;
