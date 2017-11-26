@@ -165,7 +165,7 @@ Python {
 
     function _syncCall(func, args) {
         var argArray = Array.prototype.slice.call(arguments);
-        var callString = func + "(";
+        var callString = "elfcloudadapter." + func + "(";
         var i = 1; // skip first arg since it is python call name 'func'
 
         while (i < argArray.length) {
@@ -204,7 +204,7 @@ Python {
     }
 
     function isConnected() {
-        return _syncCall("elfcloudadapter.isConnected");
+        return _syncCall("isConnected");
     }
 
     // This function is needed to make a copy from content list got from python since it seems to vanish and cause null pointer accesses
@@ -363,11 +363,11 @@ Python {
     }
 
     function setEncryptionKey(key, initVector) {
-       return _syncCall("elfcloudadapter.setEncryption", key, initVector);
+       return _syncCall("setEncryption", key, initVector);
     }
 
     function clearEncryption() {
-        return _syncCall("elfcloudadapter.clearEncryption");
+        return _syncCall("clearEncryption");
     }
 
     function setProperty(name, data, successCb, failureCb) {
@@ -390,7 +390,8 @@ Python {
             addImportPath(Qt.resolvedUrl("../lib/pycrypto-2.6.1-py3.4-linux-i486.egg"));
             addImportPath(Qt.resolvedUrl("../lib/decorator-4.0.9-py3.4.egg"));
             addImportPath(Qt.resolvedUrl("../lib/elfcloud_weasel-1.2.2-py3.4.egg"));
-            importModule('elfcloudadapter', function() {  py.ready = true; readyForUse(); });
+            importModule_sync('elfcloudadapter');
+            py.ready = true; readyForUse();
         }
     }
 

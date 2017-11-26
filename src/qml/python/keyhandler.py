@@ -20,8 +20,16 @@ keyDatabase = {}
 class CryptedFile(object):
 
     def __init__(self, name, key, iv, mode='r'):
-        self.__fd = open(name, mode='%sb' % mode)
-        self.__aes = AES.new(binascii.unhexlify(key), AES.MODE_CFB, binascii.unhexlify(iv))
+        self.__name = name
+        self.__key = key
+        self.__iv = iv
+        self.__mode = mode
+        self.__fd = None
+        self.__aes = None
+
+    def open(self):
+        self.__fd = open(self.__name, mode='%sb' % self.__mode)
+        self.__aes = AES.new(binascii.unhexlify(self.__key), AES.MODE_CFB, binascii.unhexlify(self.__iv))
 
     def read(self, size):
         raw = self.__fd.read(size)
@@ -33,6 +41,15 @@ class CryptedFile(object):
 
     def close(self):
         self.__fd.close()
+        self.__fd = None
+        self.__aes = None
+
+    def __enter__(self):
+        self.open()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
 
 
 def _checkIfXmlFileIsKeyFile(file):
@@ -55,29 +72,46 @@ def findKeyFiles(path):
     xmlFiles = [p for p in pathlib.Path(path).glob('*.xml') if p.is_file()]
     for f in xmlFiles:
         with f.open(encoding='utf-8') as fd:
-            if (_checkIfXmlFileIsKeyFile(fd)):
+            if _checkIfXmlFileIsKeyFile(fd):
                 keyFiles.append(f.resolve().as_posix())
     
     return keyFiles
 
-
-def _findAndAddKeyFiles(path):
+def _findAndAddUnencryptedKeyFiles(path):
     keyFiles = findKeyFiles(path)
     for k in keyFiles:
         _addKeyFileToDatabase(k)
-
 
 def _createKeyStore(configLocation):
     global keyStoreDir
     keyStoreDir = os.path.join(configLocation, 'keys')
     os.makedirs(keyStoreDir, exist_ok=True)
     fileHelpers.setDirAccessRights(keyStoreDir)
-    _findAndAddKeyFiles(keyStoreDir)
+    return keyStoreDir
 
 
 def init(configLocation):
-    _createKeyStore(configLocation)
+    keyStoreDir = _createKeyStore(configLocation)
+    _findAndAddUnencryptedKeyFiles(keyStoreDir)
 
+def findEncryptedKeyFiles(path, key, iv):
+    keyFiles = []
+    xmlFiles = [p for p in pathlib.Path(path).glob('*.xml.p7') if p.is_file()]
+    for f in xmlFiles:
+        with CryptedFile(f.resolve(True), key, iv) as fd:
+            if _checkIfXmlFileIsKeyFile(fd):
+                keyFiles.append(f.resolve().as_posix())
+
+    return keyFiles
+
+def _findAndAddEncryptedKeyFiles(path, key, iv):
+    keyFiles = findEncryptedKeyFiles(path, key, iv)
+    for k in keyFiles:
+        _addKeyFileToDatabase(k)
+
+def secureInit(configLocation, key, iv):
+    keyStoreDir = _createKeyStore(configLocation)
+    _findAndAddEncryptedKeyFiles(keyStoreDir, key, iv)
 
 def readKeyInfoFromFile(file):
     

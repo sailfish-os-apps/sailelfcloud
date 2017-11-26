@@ -161,12 +161,11 @@ class Test(unittest.TestCase):
         INITIALIZATION_VECTOR = '1fa39269dae695ea75d0fc43064ff883'
         DATA = bytes(range(256))
 
-        f1 = keyhandler.CryptedFile("/tmp/test.bin", KEY, INITIALIZATION_VECTOR, "w")
-        f1.write(DATA)
-        f1.close()
+        with keyhandler.CryptedFile("/tmp/test.bin", KEY, INITIALIZATION_VECTOR, "w") as f1:
+            f1.write(DATA)
 
-        f2 = keyhandler.CryptedFile("/tmp/test.bin", KEY, INITIALIZATION_VECTOR, "r")
-        data = f2.read(256)
+        with keyhandler.CryptedFile("/tmp/test.bin", KEY, INITIALIZATION_VECTOR, "r") as f2:
+            data = f2.read(256)
 
         self.assertEqual(DATA, data)
 
