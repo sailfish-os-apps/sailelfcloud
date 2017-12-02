@@ -576,12 +576,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FirstTimeDialog.qml" line="85"/>
+        <location filename="../qml/dialogs/FirstTimeDialog.qml" line="96"/>
+        <source>Enabling keyring password remembering decrease security.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/dialogs/FirstTimeDialog.qml" line="101"/>
         <source>Remember keyring password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FirstTimeDialog.qml" line="86"/>
+        <location filename="../qml/dialogs/FirstTimeDialog.qml" line="102"/>
         <source>Remember password when logging in.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -793,6 +798,19 @@
     <message>
         <location filename="../qml/pages/KeychainRestorePage.qml" line="150"/>
         <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>KeyringEncryptionPage</name>
+    <message>
+        <location filename="../qml/pages/KeyringEncryptionPage.qml" line="11"/>
+        <source>Encrypting local keyring</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qml/pages/KeyringEncryptionPage.qml" line="21"/>
+        <source>SailElfCloud</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

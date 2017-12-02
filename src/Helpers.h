@@ -31,6 +31,10 @@ public:
     Q_INVOKABLE void clearRememberLogin(void) const;
     bool containsRememberLogin(void) const;
 
+    Q_INVOKABLE bool isRememberKeyringPassword(void) const;
+    Q_INVOKABLE void setRememberKeyringPassword(void) const;
+    Q_INVOKABLE void clearRememberKeyringPassword(void) const;
+
     Q_INVOKABLE QString getSettingsUserName(void) const;
     Q_INVOKABLE void setSettingsUserName(const QString name) const;
 

@@ -10,23 +10,32 @@ Page {
         if (!helpers.isFirstTimeDone())
             pageStack.push(Qt.resolvedUrl("../dialogs/FirstTimeDialog.qml"));
         else if (helpers.isAutoLoginAllowed() && !autologinDisabled) {
-            var username = helpers.getSettingsUserName();
-            var password = helpers.getSettingsPassword();
-            pageStack.push(Qt.resolvedUrl("ConnectionPage.qml"),
-                           {"username":username,"password":password});
+            pageStack.push(Qt.resolvedUrl("ConnectionPage.qml"));
         } else {
             autologinDisabled = false;
             pageStack.replace(Qt.resolvedUrl("LoginPage.qml"));
         }
     }
 
+    function _elfCloudReady() {
+        if (keyHandler.ready)
+            _connect()
+    }
+
+    function _keyHandlerReady() {
+        if (elfCloud.ready)
+            _connect()
+    }
+
     Component.onCompleted: {
         if (!elfCloud.ready)
-            elfCloud.readyForUse.connect(_connect);
+            elfCloud.readyForUse.connect(_elfCloudReady);
+        if (!keyHandler.ready)
+            keyHandler.readyForUse.connect(_keyHandlerReady);
     }
 
     onStatusChanged: {
-        if (status == PageStatus.Active && elfCloud.ready) {
+        if (status == PageStatus.Active && elfCloud.ready && keyHandler.ready) {
             _connect();
         }
     }

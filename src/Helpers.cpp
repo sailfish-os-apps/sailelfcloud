@@ -55,6 +55,25 @@ void Helpers::clearRememberLogin(void) const
     s.setValue("user/remember", false);
 }
 
+bool Helpers::isRememberKeyringPassword(void) const
+{
+    QSettings s;
+    return s.value("user/rememberkeyringpasswd", false).toBool();
+}
+
+void Helpers::setRememberKeyringPassword(void) const
+{
+    QSettings s;
+    s.setValue("user/rememberkeyringpasswd", true);
+}
+
+void Helpers::clearRememberKeyringPassword(void) const
+{
+    QSettings s;
+    s.setValue("user/rememberkeyringpasswd", false);
+}
+
+
 QString Helpers::getSettingsUserName(void) const
 {
     QSettings s;

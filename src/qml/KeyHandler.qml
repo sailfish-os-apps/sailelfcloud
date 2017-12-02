@@ -6,13 +6,9 @@ Python {
 
     id: py
 
-    signal initialized()
+    signal readyForUse()
 
-    property bool _ready: false
-
-    function isReady() {
-        return _ready;
-    }
+    property bool ready: false
 
     function _call(func, args, callback) {
         var callName = "keyhandler." + func;
@@ -130,7 +126,7 @@ Python {
     }
 
     Component.onCompleted: {
-        if (!py._ready) {
+        if (!py.ready) {
             console.info("keyhandler starting up...");
             console.info("Python version: " + pythonVersion());
             console.info("PyOtherSide version: " + pluginVersion());
@@ -139,7 +135,7 @@ Python {
             addImportPath(Qt.resolvedUrl("../lib/pycrypto-2.6.1-py3.4-linux-i486.egg"));
             importModule_sync('keyhandler');
             _init();
-            py._ready = true; initialized();
+            py.ready = true; readyForUse();
         }
     }
 

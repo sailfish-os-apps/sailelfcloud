@@ -4,8 +4,8 @@ import ".."
 
 Page {
 
-    property string username;
-    property string password;
+    readonly property string username: helpers.getSettingsUserName()
+    readonly property string password: helpers.getSettingsPassword()
 
     id: page
 

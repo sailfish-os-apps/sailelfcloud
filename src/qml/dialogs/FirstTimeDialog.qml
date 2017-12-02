@@ -80,11 +80,26 @@ Dialog {
                 EnterKey.onClicked: focus = false
             }
 
+            Text
+            {
+                anchors {
+                    left: parent.left;
+                    right: parent.right;
+                    leftMargin: Theme.horizontalPageMargin;
+                    rightMargin: Theme.horizontalPageMargin
+                }
+                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                horizontalAlignment: Text.AlignJustify
+                color: Theme.secondaryHighlightColor
+                textFormat: Text.RichText
+                font { family: Theme.fontFamily; pixelSize: Theme.fontSizeTiny }
+                text: qsTr("Enabling keyring password remembering decrease security.")
+            }
+
             TextSwitch {
-                id: autologin
+                id: remember
                 text: qsTr("Remember keyring password")
                 description: qsTr("Remember password when logging in.")
-                checked: helpers.isAutoLogin()
             }
         }
     }
