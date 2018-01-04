@@ -5,43 +5,9 @@ import ".."
 Page {
     id: page
 
-    function _populateKeyList() {
-        var keys = keyHandler.getKeys();
-        var activeIndex = 0;
-        keyListModel.clear();
-        keyListModel.append({"key": {"name": qsTr("disable encryption"), "hash": "0"}});
-
-        for (var i = 0; i < keys.length; i++) {
-
-            if (keys[i]['hash'] === helpers.getActiveKey())
-                activeIndex = i+1; // increase by one since we have 'disable encryption' as the first one
-
-            keyListModel.append({"key": keys[i]});
-        }
-
-        // BUG: Sailfish combobox does not react if only currentIndex is set.
-        //      Also currentItem must be set in ordet to select current item.
-        keyListCompoBox.currentIndex = activeIndex;
-        keyListCompoBox.currentItem = keyListCompoBox.menu.children[activeIndex]
-    }
-
-    function _chooseActiveKey(key) {
-        if (key["hash"] !== "0") {
-            helpers.setActiveKey(key["hash"]);
-        }
-        else
-            helpers.clearActiveKey();
-    }
-
-    onStatusChanged: {
-        if (status === PageStatus.Activating) {
-            if (keyHandler.isReady())
-                _populateKeyList();
-            else
-                keyHandler.initialized.connect(_populateKeyList); // keyhandler may get loaded slowly
-        }
-
-    }
+    property string username: helpers.getSettingsUserName()
+    property string password: helpers.getSettingsPassword()
+    property string keyringpassword: helpers.getSettingsKeyringPassword()
 
     // To enable PullDownMenu, place our content in a SilicaFlickable
     SilicaFlickable {
@@ -49,7 +15,6 @@ Page {
 
         // Tell SilicaFlickable the height of its content.
         contentHeight: column.height
-
 
         // PullDownMenu and PushUpMenu must be declared in SilicaFlickable, SilicaListView or SilicaGridView
         PullDownMenu {
@@ -79,7 +44,7 @@ Page {
                 width: parent.width
                 placeholderText: qsTr("Enter Username")
                 label: qsTr("Username")
-                text: helpers.getSettingsUserName()
+                text: username
                 inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhNoPredictiveText
 
                 // Only allow Enter key to be pressed when text has been entered
@@ -100,7 +65,7 @@ Page {
                 width: parent.width
                 placeholderText: qsTr("Enter Password")
                 label: qsTr("Password")
-                text: helpers.getSettingsPassword()
+                text: password
                 showEchoModeToggle: true
 
                 // Only allow Enter key to be pressed when text has been entered
@@ -120,7 +85,7 @@ Page {
                 width: parent.width
                 placeholderText: qsTr("Enter Keyring Password")
                 label: qsTr("Keyring Password")
-                text: helpers.getSettingsKeyringPassword()
+                text: keyringpassword
                 showEchoModeToggle: true
 
                 // Only allow Enter key to be pressed when text has been entered
@@ -129,44 +94,6 @@ Page {
                 // Close the on-screen keyboard when enter is clicked
                 EnterKey.iconSource: "image://theme/icon-m-enter-close"
                 EnterKey.onClicked: focus = false
-            }
-
-            Text
-            {
-                visible: keyListModel.count < 2 // There is always default item (encryption disabled) in the list so at least 2 items needed
-                anchors { left: parent.left; right: parent.right;
-                          leftMargin: Theme.horizontalPageMargin; rightMargin: Theme.horizontalPageMargin }
-                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                horizontalAlignment: Text.AlignJustify
-                color: Theme.secondaryHighlightColor
-                textFormat: Text.RichText
-                font { family: Theme.fontFamily; pixelSize: Theme.fontSizeSmall }
-                text: "<style>a:link { color: " + Theme.highlightColor + "; }</style>" +
-                      qsTr("No encryption keys found.") + " " +
-                      qsTr("Click <a href=\"EncryptionConfigPage.qml\">here</a> to configure.")
-                onLinkActivated:
-                {
-                    pageStack.push(Qt.resolvedUrl(link));
-                }
-            }
-
-            ComboBox {
-                id: keyListCompoBox
-                visible: keyListModel.count > 1 // at least two items in list before we activate this
-                description: qsTr("Active encryption key")
-                anchors { left: parent.left; right: parent.right }
-
-                menu: ContextMenu {
-                        id: keyListContextMenu
-                        Repeater {
-                            id: keyListRepeater
-                            model: ListModel { id: keyListModel }
-                            delegate: MenuItem {
-                                    text: key["name"]
-                                    onClicked: _chooseActiveKey(key);
-                                }
-                        }
-                    }
             }
 
             TextSwitch {
@@ -184,7 +111,7 @@ Page {
                                                 helpers.clearSettingsUserNamePassword();
                     autologin.checked ? helpers.setAutoLogin() : helpers.clearAutoLogin();
                     pageStack.push(Qt.resolvedUrl("ConnectionPage.qml"),
-                                   {'username':usernameField.text,'password':passwordField.text});
+                                   {'username':usernameField.text,'password':passwordField.text,'keyringpassword':keyringPasswordField.text});
                 }
             }
             Text

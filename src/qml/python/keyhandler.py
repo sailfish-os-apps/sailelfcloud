@@ -13,7 +13,9 @@ import copy
 import fileHelpers
 import binascii
 from Crypto.Cipher import AES
+from Crypto.Protocol import KDF
 
+(key,iv) = None, None
 keyStoreDir = None
 keyDatabase = {}
 
@@ -104,13 +106,17 @@ def findEncryptedKeyFiles(path, key, iv):
 
     return keyFiles
 
-def _findAndAddEncryptedKeyFiles(path, key, iv):
+def _findAndAddEncryptedKeyFiles(path, passwd):
     keyFiles = findEncryptedKeyFiles(path, key, iv)
     for k in keyFiles:
         _addKeyFileToDatabase(k)
 
-def secureInit(configLocation, key, iv):
+def _generateKeyringEncryptionKey(passwd):
+    return KDF.PBKDF2(passwd, "", count=100000), 0
+
+def secureInit(configLocation, passwd):
     keyStoreDir = _createKeyStore(configLocation)
+    (key, iv) = _generateKeyringEncryptionKey(passwd)
     _findAndAddEncryptedKeyFiles(keyStoreDir, key, iv)
 
 def readKeyInfoFromFile(file):

@@ -119,7 +119,7 @@
 <context>
     <name>ConnectionPage</name>
     <message>
-        <location filename="../qml/pages/ConnectionPage.qml" line="35"/>
+        <location filename="../qml/pages/ConnectionPage.qml" line="40"/>
         <source>Connecting</source>
         <translation type="unfinished"></translation>
     </message>
@@ -545,49 +545,34 @@
 <context>
     <name>FirstTimeDialog</name>
     <message>
-        <location filename="../qml/dialogs/FirstTimeDialog.qml" line="36"/>
+        <location filename="../qml/dialogs/FirstTimeDialog.qml" line="38"/>
         <source>SailfElfCloud encryption</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FirstTimeDialog.qml" line="53"/>
-        <location filename="../qml/dialogs/FirstTimeDialog.qml" line="72"/>
+        <location filename="../qml/dialogs/FirstTimeDialog.qml" line="55"/>
+        <location filename="../qml/dialogs/FirstTimeDialog.qml" line="74"/>
         <source>Keyring Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FirstTimeDialog.qml" line="17"/>
+        <location filename="../qml/dialogs/FirstTimeDialog.qml" line="19"/>
         <source>First time setup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FirstTimeDialog.qml" line="32"/>
+        <location filename="../qml/dialogs/FirstTimeDialog.qml" line="34"/>
         <source>Local keyring for encryption keys will be encrypted. Therefore password for encryption must be provided. For more info see </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FirstTimeDialog.qml" line="52"/>
+        <location filename="../qml/dialogs/FirstTimeDialog.qml" line="54"/>
         <source>Enter Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/dialogs/FirstTimeDialog.qml" line="71"/>
+        <location filename="../qml/dialogs/FirstTimeDialog.qml" line="73"/>
         <source>Enter Password again for verify</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/dialogs/FirstTimeDialog.qml" line="96"/>
-        <source>Enabling keyring password remembering decrease security.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/dialogs/FirstTimeDialog.qml" line="101"/>
-        <source>Remember keyring password</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/dialogs/FirstTimeDialog.qml" line="102"/>
-        <source>Remember password when logging in.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -817,77 +802,57 @@
 <context>
     <name>LoginPage</name>
     <message>
-        <location filename="../qml/pages/LoginPage.qml" line="12"/>
-        <source>disable encryption</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/pages/LoginPage.qml" line="57"/>
+        <location filename="../qml/pages/LoginPage.qml" line="22"/>
         <source>Configuration</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/LoginPage.qml" line="74"/>
+        <location filename="../qml/pages/LoginPage.qml" line="39"/>
         <source>Login</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/LoginPage.qml" line="80"/>
+        <location filename="../qml/pages/LoginPage.qml" line="45"/>
         <source>Enter Username</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/LoginPage.qml" line="81"/>
+        <location filename="../qml/pages/LoginPage.qml" line="46"/>
         <source>Username</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/LoginPage.qml" line="101"/>
+        <location filename="../qml/pages/LoginPage.qml" line="66"/>
         <source>Enter Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/LoginPage.qml" line="102"/>
+        <location filename="../qml/pages/LoginPage.qml" line="67"/>
         <source>Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/LoginPage.qml" line="121"/>
+        <location filename="../qml/pages/LoginPage.qml" line="86"/>
         <source>Enter Keyring Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/LoginPage.qml" line="122"/>
+        <location filename="../qml/pages/LoginPage.qml" line="87"/>
         <source>Keyring Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/LoginPage.qml" line="145"/>
-        <source>No encryption keys found.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/pages/LoginPage.qml" line="146"/>
-        <source>Click &lt;a href=&quot;EncryptionConfigPage.qml&quot;&gt;here&lt;/a&gt; to configure.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/pages/LoginPage.qml" line="156"/>
-        <source>Active encryption key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../qml/pages/LoginPage.qml" line="174"/>
+        <location filename="../qml/pages/LoginPage.qml" line="101"/>
         <source>Automatic login</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/LoginPage.qml" line="175"/>
+        <location filename="../qml/pages/LoginPage.qml" line="102"/>
         <source>Login automatically when application starts.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qml/pages/LoginPage.qml" line="200"/>
+        <location filename="../qml/pages/LoginPage.qml" line="127"/>
         <source>See &lt;a href=&quot;ConfigPage.qml&quot;&gt;Config page&lt;/a&gt; for more properties to change.</source>
         <translation type="unfinished"></translation>
     </message>

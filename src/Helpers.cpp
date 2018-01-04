@@ -147,7 +147,6 @@ void Helpers::clearSettingsUserNamePassword(void) const
     s.remove("user/passw");
     s.remove("user/keyringpassw");
     clearActiveKey();
-    clearFirstTimeDone();
 }
 
 bool Helpers::isAutoLogin(void) const

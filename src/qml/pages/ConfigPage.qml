@@ -85,6 +85,7 @@ Page {
                 anchors.horizontalCenter: parent.horizontalCenter
                 onClicked: {
                     helpers.clearLoginInformation();
+                    elfCloud.disconnect();
                     autologin.checked = false;
                     pageStack.pop();
                 }

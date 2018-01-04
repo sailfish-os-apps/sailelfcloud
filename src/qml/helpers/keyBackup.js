@@ -18,7 +18,7 @@ var CLOUD_KEYRING_ACTIVE = "com.ahola.sailelfcloud.keyring.user.active";
   {
     "version": "x.y",    // version string for key backup JSON document format where x is major and y is minor version number
     "timestamp": "<ts>", // local timestamp <ts> when backup was created
-    "keyring": ""        // encrypted base64 encoded keyring JSON string
+    "keyring": ""        // base64 encoded keyring JSON string
   }
 */
 

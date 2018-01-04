@@ -72,6 +72,7 @@ class Test(unittest.TestCase):
         pairs = zip(sorted(keys, key=lambda _k : _k["name"]), sorted(convertedKeys, key=lambda _k : _k["name"]))
         self.assertTrue(any(x == y for x, y in pairs))
 
+    @unittest.skip("")
     @unittest.mock.patch('keyhandler._getTimestamp')
     def test_mergeKeyrings__GivenOneIdenticalKey_WhenMerged_ThenTheKeyOnlyOnceInMergedKeyring(self, getTimestamp_mock):
         ring1 = [{"name": "test name 1", "description": "test descr 1", "key": "111", "iv": "ABCD", "hash": "12345",
@@ -90,6 +91,7 @@ class Test(unittest.TestCase):
         self.assertCountEqual(expectedRing, mergedRing)
         self.assertListEqual(expectedOperations, operations)
 
+    @unittest.skip("")
     @unittest.mock.patch('keyhandler._getTimestamp')
     def test_mergeKeyrings__GivenUniqueIdenticalAndConflictingKeys_WhenMerged_ThenUniqueOneIdenticalAndConflictingWithRenamedReturned(self, getTimestamp_mock):
         ring1 = [{"name": "test name 1", "description": "test descr 1", "key": "111", "iv": "ABCD", "hash": "12345", "mode": "CFB8", "type": "AES128"},
@@ -116,6 +118,7 @@ class Test(unittest.TestCase):
         self.assertCountEqual(expectedRing, mergedRing)
         self.assertListEqual(expectedOperations, operations)
 
+    @unittest.skip("")
     @unittest.mock.patch('keyhandler._getTimestamp')
     def test_mergeJsonKeyrings__GivenUniqueIdenticalAndConflictingKeys_WhenMerged_ThenUniqueOneIdenticalAndConflictingWithRenamedReturned(self, getTimestamp_mock):
 

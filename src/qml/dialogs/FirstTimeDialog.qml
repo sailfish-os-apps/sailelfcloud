@@ -4,6 +4,8 @@ import Sailfish.Silica 1.0
 Dialog {
     id: dialog
 
+    property string keyringPassword
+
     SilicaFlickable {
         anchors.fill: parent
 
@@ -79,31 +81,10 @@ Dialog {
                 EnterKey.iconSource: "image://theme/icon-m-enter-close"
                 EnterKey.onClicked: focus = false
             }
-
-            Text
-            {
-                anchors {
-                    left: parent.left;
-                    right: parent.right;
-                    leftMargin: Theme.horizontalPageMargin;
-                    rightMargin: Theme.horizontalPageMargin
-                }
-                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                horizontalAlignment: Text.AlignJustify
-                color: Theme.secondaryHighlightColor
-                textFormat: Text.RichText
-                font { family: Theme.fontFamily; pixelSize: Theme.fontSizeTiny }
-                text: qsTr("Enabling keyring password remembering decrease security.")
-            }
-
-            TextSwitch {
-                id: remember
-                text: qsTr("Remember keyring password")
-                description: qsTr("Remember password when logging in.")
-            }
         }
     }
 
-    onAccepted: helpers.setSettingsKeyringPassword(keyringPasswordField.text);
+    onCanceled: { helpers.setFirstTimeDone(); keyringPassword = undefined; }
+    onAccepted: { helpers.setFirstTimeDone(); keyringPassword = keyringPasswordField.text; }
     canAccept: keyringPasswordField.text.length > 0 && keyringPasswordField.text === keyringPasswordVerifyField.text
 }

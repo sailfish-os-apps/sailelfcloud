@@ -6,15 +6,20 @@ Page {
 
     readonly property string username: helpers.getSettingsUserName()
     readonly property string password: helpers.getSettingsPassword()
+    readonly property string keyringpassword: helpers.getSettingsKeyringPassword()
 
     id: page
 
     property bool _triedConnect: false
 
-    function _connectionSucceededCb() {
+    function _keychainInitCb() {
         busyIndication.running = false;
-        _triedConnect = true;
         pageStack.replaceAbove(null, Qt.resolvedUrl("ContainerPage.qml"));
+    }
+
+    function _connectionSucceededCb() {
+        _triedConnect = true;
+        keyHandler.secureInit(keyringpassword, _keychainInitCb);
     }
 
     function _connectionFailedCb() {

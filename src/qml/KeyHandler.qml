@@ -9,16 +9,22 @@ Python {
     signal readyForUse()
 
     property bool ready: false
+    property string _keyringpassword
 
-    function _call(func, args, callback) {
-        var callName = "keyhandler." + func;
-        return py.call(callName, args, callback);
+    function _getVarArgs(func, args) {
+        return Array.prototype.slice.call(args, func.length);
     }
 
-    function _syncCall(func, args) {
-        var argArray = Array.prototype.slice.call(arguments);
+    function _asycCall(func, callback) {
+        var argArray = _getVarArgs(_asycCall, arguments);
+        var callName = "keyhandler." + func;
+        return py.call(callName, argArray, callback);
+    }
+
+    function _syncCall(func) {
+        var argArray = _getVarArgs(_syncCall, arguments);
         var callString = "keyhandler." + func + "(";
-        var i = 1; // skip first arg since it is python call name 'func'
+        var i = 0;
 
         while (i < argArray.length) {
             if (typeof(argArray[i]) === 'number')
@@ -117,8 +123,12 @@ Python {
         return _syncCall("mergeJsonKeyrings", keyring1, keyring2);
     }
 
-    function secureInit(key, iv) {
-        _syncCall('secureInit', StandardPaths.data, key, iv);
+    function secureInit(cb) {
+        _asycCall('secureInit', cb, StandardPaths.data, _keyringpassword);
+    }
+
+    function setKeyringPassword(passwd) {
+        _keyringpassword = passwd;
     }
 
     function _init() {

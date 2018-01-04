@@ -5,37 +5,23 @@ Page {
     id: mainPage
 
     property bool autologinDisabled: false; // allows overriding autologin from settings
+    property string keyringpassword
 
     function _connect() {
-        if (!helpers.isFirstTimeDone())
-            pageStack.push(Qt.resolvedUrl("../dialogs/FirstTimeDialog.qml"));
+        if (!helpers.isFirstTimeDone()) {
+            var d = pageStack.push(Qt.resolvedUrl("../dialogs/FirstTimeDialog.qml"));
+            d.accepted.connect(function() { keyringpassword = d.keyringPassword; });
+        }
         else if (helpers.isAutoLoginAllowed() && !autologinDisabled) {
             pageStack.push(Qt.resolvedUrl("ConnectionPage.qml"));
         } else {
             autologinDisabled = false;
-            pageStack.replace(Qt.resolvedUrl("LoginPage.qml"));
+            pageStack.replace(Qt.resolvedUrl("LoginPage.qml"), {'keyringpassword': keyringpassword});
         }
     }
 
-    function _elfCloudReady() {
-        if (keyHandler.ready)
-            _connect()
-    }
-
-    function _keyHandlerReady() {
-        if (elfCloud.ready)
-            _connect()
-    }
-
-    Component.onCompleted: {
-        if (!elfCloud.ready)
-            elfCloud.readyForUse.connect(_elfCloudReady);
-        if (!keyHandler.ready)
-            keyHandler.readyForUse.connect(_keyHandlerReady);
-    }
-
     onStatusChanged: {
-        if (status == PageStatus.Active && elfCloud.ready && keyHandler.ready) {
+        if (status == PageStatus.Active) {
             _connect();
         }
     }
