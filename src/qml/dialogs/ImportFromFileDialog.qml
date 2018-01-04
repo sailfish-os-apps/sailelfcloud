@@ -7,8 +7,8 @@ Dialog {
     signal createdKey(string hash)
 
     function addKeyFilesToList() {
-        var keyFilesInDocuments = keyHandler.findKeyFiles(helpers.getStandardLocationDocuments());
-        var keyFilesInDownloads = keyHandler.findKeyFiles(helpers.getStandardLocationDownloads());
+        var keyFilesInDocuments = keyHandler.findKeyFiles(helpers.getStandardLocationDocuments()[0]);
+        var keyFilesInDownloads = keyHandler.findKeyFiles(helpers.getStandardLocationDownloads()[0]);
 
         for (var i = 0; i < keyFilesInDocuments.length; i++) {
             var keyInfo = keyHandler.readKeyInfoFromFile(keyFilesInDocuments[i]);
