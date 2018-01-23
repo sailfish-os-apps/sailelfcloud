@@ -1,4 +1,9 @@
 # sailelfcloud
+
+
+NOTE! Sadly elfCLOUD service is going to be shutdown at 15th of June 2018. It means that this application will become deprecated as well and not maintained. For more details about elfCLOUD see https://secure.elfcloud.fi/en_US/.
+
+
 elfCLOUD client for Sailfish
 
 elfCLOUD is a product of elfGROUP. See https://secure.elfcloud.fi/en_US/.
